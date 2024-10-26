@@ -1,36 +1,35 @@
 // app/page.tsx
 import CardPatient from '../components/CardPatient';
+import SignUp from '@/components/SigUp';
 import React from 'react';
+import ListPatients from '@/components/ListPatients';
+import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
+
+const patients: CardPatientInterface[] = [
+  { id: 1, name: 'João', age: 23, solicitingDoctor: 'Dr. Silva' },
+  { id: 2, name: 'Maria', age: 45, solicitingDoctor: 'Dr. Santos' },
+  { id: 3, name: 'José', age: 33, solicitingDoctor: 'Dr. Oliveira' },
+  { id: 4, name: 'Ana', age: 19, solicitingDoctor: 'Dr. Costa' },
+  { id: 5, name: 'Carlos', age: 67, solicitingDoctor: 'Dr. Pereira' },
+  { id: 6, name: 'Paula', age: 25, solicitingDoctor: 'Dr. Almeida' },
+  { id: 7, name: 'Pedro', age: 50, solicitingDoctor: 'Dr. Ferreira' },
+  { id: 8, name: 'Mariana', age: 37, solicitingDoctor: 'Dr. Lima' },
+];
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F1F2F3]">
-
-      <div className="bg-[#173D65] text-white p-2 flex-1 text-center font-bold h-full ml-10">
-        <h1 className='mb-7'>Fila de Espera</h1>
-        <CardPatient></CardPatient>
-        <CardPatient></CardPatient>
-      </div>
-      <div className="bg-white flex-1 text-center p-2 text-[#173D65] font-bold">
-        <h1 className='mb-7 text-lg'>Adicionar Paciente na Fila</h1>
-
-        <div className="flex flex-col space-y-4 text-left">
-          <div>
-            <label htmlFor="name" className="block text-lg font-bold text-[#173D65]">Nome Completo</label>
-            <input type="text" id="name" className="mt-1 block w-full p-2 border border-[#173D65] rounded-md h-14" />
-          </div>
-          <div>
-            <label htmlFor="age" className="block text-lg font-bold text-[#173D65]">Idade</label>
-            <input type="number" id="age" className="mt-1 block w-full p-2 border border-[#173D65] rounded-md h-14" />
-          </div>
-          <div>
-            <label htmlFor="condition" className="block text-lg font-bold text-[#173D65]">Médico Solicitante</label>
-            <input type="text" id="condition" className="mt-1 block w-full p-2 border border-[#173D65] rounded-md h-14" />
-          </div>
+    <div className="bg-gray-100 h-screen">
+      <div className="grid grid-cols-1 md:grid-cols-2 p-5 items-stretch h-full md:gap-0 gap-x-4">
+      
+        <div>
+          <ListPatients arrayOfPatients = {patients} />
         </div>
+ 
+        <div className="flex h-full">
+          <SignUp />
+        </div>
+
       </div>
-
     </div>
-
   );
 }
