@@ -7,6 +7,8 @@ import { blue } from '@mui/material/colors';
 
 
 const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
+    fontWeight: 'bold',
+    fontSize: '1.3rem',
     color: theme.palette.getContrastText('#173D65'),
     backgroundColor: '#173D65',
     '&:hover': {
@@ -16,10 +18,10 @@ const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
 
 export default function SignUp() {
     return (
-        <div className="bg-white flex flex-col justify-between h-full w-full p-4 text-[#173D65] font-bold">
-            <h1 className='mb-7 text-xl text-center'>Adicionar Paciente na Fila</h1>
+        <div className="bg-white flex flex-col justify-between h-full w-full p-4 text-[#173D65] font-bold rounded-r-lg border border-[#173D65]">
+            <h1 className="mt-4 mb-7 text-center text-2xl font-extrabold" style={{ fontFamily: 'Inter, sans-serif' }}>Adicionar Paciente na Fila</h1>
 
-            <div className="flex flex-col space-y-4 text-left flex-grow">
+            <div className="flex flex-col space-y-4 text-left flex-grow p-4">
                 <div>
                     <label htmlFor="name" className="block text-lg font-bold text-[#173D65]">Nome Completo</label>
                     <input type="text" id="name" className="mt-1 block w-full p-2 border border-[#173D65] rounded-md h-14" />
@@ -34,18 +36,20 @@ export default function SignUp() {
                 </div>
 
                 <div className='flex justify-start'>
-                    <FormControlLabel className='text-[#173D65] text-lg'
+                    <FormControlLabel
+                        className='text-[#173D65] text-lg font-bold'
                         control={<Checkbox />}
-                        label="Prioridade"
+                        label={<span className='font-bold'>Prioridade</span>}
                     />
+                </div>
+                <div className="w-full mt-4">
+                    <ColorButton variant="contained" fullWidth sx={{ height: '70px', textTransform: 'none' }}>
+                        Adicionar
+                    </ColorButton>
                 </div>
             </div>
 
-            <div className="w-full mt-4">
-                <ColorButton variant="contained" fullWidth sx={{ height: '56px' }}>
-                    Adicionar
-                </ColorButton>
-            </div>
+
 
         </div>
     );
