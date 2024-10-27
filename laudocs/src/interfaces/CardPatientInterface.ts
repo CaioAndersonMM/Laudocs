@@ -1,6 +1,7 @@
 export interface CardPatientInterface {
-    id: number;
+    id: string; 
     name: string;
     solicitingDoctor: string;
     age: number;
+    priority?: boolean;
 }

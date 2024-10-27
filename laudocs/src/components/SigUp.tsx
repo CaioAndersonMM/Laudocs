@@ -5,9 +5,10 @@ import { styled } from '@mui/material/styles';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { blue } from '@mui/material/colors';
 import { useState } from 'react';
+import axios from 'axios';
 
 interface SignUpProps {
-    addPatient: (patient: { id: number; name: string; age: number; solicitingDoctor: string; }) => void;
+    addPatient: (patient: { id: string; name: string; age: number; solicitingDoctor: string; priority?: boolean; }) => void;
 }
 
 const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
@@ -31,8 +32,8 @@ export default function SignUp({ addPatient }: SignUpProps) {
     const [ageError, setAgeError] = useState('');
     const [doctorError, setDoctorError] = useState('');
 
-    const handleAddPatient = () => {
-
+    const handleAddPatient = async () => {
+        console.log('entrando na função de adicionar paciente');
         let isValid = true;
 
         setNameError('');
@@ -55,20 +56,26 @@ export default function SignUp({ addPatient }: SignUpProps) {
 
         if (isValid) {
             const newPatient = {
-                id: Date.now(),
                 name,
                 age: parseInt(age),
                 solicitingDoctor,
                 priority
             };
-            addPatient(newPatient);
-            setName('');
-            setAge('');
-            setSolicitingDoctor('');
-            setPriority(false);
+
+            try {
+                console.log('Enviando para o backend:', newPatient);
+                const response = await axios.post('/api/pacientes', newPatient);
+                const patientWithId = { id: response.data.id, ...newPatient };
+                addPatient(patientWithId);
+                setName('');
+                setAge('');
+                setSolicitingDoctor('');
+                setPriority(false);
+            } catch (error) {
+                console.error('Erro ao adicionar paciente:', error);
+            }
         }
     };
-
 
     return (
         <div className="bg-white flex flex-col justify-between h-full w-full p-4 text-[#173D65] font-bold rounded-r-lg border border-[#173D65]">
@@ -101,7 +108,6 @@ export default function SignUp({ addPatient }: SignUpProps) {
                         }}
                     />
                     {ageError && <span className="text-red-500 text-sm">{ageError}</span>}
-
                 </div>
                 <div>
                     <label htmlFor="condition" className="block text-lg font-bold text-[#173D65]">Médico Solicitante</label>
@@ -113,7 +119,6 @@ export default function SignUp({ addPatient }: SignUpProps) {
                         onChange={(e) => setSolicitingDoctor(e.target.value)}
                     />
                     {doctorError && <span className="text-red-500 text-sm">{doctorError}</span>}
-
                 </div>
 
                 <div className='flex justify-start'>
