@@ -28,15 +28,13 @@ export default function SelectPatient({ selectedPatient, removePatientSelected }
                     <div className='flex items-center ml-2 mt-3'>
 
                         <img src="/assets/medicIcon.svg" alt="Icone Hospital" className="w-6 h-6 mr-2" />
-                        <p className="text-left">Solicitante: {selectedPatient.solicitingDoctor}</p>
+                        <p className="text-left">Médico Solicitante: {selectedPatient.solicitingDoctor}</p>
                         <hr className='border-1 border-cyan-800 mt-3' />
                     </div>
                     <hr className='border-1 border-cyan-800 mt-7' />
 
                     <h1 className='text-2xl mt-4'>Clique em uma opção para iniciar a consulta:</h1>
-                    <ListTypeConsult patientId={selectedPatient.id}></ListTypeConsult>
-
-
+                    <ListTypeConsult patient={selectedPatient}></ListTypeConsult>
 
                 </div>
             ) : (
