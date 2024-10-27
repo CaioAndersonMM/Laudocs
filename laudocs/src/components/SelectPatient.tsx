@@ -1,6 +1,7 @@
 "use client"
 
 import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
+import ListTypeConsult from './ListTypeConsult';
 
 interface SelectPatientProps {
     selectedPatient: CardPatientInterface | null;
@@ -31,6 +32,12 @@ export default function SelectPatient({ selectedPatient, removePatientSelected }
                         <hr className='border-1 border-cyan-800 mt-3' />
                     </div>
                     <hr className='border-1 border-cyan-800 mt-7' />
+
+                    <h1 className='text-2xl mt-4'>Clique em uma opção para iniciar a consulta:</h1>
+                    <ListTypeConsult patientId={selectedPatient.id}></ListTypeConsult>
+
+
+
                 </div>
             ) : (
                 <h1 className="mt-4 mb-7 text-center text-2xl font-extrabold" style={{ fontFamily: 'Inter, sans-serif' }}>Selecione o Paciente</h1>
