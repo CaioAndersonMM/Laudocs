@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Grid, Card, CardContent, Typography } from '@mui/material';
+import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
 
 const consultations = [
     'Masculino',
@@ -13,25 +14,24 @@ const consultations = [
 ];
 
 interface ListTypeConsultProps {
-    patientId: number; // Passa o ID do paciente como uma prop
+    patient: CardPatientInterface;
 }
 
-const ListTypeConsult: React.FC<ListTypeConsultProps> = ({ patientId }) => {
+const ListTypeConsult: React.FC<ListTypeConsultProps> = ({ patient }) => {
     return (
         <Box sx={{ flexGrow: 1, padding: 2 }}>
             <Grid container spacing={2}>
                 {consultations.map((consultation, index) => (
                     <Grid item xs={12} sm={6} key={index}>
-                        <a 
-                            href={`/consultatype?patientId=${patientId}&consultation=${consultation}`}
-                            style={{ textDecoration: 'none' }}
+                        <a
+                            href={`/consultatype?patientId=${patient.id}&consultation=${consultation}&doctor=${encodeURIComponent(patient.solicitingDoctor)}&age=${patient.age}&patientName=${encodeURIComponent(patient.name)}`} style={{ textDecoration: 'none' }}
                         >
                             <Card
                                 sx={{
                                     backgroundColor: '#15AAAA',
                                     textAlign: 'center',
                                     borderRadius: '8px',
-                                    cursor: 'pointer', 
+                                    cursor: 'pointer',
                                     '&:hover': {
                                         backgroundColor: '#138E8E',
                                     },
