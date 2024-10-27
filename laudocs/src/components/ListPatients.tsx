@@ -22,7 +22,7 @@ export default function ListPatients({ arrayOfPatients, onSelectPatient }: ListP
         {arrayOfPatients.map((patient) => (
           <div 
             key={patient.id} 
-            onClick={() => onSelectPatient && onSelectPatient(patient)}
+            onClick={() => onSelectPatient?.(patient)}
             className="cursor-pointer"
           >
             <CardPatient id={patient.id} name={patient.name} age={patient.age} solicitingDoctor={patient.solicitingDoctor} />

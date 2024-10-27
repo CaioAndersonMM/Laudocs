@@ -9,7 +9,7 @@ export default function CardPatient({ id, name, age, solicitingDoctor }: CardPat
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center ml-2">
           <img src="/assets/patientIcon.svg" alt="Icone Médico" className="w-6 h-6 mr-2" />
-          <h2 className="text-base font-extrabold text-cyan-800">{name}, {age}</h2>
+          <h2 className="text-base font-extrabold text-cyan-800">{name}, {age} anos</h2>
         </div>
         <button className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center">
           <span className="text-xs font-bold">X</span>
