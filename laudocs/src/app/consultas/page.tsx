@@ -23,7 +23,10 @@ export default function Home() {
       setSelectedPatient(patient);
     };
 
-    
+    const removePatientSelected = () => {
+      setSelectedPatient(null);
+    };
+
     return (
         <div className="bg-gray-100 h-screen p-1">
           <div className="grid grid-cols-1 md:grid-cols-2 p-5 items-stretch h-full md:gap-0 gap-x-4">
@@ -33,7 +36,7 @@ export default function Home() {
             </div>
     
             <div className="flex h-[97%]">
-              <SelectPatient selectedPatient={selectedPatient} />
+            <SelectPatient selectedPatient={selectedPatient} removePatientSelected={removePatientSelected} />
             </div>
     
           </div>
