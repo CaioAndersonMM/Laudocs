@@ -1,9 +1,12 @@
-'use client'
+"use client"
+
 import SignUp from '@/components/SigUp';
 import React, { useState, useEffect } from 'react';
 import ListPatients from '@/components/ListPatients';
 import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
 import axios from 'axios';
+import { QueryClientProvider } from '@tanstack/react-query';
+
 
 export default function Home() {
   const [patients, setPatients] = useState<CardPatientInterface[]>([]);
@@ -32,6 +35,10 @@ export default function Home() {
     setPatients((prevPatients) => [...prevPatients, patient]);
   };
 
+  const removePatient = (id: string) => {
+    setPatients((prevPatients) => prevPatients.filter((patient) => patient.id !== id));
+  };
+
   const handleSelectPatient = (patient: CardPatientInterface) => {
     setSelectedPatient(patient);
   };
@@ -46,7 +53,7 @@ export default function Home() {
           ) : error ? (
             <p>{error}</p>
           ) : (
-            <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} />
+            <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} removePatient={removePatient} />
           )}
         </div>
 
@@ -57,4 +64,5 @@ export default function Home() {
       </div>
     </div>
   );
+  
 }

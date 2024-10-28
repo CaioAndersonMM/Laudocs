@@ -1,45 +1,67 @@
-'use client'
+'use client';
 import SelectPatient from '@/components/SelectPatient';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ListPatients from '@/components/ListPatients';
 import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
-
-const patients: CardPatientInterface[] = [
-  { id: 1, name: 'João Paulo da Silva Souza', age: 23, solicitingDoctor: 'Dr. Silva' },
-  { id: 2, name: 'Maria da Costa Silva Pereira', age: 45, solicitingDoctor: 'Dr. Santos' },
-  { id: 3, name: 'José Armando de Souza', age: 33, solicitingDoctor: 'Dr. Oliveira' },
-  { id: 4, name: 'Ana Maria dos Santos', age: 19, solicitingDoctor: 'Dr. Costa' },
-  { id: 5, name: 'Carlos Alberto Vieira Costa', age: 67, solicitingDoctor: 'Dr. Pereira' },
-  { id: 6, name: 'Paula Eliza Martins dos Santos', age: 25, solicitingDoctor: 'Dr. Almeida' },
-  { id: 7, name: 'Pedro Pereira Santiago Filho', age: 50, solicitingDoctor: 'Dr. Ferreira' },
-  { id: 8, name: 'Mariana Karla Pinheiro', age: 37, solicitingDoctor: 'Dr. Lima' },
-];
+import axios from 'axios';
 
 export default function Home() {
+  const [patients, setPatients] = useState<CardPatientInterface[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<CardPatientInterface | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const [selectedPatient, setSelectedPatient] = useState<CardPatientInterface | null>(null);
 
-    const handleSelectPatient = (patient: CardPatientInterface) => {
-      setSelectedPatient(patient);
-    };
+  const fetchPatients = async () => {
+    try {
+      setIsLoading(true); 
+      const response = await axios.get('/api/pacientes');
+      setPatients(response.data); 
+      setError(null);
+    } catch (err) {
+      setError('Erro ao buscar pacientes');
+      console.error(err);
+    } finally {
+      setIsLoading(false); 
+    }
+  };
 
-    const removePatientSelected = () => {
-      setSelectedPatient(null);
-    };
+ 
+  useEffect(() => {
+   
+    fetchPatients();
 
-    return (
-        <div className="bg-gray-100 h-screen p-1">
-          <div className="grid grid-cols-1 md:grid-cols-2 p-5 items-stretch h-full md:gap-0 gap-x-4">
+    const intervalId = setInterval(fetchPatients, 20000);
+
     
-            <div className="flex-1">
-              <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} />
-            </div>
-    
-            <div className="flex h-[97%]">
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const handleSelectPatient = (patient: CardPatientInterface) => {
+    setSelectedPatient(patient);
+  };
+  const removePatientSelected = () => {
+    setSelectedPatient(null);
+  };
+
+  return (
+    <div className="bg-gray-100 h-screen p-1">
+      {isLoading && <p>Carregando...</p>}
+      
+
+      {error && <p>{error}</p>}
+      
+     
+      {!isLoading && !error && (
+        <div className="grid grid-cols-1 md:grid-cols-2 p-5 items-stretch h-full md:gap-0 gap-x-4">
+          <div className="flex-1">
+            <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} />
+          </div>
+          <div className="flex h-[97%]">
             <SelectPatient selectedPatient={selectedPatient} removePatientSelected={removePatientSelected} />
-            </div>
-    
           </div>
         </div>
-      );
-    }
+      )}
+    </div>
+  );
+}
