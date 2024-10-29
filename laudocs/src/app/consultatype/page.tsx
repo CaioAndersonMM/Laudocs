@@ -16,15 +16,17 @@ const ConsultaPage = () => {
 
 
     const searchParams = useSearchParams();
-    const consulta = searchParams.get('consultation') as keyof typeof optionsMap | null;
-    const patientId = searchParams.get('patientId');
-    const patientName = searchParams.get('patientName');
-    const patientAge = searchParams.get('patientAge');
-    const solicitingDoctor = searchParams.get('doctor');
+    const consulta = searchParams ? searchParams.get('consultation') as keyof typeof optionsMap | null : null;
+    const patientId = searchParams ? searchParams.get('patientId') : null;
+    const patientName = searchParams ? searchParams.get('patientName') : null;
+    const patientAge = searchParams ? searchParams.get('patientAge') : null;
+    const solicitingDoctor = searchParams ? searchParams.get('doctor') : null;
 
     const handleCardClick = (title: string) => {
-        // Lógica para o que deve acontecer ao clicar no cartão
-        alert(`Você clicou na ${title}`);
+
+        router.push(`/consulta/${title}?patientId=${patientId}&patientName=${patientName}&patientAge=${patientAge}&doctor=${solicitingDoctor}`);
+
+
     };
 
     const renderOptions = () => {
