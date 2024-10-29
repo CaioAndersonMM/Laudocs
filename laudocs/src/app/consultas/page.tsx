@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import SelectPatient from '@/components/SelectPatient';
 import ListPatients from '@/components/ListPatients';
 import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
-import { database } from '../../../services/firebase'; // Certifique-se de que o caminho esteja correto
+import { database } from '../../../services/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 
 export default function Home() {
@@ -15,7 +15,6 @@ export default function Home() {
   useEffect(() => {
     const pacientesRef = collection(database, 'pacientes');
 
-    // Escuta as mudanças na coleção 'pacientes'
     const unsubscribe = onSnapshot(pacientesRef, (snapshot) => {
       const pacientesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as CardPatientInterface[];
       setPatients(pacientesData);
@@ -24,8 +23,6 @@ export default function Home() {
       setError('Erro ao escutar pacientes: ' + error.message);
       console.error('Erro ao escutar pacientes:', error);
     });
-
-    // Limpar o listener ao desmontar o componente
     return () => unsubscribe();
   }, []);
 
