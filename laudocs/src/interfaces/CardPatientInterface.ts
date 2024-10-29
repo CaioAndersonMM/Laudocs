@@ -1,5 +1,5 @@
 export interface CardPatientInterface {
-    id: string; 
+    id?: string; 
     name: string;
     solicitingDoctor: string;
     age: number;

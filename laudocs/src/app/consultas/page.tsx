@@ -1,9 +1,10 @@
 'use client';
-import SelectPatient from '@/components/SelectPatient';
 import React, { useState, useEffect } from 'react';
+import SelectPatient from '@/components/SelectPatient';
 import ListPatients from '@/components/ListPatients';
 import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
-import axios from 'axios';
+import { database } from '../../../services/firebase'; // Certifique-se de que o caminho esteja correto
+import { collection, onSnapshot } from 'firebase/firestore';
 
 export default function Home() {
   const [patients, setPatients] = useState<CardPatientInterface[]>([]);
@@ -11,35 +12,27 @@ export default function Home() {
   const [selectedPatient, setSelectedPatient] = useState<CardPatientInterface | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-
-  const fetchPatients = async () => {
-    try {
-      setIsLoading(true); 
-      const response = await axios.get('/api/pacientes');
-      setPatients(response.data); 
-      setError(null);
-    } catch (err) {
-      setError('Erro ao buscar pacientes');
-      console.error(err);
-    } finally {
-      setIsLoading(false); 
-    }
-  };
-
- 
   useEffect(() => {
-   
-    fetchPatients();
+    const pacientesRef = collection(database, 'pacientes');
 
-    const intervalId = setInterval(fetchPatients, 20000);
+    // Escuta as mudanças na coleção 'pacientes'
+    const unsubscribe = onSnapshot(pacientesRef, (snapshot) => {
+      const pacientesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as CardPatientInterface[];
+      setPatients(pacientesData);
+      setError(null);
+    }, (error) => {
+      setError('Erro ao escutar pacientes: ' + error.message);
+      console.error('Erro ao escutar pacientes:', error);
+    });
 
-    
-    return () => clearInterval(intervalId);
+    // Limpar o listener ao desmontar o componente
+    return () => unsubscribe();
   }, []);
 
   const handleSelectPatient = (patient: CardPatientInterface) => {
     setSelectedPatient(patient);
   };
+
   const removePatientSelected = () => {
     setSelectedPatient(null);
   };
@@ -47,21 +40,16 @@ export default function Home() {
   return (
     <div className="bg-gray-100 h-screen p-1">
       {isLoading && <p>Carregando...</p>}
-      
-
       {error && <p>{error}</p>}
       
-     
-      {!isLoading && !error && (
-        <div className="grid grid-cols-1 md:grid-cols-2 p-5 items-stretch h-full md:gap-0 gap-x-4">
-          <div className="flex-1">
-            <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} />
-          </div>
-          <div className="flex h-[97%]">
-            <SelectPatient selectedPatient={selectedPatient} removePatientSelected={removePatientSelected} />
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 p-5 items-stretch h-full md:gap-0 gap-x-4">
+        <div className="flex-1">
+          <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} />
         </div>
-      )}
+        <div className="flex h-[97%]">
+          <SelectPatient selectedPatient={selectedPatient} removePatientSelected={removePatientSelected} />
+        </div>
+      </div>
     </div>
   );
 }
