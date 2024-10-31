@@ -11,7 +11,6 @@ interface SelectPatientProps {
 export default function SelectPatient({ selectedPatient, removePatientSelected }: SelectPatientProps) {
     return (
         <div className="bg-white flex flex-col justify-between h-full w-full p-4 text-[#173D65] font-bold rounded-r-lg border border-[#173D65]">
-            {/* Condição para mostrar o título ou as informações do paciente */}
             {selectedPatient ? (
                 <div className='text-left'>
                     <div className="flex items-center justify-between mb-1">
