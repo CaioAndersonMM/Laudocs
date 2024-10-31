@@ -5,8 +5,12 @@ import os
 from docx import Document
 
 def substituir_campos(substituicoes):
+
+    nome_doc = substituicoes.get('typeUltrassom').replace(' ', '_').lower()
+    print(f"Substituindo campos no documento: {nome_doc}.docx")
+
     # Define o caminho relativo para o documento base
-    doc_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'public', 'docs', 'axila.docx'))
+    doc_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'public', 'docs', nome_doc + '.docx'))
     # print(f"Path to document: {doc_path}")
     
     if not os.path.exists(doc_path):
