@@ -10,10 +10,11 @@ const TitlePage = () => {
     const [hasNodule, setHasNodule] = useState(false);
     const [noduleLocation, setNoduleLocation] = useState('');
     const [patient, setPatient] = useState('');
-    const [data, setData] = useState(new Date().toISOString().split('T')[0]); // Define a data atual
+    const [age, setAge] = useState('');
+    const [data, setData] = useState(new Date().toISOString().split('T')[0]);
     const [doctor, setDoctor] = useState('');
-    const [error, setError] = useState(''); // Estado para controlar o aviso de erro
-    const [showModal, setShowModal] = useState(false); // Estado para controlar a visibilidade do modal
+    const [error, setError] = useState('');
+    const [showModal, setShowModal] = useState(false);
 
     // Obter informações do paciente dos parâmetros da URL
     useEffect(() => {
@@ -23,7 +24,8 @@ const TitlePage = () => {
             const solicitingDoctor = searchParams.get('doctor');
             
             if (patientName && patientAge && solicitingDoctor) {
-                setPatient(`${patientName} (${patientAge} anos)`);
+                setPatient(`${patientName}`);
+                setAge(`${patientAge}`);
                 setDoctor(solicitingDoctor);
             } else {
                 setError('Dados do paciente não encontrados. Redirecionando para consultas...');
@@ -40,7 +42,9 @@ const TitlePage = () => {
         event.preventDefault();
 
         const substituicoes = {
+            typeUltrassom: title,
             patient,
+            age,
             data,
             doctor,
             noduledireita: noduleLocation === 'direita' || noduleLocation === 'ambas' ? 'Nódulo encontrado na axila direita' : '',
@@ -155,7 +159,7 @@ const TitlePage = () => {
                         </div>
                     </div>
                 )}
-                <h1 className="text-2xl font-bold text-center">Ultrassom de {title} do Paciente {patient}</h1>
+                <h1 className="text-2xl font-bold text-center">Ultrassom de {title} do Paciente {patient}, {age} anos</h1>
                 {renderQuestions()}
             </div>
         </div>
