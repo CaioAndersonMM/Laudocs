@@ -6,7 +6,7 @@ import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
 import { database } from '../../../services/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 
-export default function Home() {
+export default function Consultas() {
   const [patients, setPatients] = useState<CardPatientInterface[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<CardPatientInterface | null>(null);
