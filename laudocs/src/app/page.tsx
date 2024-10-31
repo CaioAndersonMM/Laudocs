@@ -1,68 +1,74 @@
-"use client"
+'use client'
 
-import SignUp from '@/components/SigUp';
-import React, { useState, useEffect } from 'react';
-import ListPatients from '@/components/ListPatients';
-import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
-import axios from 'axios';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import signIn from '../../services/auth/SignIn';
+import { FirebaseError } from 'firebase/app';
+
+export default function LoginPage() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const router = useRouter();
+    const auth = getAuth();
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                router.push('/lista-de-pacientes'); 
+            }
+        });
+
+        return () => unsubscribe();
+    }, [auth, router]);
+
+    const handleForm = async () => {
+        try {
+            console.log('Email:', email);
+            console.log('Password:', password);
+            const { result, error } = await signIn(email, password);
+
+            if (error) {
+                const firebaseError = error as FirebaseError;
+                if (firebaseError.message) {
+                    alert(firebaseError.message);
+                    console.log(firebaseError.message);
+                    throw new Error(firebaseError.message);
+                } else {
+                    alert('Erro desconhecido');
+                    console.log('Unknown Error:', firebaseError);
+                    throw new Error('Unknown Error');
+                    setEmail('')
+                    setPassword('')
+                }
+            }
+
+            console.log(result)
+            return router.push("/");
+        } catch (error) {
+            console.error('Error: ', error);
+        }
+    }
 
 
-export default function Home() {
-  const [patients, setPatients] = useState<CardPatientInterface[]>([]);
-  const [selectedPatient, setSelectedPatient] = useState<CardPatientInterface | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+    return (
+        <div className="flex justify-center items-center h-screen">
+            <div className="w-1/2 flex flex-col rounded-md border-2 border-black">
+                <div className="bg-[#173D65] text-white text-center p-4 ">
+                    <h1 className="text-2xl font-bold">Entrar no Sistema Loudocs</h1>
+                    <p>Informe suas credênciais para utilizar as funcionalidades do sistema ou entre em contato com o suporte aqui</p>
+                </div>
+                <div className="bg-white text-[#173D65] text-center p-4">
+                    <p className="justify-start px-4 flex font-bold text-2xl py-4 ">Email</p>
+                    <input onChange={(e) => setEmail(e.target.value)} type="email" className="w-full p-2 border-2 border-[#173D65] rounded-md px-4 py-4" />
+                    <p className="justify-start px-4 flex font-bold text-2xl py-4 ">Senha</p>
+                    <input  onChange={(e) => setPassword(e.target.value)} type="password" className="w-full p-2 border-2 border-[#173D65] rounded-md px-4 py-4" />
+                    <p className="justify-end pr-4  text-[#173D65] flex py-4 font-bold">esqueci minha senha</p>
 
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get('/api/pacientes');
-        setPatients(response.data);
-      } catch (err) {
-        setError('Erro ao buscar pacientes');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+                    <button onClick={handleForm} className="bg-[#173D65] text-white font-bold text-2xl rounded-md p-2 py-4 px-4 w-full">Entrar</button>
 
-    fetchPatients();
-  }, []);
-
-  const addPatient = (patient: CardPatientInterface) => {
-    setPatients((prevPatients) => [...prevPatients, patient]);
-  };
-
-  const removePatient = (id: string) => {
-    setPatients((prevPatients) => prevPatients.filter((patient) => patient.id !== id));
-  };
-
-  const handleSelectPatient = (patient: CardPatientInterface) => {
-    setSelectedPatient(patient);
-  };
-
-  return (
-    <div className="bg-gray-100 h-screen p-1">
-      <div className="grid grid-cols-1 md:grid-cols-2 p-5 items-stretch h-full md:gap-0 gap-x-4">
-
-        <div className="flex-1">
-          {loading ? (
-            <p>Carregando...</p>
-          ) : error ? (
-            <p>{error}</p>
-          ) : (
-            <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} removePatient={removePatient} />
-          )}
+                </div>
+            </div>
         </div>
-
-        <div className="flex h-[97%]">
-          <SignUp addPatient={addPatient} />
-        </div>
-
-      </div>
-    </div>
-  );
-  
+    );
 }
