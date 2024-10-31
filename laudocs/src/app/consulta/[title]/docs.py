@@ -1,3 +1,4 @@
+from datetime import datetime
 import sys
 import json
 import os
@@ -16,7 +17,6 @@ def substituir_campos(substituicoes):
     def substituir_texto(paragrafo, campo, valor):
         campo_formatado = f'{{{campo}}}'
         
-        # Exibir mensagem de depuração
         if campo_formatado in paragrafo.text:
             # print(f"Substituindo {campo_formatado} por {valor} no parágrafo: {paragrafo.text}")
             # Substituição direta no texto do parágrafo
@@ -25,9 +25,22 @@ def substituir_campos(substituicoes):
     for paragrafo in doc.paragraphs:
         for campo, valor in substituicoes.items():
             substituir_texto(paragrafo, campo, valor)
+
+
+    nome_paciente = substituicoes.get('patient')
+    if nome_paciente:
+        nome_paciente = nome_paciente.replace(' ', '_').lower()
+
+    type_ultrassom = substituicoes.get('typeUltrassom').replace(' ', '_').lower()
+    data_hora_emissao = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+    if nome_paciente and type_ultrassom:
+        nome_arquivo = f"{nome_paciente}_{type_ultrassom}_{data_hora_emissao}.docx"
+    else:
+        nome_arquivo = f"arquivo_gerado_{data_hora_emissao}.docx"
     
     # Define o caminho para o arquivo gerado
-    output_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'public', 'docs', 'arquivo_gerado.docx'))
+    output_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', 'public', 'docs', nome_arquivo))
     print(f"Saving generated document to: {output_path}")  # Caminho do arquivo gerado
     doc.save(output_path)
 
