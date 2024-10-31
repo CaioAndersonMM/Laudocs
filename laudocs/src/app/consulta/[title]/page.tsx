@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
+import ProtectedLayout from '@/components/ProtectedLayout';
 
 const TitlePage = () => {
     const { title } = useParams() as { title: string }; // Captura o parâmetro da rota
@@ -143,6 +144,7 @@ const TitlePage = () => {
     };
 
     return (
+         <ProtectedLayout>
         <div className="bg-gray-100 h-screen p-6 rounded-lg">
             <div className='text-[#173D65] border border-black rounded-md bg-white p-4'>
                 {showModal && (
@@ -163,6 +165,7 @@ const TitlePage = () => {
                 {renderQuestions()}
             </div>
         </div>
+        </ProtectedLayout>
     );
 };
 

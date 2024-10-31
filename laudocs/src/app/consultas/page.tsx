@@ -1,12 +1,13 @@
-'use client';
+"use client"
 import React, { useState, useEffect } from 'react';
 import SelectPatient from '@/components/SelectPatient';
 import ListPatients from '@/components/ListPatients';
 import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
 import { database } from '../../../services/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
+import ProtectedLayout from '@/components/ProtectedLayout';
 
-export default function Consultas() {
+ function Consultas() {
   const [patients, setPatients] = useState<CardPatientInterface[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<CardPatientInterface | null>(null);
@@ -35,6 +36,7 @@ export default function Consultas() {
   };
 
   return (
+    <ProtectedLayout>
     <div className="bg-gray-100 h-screen p-1">
       {isLoading && <p>Carregando...</p>}
       {error && <p>{error}</p>}
@@ -48,5 +50,7 @@ export default function Consultas() {
         </div>
       </div>
     </div>
+    </ProtectedLayout>
   );
 }
+export default Consultas;
