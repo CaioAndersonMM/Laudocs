@@ -3,7 +3,7 @@
 import SignUp from '@/components/SignUpPatient';
 import React, { useState, useEffect } from 'react';
 import ListPatients from '@/components/ListPatients';
-import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
+import { CardPatientInterface } from '@/interfaces/AllInterfaces';
 import axios from 'axios';
 
 
@@ -37,7 +37,7 @@ export default function Home() {
   const removePatient = (id: string) => {
     setPatients((prevPatients) => prevPatients.filter((patient) => patient.id !== id));
   };
-  
+
 
   const handleSelectPatient = (patient: CardPatientInterface) => {
     setSelectedPatient(patient);

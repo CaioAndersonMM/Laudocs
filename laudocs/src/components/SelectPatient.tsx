@@ -1,12 +1,8 @@
 "use client"
 
-import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
+import { CardPatientInterface, SelectPatientProps } from '@/interfaces/AllInterfaces';
 import ListTypeConsult from './ListTypeConsult';
 
-interface SelectPatientProps {
-    selectedPatient: CardPatientInterface | null;
-    removePatientSelected: () => void;
-}
 
 export default function SelectPatient({ selectedPatient, removePatientSelected }: SelectPatientProps) {
     return (

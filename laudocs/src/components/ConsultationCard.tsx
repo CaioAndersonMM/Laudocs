@@ -1,12 +1,9 @@
 // ConsultationCard.tsx
 import React from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
+import { ConsultationCardProps } from '@/interfaces/AllInterfaces';
 
-interface ConsultationCardProps {
-    title: string;
-    options: string;
-    onClick: () => void; // Adicionando a propriedade onClick
-}
+
 
 const ConsultationCard: React.FC<ConsultationCardProps> = ({ title, options, onClick }) => {
     return (

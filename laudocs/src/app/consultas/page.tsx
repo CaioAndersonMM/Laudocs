@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import SelectPatient from '@/components/SelectPatient';
 import ListPatients from '@/components/ListPatients';
-import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
+import { CardPatientInterface } from '@/interfaces/AllInterfaces';
 import { database } from '../../../services/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import ProtectedLayout from '@/components/ProtectedLayout';

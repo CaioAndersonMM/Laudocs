@@ -5,6 +5,8 @@ import { Box } from '@mui/material';
 import { consultations, optionsMap } from '@/utils/consultations'; // Importando as constantes
 import ConsultationCard from '@/components/ConsultationCard';
 import { useRouter } from 'next/navigation';
+import ProtectedLayout from '@/components/ProtectedLayout';
+
 
 
 const ConsultaPage = () => {
@@ -43,6 +45,7 @@ const ConsultaPage = () => {
     };
 
     return (
+         <ProtectedLayout>
         <div className="bg-gray-100 h-screen p-6 rounded-lg">
             <div className='text-[#173D65] border border-black rounded-md bg-white h-full'>
                 <div className="relative "> {/* Contêiner com posição relativa */}
@@ -72,6 +75,7 @@ const ConsultaPage = () => {
                 </Box>
             </div>
         </div>
+        </ProtectedLayout>
     );
 };
 

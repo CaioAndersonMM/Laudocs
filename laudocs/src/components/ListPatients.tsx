@@ -1,11 +1,6 @@
 import CardPatient from "./CardPatient";
-import { CardPatientInterface } from "../interfaces/CardPatientInterface";
+import { CardPatientInterface, ListPatientsProps } from "../interfaces/AllInterfaces";
 
-interface ListPatientsProps {
-  arrayOfPatients: CardPatientInterface[];
-  onSelectPatient?: (patient: CardPatientInterface) => void;
-  removePatient?: (id: string) => void;
-}
 
 
 export default function ListPatients({ arrayOfPatients, onSelectPatient, removePatient }: ListPatientsProps) {

@@ -1,14 +1,13 @@
 
-import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
+import { CardPatientInterface } from '@/interfaces/AllInterfaces';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Modal, Box, TextField, Button } from '@mui/material';
 import axios from 'axios';
 import { useState } from 'react';
+import { CardPatientProps } from '@/interfaces/AllInterfaces';
 
-interface CardPatientProps extends CardPatientInterface {
-  removePatient?: (id: string) => void;
-}
+
 
 export default function CardPatient({ id, name, age, solicitingDoctor, removePatient }: CardPatientProps) {
   const [isModalOpen, setModalOpen] = useState(false);

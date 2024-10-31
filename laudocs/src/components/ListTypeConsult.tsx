@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Grid, Card, CardContent, Typography } from '@mui/material';
-import { CardPatientInterface } from '@/interfaces/CardPatientInterface';
+import { CardPatientInterface, ListTypeConsultProps } from '@/interfaces/AllInterfaces';
 
 const consultations = [
     'Masculino',
@@ -13,9 +13,7 @@ const consultations = [
     'Outros',
 ];
 
-interface ListTypeConsultProps {
-    patient: CardPatientInterface;
-}
+
 
 const ListTypeConsult: React.FC<ListTypeConsultProps> = ({ patient }) => {
     return (

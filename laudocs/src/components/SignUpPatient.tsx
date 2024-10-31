@@ -6,10 +6,8 @@ import Button, { ButtonProps } from '@mui/material/Button';
 import { blue } from '@mui/material/colors';
 import { useState } from 'react';
 import axios from 'axios';
+import { SignUpProps } from '@/interfaces/AllInterfaces';
 
-interface SignUpProps {
-    addPatient: (patient: { id: string; name: string; age: number; solicitingDoctor: string; priority?: boolean; }) => void;
-}
 
 const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
     fontWeight: 'bold',

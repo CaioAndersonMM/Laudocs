@@ -38,8 +38,6 @@ export default function LoginPage() {
                     alert('Erro desconhecido');
                     console.log('Unknown Error:', firebaseError);
                     throw new Error('Unknown Error');
-                    setEmail('')
-                    setPassword('')
                 }
             }
 
