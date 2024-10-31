@@ -89,7 +89,12 @@ export default function SignUp({ addPatient }: SignUpProps) {
                         id="name"
                         className="mt-1 block w-full p-2 border border-[#173D65] rounded-md h-14"
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(e) => {
+                            const inputValue = e.target.value;
+                            if (!/\d/.test(inputValue)) {
+                                setName(inputValue);
+                            }
+                        }}
                     />
                     {nameError && <span className="text-red-500 text-sm">{nameError}</span>}
                 </div>
@@ -116,7 +121,12 @@ export default function SignUp({ addPatient }: SignUpProps) {
                         id="solicitingDoctor"
                         className="mt-1 block w-full p-2 border border-[#173D65] rounded-md h-14"
                         value={solicitingDoctor}
-                        onChange={(e) => setSolicitingDoctor(e.target.value)}
+                        onChange={(e) => {
+                            const inputValue = e.target.value;
+                            if (!/\d/.test(inputValue)) {
+                                setSolicitingDoctor(inputValue);
+                            }
+                        }}
                     />
                     {doctorError && <span className="text-red-500 text-sm">{doctorError}</span>}
                 </div>
