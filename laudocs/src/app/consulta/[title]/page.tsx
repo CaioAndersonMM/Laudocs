@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
+import Axila from '@/components/typeultrassom/Axila';
+import Mamas from '@/components/typeultrassom/Mamas';
 
 const TitlePage = () => {
     const { title } = useParams() as { title: string }; // Captura o parâmetro da rota
@@ -77,68 +79,11 @@ const TitlePage = () => {
     const renderQuestions = () => {
         switch (typeof title === 'string' ? title.toLowerCase() : '') {
             case 'axila':
-                return (
-                    <form onSubmit={handleSubmit} className="mt-4">
-                        <div className="mb-4">
-                            <label className="block text-lg font-semibold">
-                                Tem nódulo?
-                                <select 
-                                    value={hasNodule ? 'sim' : 'nao'} 
-                                    onChange={(e) => setHasNodule(e.target.value === 'sim')}
-                                    className="ml-2 p-2 border rounded-md"
-                                >
-                                    <option value="nao">Não</option>
-                                    <option value="sim">Sim</option>
-                                </select>
-                            </label>
-                        </div>
-                        {hasNodule && (
-                            <div className="mb-4">
-                                <label className="block text-lg font-semibold">
-                                    Onde está o nódulo?
-                                    <select 
-                                        value={noduleLocation} 
-                                        onChange={(e) => setNoduleLocation(e.target.value)}
-                                        className="ml-2 p-2 border rounded-md"
-                                    >
-                                        <option value="">Selecione</option>
-                                        <option value="esquerda">Esquerda</option>
-                                        <option value="direita">Direita</option>
-                                        <option value="ambas">Ambas</option>
-                                    </select>
-                                </label>
-                            </div>
-                        )}
-                        <div className="mb-4">
-                            <label className="block text-lg font-semibold">
-                                Data:
-                                <input 
-                                    type="date" 
-                                    value={data}
-                                    onChange={(e) => setData(e.target.value)}
-                                    className="ml-2 p-2 border rounded-md"
-                                    required
-                                />
-                            </label>
-                        </div>
-                        <button 
-                            type="submit" 
-                            className="px-4 py-2 bg-cyan-800 text-white font-bold rounded-md shadow-lg hover:bg-cyan-700 transition duration-300 ease-in-out"
-                        >
-                            Enviar
-                        </button>
-                    </form>
-                );
-
-            case 'outraConsulta':
-                return (
-                    <div>
-                        <h2 className="text-xl font-bold">Outra lógica para consulta</h2>
-                    </div>
-                );
-
-            default:
-                return <h2 className="text-xl font-bold">Nenhuma pergunta disponível para esta consulta.</h2>;
+                return <Axila title={title} />;
+                case 'mamas':
+                    return <Mamas title={title} />;
+                default:
+                    return <h2 className="text-xl font-bold">Nenhuma pergunta disponível para esta consulta.</h2>;
         }
     };
 
@@ -159,7 +104,6 @@ const TitlePage = () => {
                         </div>
                     </div>
                 )}
-                <h1 className="text-2xl font-bold text-center">Ultrassom de {title} do Paciente {patient}, {age} anos</h1>
                 {renderQuestions()}
             </div>
         </div>
