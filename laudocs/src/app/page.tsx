@@ -73,7 +73,7 @@ export default function LoginPage() {
             }
 
             console.log(result)
-            return router.push("/");
+            return router.push("/lista-de-pacientes");
         } catch (error) {
             console.error('Error: ', error);
         }
