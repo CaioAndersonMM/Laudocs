@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import ListPatients from '@/components/ListPatients';
 import { CardPatientInterface } from '@/interfaces/AllInterfaces';
 import axios from 'axios';
-
+import LoadingCard from '@/components/LoadingCard';
 
 export default function Home() {
   const [patients, setPatients] = useState<CardPatientInterface[]>([]);
@@ -38,7 +38,6 @@ export default function Home() {
     setPatients((prevPatients) => prevPatients.filter((patient) => patient.id !== id));
   };
 
-
   const handleSelectPatient = (patient: CardPatientInterface) => {
     setSelectedPatient(patient);
   };
@@ -49,7 +48,15 @@ export default function Home() {
 
         <div className="flex-1">
           {loading ? (
-            <p>Carregando...</p>
+            <div className="bg-[#173D65] text-white flex flex-col p-2 rounded-l-lg h-[97%]">
+              <h1 className="mt-4 mb-7 text-center text-2xl font-bold" style={{ fontFamily: 'Inter, sans-serif' }}>Fila de Espera</h1>
+
+              <div className="overflow-y-auto flex-1 px-8 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300">
+                <LoadingCard />
+                <LoadingCard />
+                <LoadingCard />
+              </div>
+            </div>
           ) : error ? (
             <p>{error}</p>
           ) : (
@@ -64,5 +71,4 @@ export default function Home() {
       </div>
     </div>
   );
-  
 }
