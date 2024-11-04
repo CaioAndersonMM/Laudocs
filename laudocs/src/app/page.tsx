@@ -42,7 +42,7 @@ export default function LoginPage() {
             setEmailError('Por favor, insira um email válido.');
             hasError = true;
         }
-        if (password.length < 5) {
+        if (password.length < 6) {
             setPasswordError('A senha deve ter pelo menos 5 caracteres.');
             hasError = true;
         }
@@ -81,7 +81,7 @@ export default function LoginPage() {
 
 
     return (
-        <div className="flex justify-center items-center h-screen bg-[F1F2F3]">
+        <div className="flex justify-center items-center h-screen bg-[#F1F2F3]">
             <div className="w-1/3 flex flex-col">
                 <div className="bg-[#173D65] text-white text-center p-4 rounded-tl-lg rounded-tr-lg">
                     <h1 className="text-2xl font-extrabold">Entrar no Sistema Laudocs!</h1>
