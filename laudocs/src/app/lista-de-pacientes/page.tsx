@@ -6,6 +6,8 @@ import ListPatients from '@/components/ListPatients';
 import { CardPatientInterface } from '@/interfaces/AllInterfaces';
 import axios from 'axios';
 import LoadingCard from '@/components/LoadingCard';
+import LogOutComponent from '@/components/LogOutButton';
+import ProtectedLayout from '@/components/ProtectedLayout';
 
 export default function Home() {
   const [patients, setPatients] = useState<CardPatientInterface[]>([]);
@@ -43,7 +45,11 @@ export default function Home() {
   };
 
   return (
+    <ProtectedLayout>
     <div className="bg-gray-100 h-screen p-1">
+      <div className="flex justify-end p-4">
+        <LogOutComponent />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 p-5 items-stretch h-full md:gap-0 gap-x-4">
 
         <div className="flex-1">
@@ -70,5 +76,6 @@ export default function Home() {
 
       </div>
     </div>
+    </ProtectedLayout>
   );
 }

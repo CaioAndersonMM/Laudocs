@@ -9,7 +9,6 @@ const TitlePage = () => {
     const { title } = useParams() as { title: string }; // Captura o parâmetro da rota
     const searchParams = useSearchParams();
     const router = useRouter();
-    
     const [hasNodule, setHasNodule] = useState(false);
     const [noduleLocation, setNoduleLocation] = useState('');
     const [patient, setPatient] = useState('');

@@ -6,6 +6,8 @@ import { CardPatientInterface } from '@/interfaces/AllInterfaces';
 import { database } from '../../../services/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import LoadingCard from '@/components/LoadingCard';
+import ProtectedLayout from '@/components/ProtectedLayout';
+import LogOutComponent from '@/components/LogOutButton';
 
 function Consultas() {
   const [patients, setPatients] = useState<CardPatientInterface[]>([]);
@@ -41,7 +43,11 @@ function Consultas() {
   };
 
   return (
+     <ProtectedLayout>
     <div className="bg-gray-100 h-screen p-1">
+    <div className="flex justify-end p-4">
+        <LogOutComponent />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 p-5 items-stretch h-full md:gap-0 gap-x-4">
         <div className="flex-1">
           {isLoading ? (
@@ -65,6 +71,7 @@ function Consultas() {
         </div>
       </div>
     </div>
+    </ProtectedLayout>
   );
 }
 

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -12,6 +12,7 @@ export default function LoginPage() {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [credenciaisError, setCredencialError] = useState('');
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
     const auth = getAuth();
 
@@ -19,6 +20,8 @@ export default function LoginPage() {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 router.push('/lista-de-pacientes');
+            } else {
+                setLoading(false);
             }
         });
 
@@ -37,7 +40,6 @@ export default function LoginPage() {
 
         let hasError = false;
 
-        // Validação dos campos
         if (email.length < 5 || !validateEmail(email)) {
             setEmailError('Por favor, insira um email válido.');
             hasError = true;
@@ -51,8 +53,6 @@ export default function LoginPage() {
             return;
         }
         try {
-            console.log('Email:', email);
-            console.log('Password:', password);
             const { result, error } = await signIn(email, password);
 
             if (error) {
@@ -61,24 +61,35 @@ export default function LoginPage() {
                     setCredencialError('Email não encontrado.');
                 } else if (firebaseError.code === 'auth/invalid-credential') {
                     setCredencialError('Email ou Senha estão incorretos.');
-                } 
-                else if (firebaseError.message) {
+                } else if (firebaseError.message) {
                     setCredencialError(firebaseError.message);
-                }
-                else {
+                } else {
                     setCredencialError('Erro desconhecido');
                 }
-                console.log(firebaseError.message);
                 return;
             }
 
-            console.log(result)
-            return router.push("/lista-de-pacientes");
+            router.push("/lista-de-pacientes");
         } catch (error) {
             console.error('Error: ', error);
         }
-    }
+    };
 
+    if (loading) {
+    
+        return (
+            <div className="flex justify-center items-center h-screen bg-[#F1F2F3]">
+                <div className="w-1/3 bg-white p-4 rounded-lg shadow-lg text-center">
+                    <div className="animate-pulse">
+                        <div className="h-6 bg-gray-300 rounded w-3/4 mx-auto mb-4"></div>
+                        <div className="h-6 bg-gray-300 rounded w-full mb-4"></div>
+                        <div className="h-6 bg-gray-300 rounded w-full mb-4"></div>
+                        <div className="h-10 bg-gray-300 rounded w-full"></div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex justify-center items-center h-screen bg-[#F1F2F3]">
@@ -88,20 +99,18 @@ export default function LoginPage() {
                     <p className='text-sm font-semibold mt-2 p-4'>
                         Informe suas credenciais para utilizar as funcionalidades do sistema ou entre em contato com o suporte <a href="/suporte" className='underline text-white'>aqui</a>.
                     </p>
-
                 </div>
                 <div className="bg-white text-[#173D65] text-center p-4 border-l border-r border-b border-[#173D65] rounded-bl-lg rounded-br-lg">
                     {credenciaisError && <p className="text-red-600 font-bold text-lg mb-5">{credenciaisError}</p>}
-                    <p className="justify-start flex font-bold text-xl py-2 ">Email</p>
+                    <p className="justify-start flex font-bold text-xl py-2">Email</p>
                     <input onChange={(e) => setEmail(e.target.value)} type="email" className="w-full p-2 border-2 border-[#173D65] rounded-md px-4 py-4 mb-4" />
                     {emailError && <p className="text-red-600 font-bold text-sm mb-5 text-left">{emailError}</p>}
                     <p className="justify-start flex font-bold text-xl py-2">Senha</p>
                     <input onChange={(e) => setPassword(e.target.value)} type="password" className="w-full p-2 border-2 border-[#173D65] rounded-md px-4 py-4 mb-4" />
                     {passwordError && <p className="text-red-600 font-bold text-sm mb-5 text-left">{passwordError}</p>}
-                    <p className="justify-end pr-4  text-[#173D65] flex mb-9 font-bold"><a href="/suporte" className=' text-[#173D65]'>Esqueci minha senha</a></p>
+                    <p className="justify-end pr-4 text-[#173D65] flex mb-9 font-bold"><a href="/suporte" className='text-[#173D65]'>Esqueci minha senha</a></p>
 
                     <button onClick={handleForm} className="bg-[rgb(23,61,101)] text-white font-bold text-2xl rounded-md p-2 py-4 px-4 w-full">Entrar</button>
-
                 </div>
             </div>
         </div>
