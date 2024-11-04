@@ -45,11 +45,11 @@ function Consultas() {
   return (
      <ProtectedLayout>
     <div className="bg-gray-100 h-screen p-1">
-    <div className="flex justify-end p-4">
+    <div className="flex justify-end pr-6">
         <LogOutComponent />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 p-5 items-stretch h-full md:gap-0 gap-x-4">
-        <div className="flex-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 pr-5 pb-5 pl-5 pt-1 items-stretch h-full md:gap-0 gap-x-4">
+      <div className="flex-1">
           {isLoading ? (
             <div className="bg-[#173D65] text-white flex flex-col p-2 rounded-l-lg h-[97%]">
               <h1 className="mt-4 mb-7 text-center text-2xl font-bold" style={{ fontFamily: 'Inter, sans-serif' }}>Fila de Espera</h1>
