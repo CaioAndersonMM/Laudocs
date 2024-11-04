@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -12,6 +12,7 @@ export default function LoginPage() {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [credenciaisError, setCredencialError] = useState('');
+    const [saveCredentials, setSaveCredentials] = useState(false);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const auth = getAuth();
@@ -69,6 +70,11 @@ export default function LoginPage() {
                 return;
             }
 
+            if (saveCredentials) {
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('userPassword', password);
+            }
+
             router.push("/lista-de-pacientes");
         } catch (error) {
             console.error('Error: ', error);
@@ -76,7 +82,6 @@ export default function LoginPage() {
     };
 
     if (loading) {
-    
         return (
             <div className="flex justify-center items-center h-screen bg-[#F1F2F3]">
                 <div className="w-1/3 bg-white p-4 rounded-lg shadow-lg text-center">
@@ -108,7 +113,18 @@ export default function LoginPage() {
                     <p className="justify-start flex font-bold text-xl py-2">Senha</p>
                     <input onChange={(e) => setPassword(e.target.value)} type="password" className="w-full p-2 border-2 border-[#173D65] rounded-md px-4 py-4 mb-4" />
                     {passwordError && <p className="text-red-600 font-bold text-sm mb-5 text-left">{passwordError}</p>}
-                    <p className="justify-end pr-4 text-[#173D65] flex mb-9 font-bold"><a href="/suporte" className='text-[#173D65]'>Esqueci minha senha</a></p>
+                    <div className="flex items-center justify-between mb-4">
+                        <label className="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                className="mr-2" 
+                                checked={saveCredentials} 
+                                onChange={() => setSaveCredentials(!saveCredentials)} 
+                            />
+                            <span>Lembrar minhas credenciais</span>
+                        </label>
+                        <a href="/suporte" className='text-[#173D65] font-bold'>Esqueci minha senha</a>
+                    </div>
 
                     <button onClick={handleForm} className="bg-[rgb(23,61,101)] text-white font-bold text-2xl rounded-md p-2 py-4 px-4 w-full">Entrar</button>
                 </div>
