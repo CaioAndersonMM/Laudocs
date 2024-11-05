@@ -22,7 +22,8 @@ export default function ProtectedLayout({
       setLoading(false);
     });
     return () => unsubscribe();
-  }, [router]);
+  }, [auth, router]);
+  
 
   if (loading) return <p>Carregando...</p>;
 
