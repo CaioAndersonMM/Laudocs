@@ -2,13 +2,16 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { database } from '../../../services/firebase';
 import { collection, getDocs, addDoc } from 'firebase/firestore';
 
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (!database) {
+    console.error('Database not initialized');
+    return res.status(500).json({ error: 'Database not initialized' });
+  }
+
   const pacientesRef = collection(database, 'pacientes');
 
   try {
     if (req.method === 'GET') {
-
       const snapshot = await getDocs(pacientesRef);
       const pacientes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       return res.status(200).json(pacientes);
@@ -23,6 +26,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Método ${req.method} não permitido`);
   } catch (error) {
-    res.status(500).json({ error: 'Erro interno do servidor' });
+    console.error('Erro ao processar a requisição:', error);
+    const errorMessage = (error as any).message || 'Erro desconhecido';
+    res.status(500).json({ error: 'Erro interno do servidor', details: errorMessage });
   }
 }
