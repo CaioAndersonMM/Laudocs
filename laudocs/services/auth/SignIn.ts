@@ -1,6 +1,9 @@
 import { getAuth, setPersistence, browserLocalPersistence, signInWithEmailAndPassword } from 'firebase/auth';
 import { app } from '../firebase';
 
+if (!app) {
+    throw new Error("Firebase app is not initialized");
+}
 const auth = getAuth(app);
 
 export default async function signIn(email: string, password: string) {
