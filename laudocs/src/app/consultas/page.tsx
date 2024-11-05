@@ -16,6 +16,11 @@ function Consultas() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    if (!database) {
+      setError('Database is not initialized');
+      setIsLoading(false);
+      return;
+    }
     const pacientesRef = collection(database, 'pacientes');
 
     setIsLoading(true);
