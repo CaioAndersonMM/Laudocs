@@ -3,7 +3,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { initializeFirebase } from "../../services/firebase";
+import {app } from "../../services/firebase";
 import { ReactNode, useEffect } from "react";
 
 const geistSans = localFont({
@@ -26,7 +26,7 @@ const geistMono = localFont({
 export default function RootLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Inicialize o Firebase aqui
-    initializeFirebase();
+    app;
   }, []); // O array vazio garante que isso seja executado apenas uma vez
 
   return (
