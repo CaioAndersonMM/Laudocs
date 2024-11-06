@@ -52,11 +52,15 @@ const Questions: Record<string, {
 };
 
 interface FormState {
-  [key: string]: any;
+  [key: string]: string | boolean;
 }
 
-export const preencherSubstituicoes = (formState: FormState, tipo: string, patient: string, age: string, data: string, doctor: string) => {
-  const substituicoes: { [key: string]: any } = {
+interface Substituicoes {
+  [key: string]: string;
+}
+
+export const preencherSubstituicoes = (formState: FormState, tipo: string, patient: string, age: string, data: string, doctor: string): Substituicoes => {
+  const substituicoes: Substituicoes = {
     typeUltrassom: tipo,
     patient,
     age,
