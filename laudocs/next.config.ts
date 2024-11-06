@@ -1,7 +1,13 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-
-};
-
-export default nextConfig;
+const nextConfig = {
+    reactStrictMode: true,
+    swcMinify: true,
+    output: 'standalone',
+    experimental: {
+    },
+    compiler: {
+      swcMinify: true,
+    },
+  };
+  
+  export default nextConfig;
+  
