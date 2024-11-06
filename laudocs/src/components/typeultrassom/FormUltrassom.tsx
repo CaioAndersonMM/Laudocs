@@ -1,48 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
 import Questions from '@/utils/question';
 import { preencherSubstituicoes } from '@/utils/question';
+import router from 'next/router';
 
 interface FormUltrassomProps {
     tipo: string;
+    patientName: string;
+    patientAge: string;
+    solicitingDoctor: string;
 }
 
-const FormUltrassom = ({ tipo }: FormUltrassomProps) => {
-    const searchParams = useSearchParams();
-    const router = useRouter();
+const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: FormUltrassomProps) => {
 
-    const [patient, setPatient] = useState('');
-    const [age, setAge] = useState('');
     const [data, setData] = useState(new Date().toISOString().split('T')[0]);
-    const [doctor, setDoctor] = useState('');
-    const [error, setError] = useState('');
-    const [showModal, setShowModal] = useState(false);
     const [formState, setFormState] = useState<{ [key: string]: any }>({});
     const [hasNodule, setHasNodule] = useState(false);
     const [hasLinfonodo, setHasLinfonodo] = useState(false);
 
 
     const formQuestions = Questions[tipo] || { Selects: [], Checkbox: [] };
-
-    useEffect(() => {
-        if (searchParams) {
-            const patientName = searchParams.get('patientName');
-            const patientAge = searchParams.get('patientAge');
-            const solicitingDoctor = searchParams.get('doctor');
-
-            if (patientName && patientAge && solicitingDoctor) {
-                setPatient(patientName);
-                setAge(patientAge);
-                setDoctor(solicitingDoctor);
-            } else {
-                setError('Dados do paciente não encontrados. Redirecionando para consultas...');
-                setShowModal(true);
-                setTimeout(() => {
-                    router.push('/consultas');
-                }, 3000);
-            }
-        }
-    }, [searchParams, router]);
 
     const handleSelectChange = (questionLabel: string, value: string) => {
         setFormState((prevState) => ({
@@ -63,7 +39,7 @@ const FormUltrassom = ({ tipo }: FormUltrassomProps) => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const substituicoes = preencherSubstituicoes(formState, tipo, patient, age, data, doctor);
+        const substituicoes = preencherSubstituicoes(formState, tipo, patientName, patientAge, data, solicitingDoctor);
 
         try {
             const response = await fetch('/api/gerar-doc', {
@@ -91,7 +67,7 @@ const FormUltrassom = ({ tipo }: FormUltrassomProps) => {
     return (
         <div>
             <h1 className="text-2xl font-bold text-center">
-                Ultrassom de {tipo} do Paciente {patient}, {age} anos
+                Ultrassom de {tipo} do Paciente {patientName}, {patientAge} anos
             </h1>
             <form onSubmit={handleSubmit} className="mt-4">
                 {formQuestions.Selects.map((question, index) => {
