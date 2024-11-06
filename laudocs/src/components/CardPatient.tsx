@@ -1,11 +1,11 @@
 
-import { CardPatientInterface } from '@/interfaces/AllInterfaces';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Modal, Box, TextField, Button } from '@mui/material';
 import axios from 'axios';
 import { useState } from 'react';
 import { CardPatientProps } from '@/interfaces/AllInterfaces';
+import Image from 'next/image';
 
 
 
@@ -45,7 +45,7 @@ export default function CardPatient({ id, name, age, solicitingDoctor, removePat
     <div className="bg-white shadow-md rounded-lg p-2 mb-3">
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center ml-2">
-          <img src="/assets/patientIcon.svg" alt="Icone Médico" className="w-6 h-6 mr-2" />
+          <Image src="/assets/patientIcon.svg" alt="Icone Médico" width={24} height={24} className="mr-2" />
           <h2 className="text-base font-extrabold text-cyan-800">{name}, {age} anos</h2>
         </div>
         <button className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center" onClick={openModal}>
@@ -55,7 +55,7 @@ export default function CardPatient({ id, name, age, solicitingDoctor, removePat
       <div className="flex items-center justify-between mb-1">
 
         <div className="flex items-center ml-2">
-          <img src="/assets/medicIcon.svg" alt="Icone Hospital" className="w-6 h-6 mr-2" />
+          <Image src="/assets/medicIcon.svg" alt="Icone Hospital" width={24} height={24} className="mr-2" />
           <p className="text-cyan-800 font-bold">{solicitingDoctor}</p>
         </div>
         <button className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center" onClick={() => id && removePatient && remove(id, removePatient)}>

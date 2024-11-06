@@ -25,9 +25,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Método ${req.method} não permitido`);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Erro ao processar a requisição:', error);
-    const errorMessage = (error as any).message || 'Erro desconhecido';
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
     res.status(500).json({ error: 'Erro interno do servidor', details: errorMessage });
   }
 }

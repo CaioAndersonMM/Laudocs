@@ -54,7 +54,7 @@ export default function LoginPage() {
             return;
         }
         try {
-            const { result, error } = await signIn(email, password);
+            const { error } = await signIn(email, password);
 
             if (error) {
                 const firebaseError = error as FirebaseError;

@@ -1,5 +1,5 @@
 import CardPatient from "./CardPatient";
-import { CardPatientInterface, ListPatientsProps } from "../interfaces/AllInterfaces";
+import { ListPatientsProps } from "../interfaces/AllInterfaces";
 
 
 

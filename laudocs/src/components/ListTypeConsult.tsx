@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Grid, Card, CardContent, Typography } from '@mui/material';
-import { CardPatientInterface, ListTypeConsultProps } from '@/interfaces/AllInterfaces';
+import {ListTypeConsultProps } from '@/interfaces/AllInterfaces';
 
 const consultations = [
     'Masculino',

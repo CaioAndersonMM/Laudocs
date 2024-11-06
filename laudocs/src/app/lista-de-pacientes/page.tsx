@@ -11,6 +11,7 @@ import ProtectedLayout from '@/components/ProtectedLayout';
 
 export default function Home() {
   const [patients, setPatients] = useState<CardPatientInterface[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedPatient, setSelectedPatient] = useState<CardPatientInterface | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

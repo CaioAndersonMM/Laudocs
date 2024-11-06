@@ -32,12 +32,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({ message: 'Paciente excluído com sucesso' });
     }
 
-    // Se o método não for permitido
     res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
     return res.status(405).end(`Método ${req.method} não permitido`);
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erro ao processar a requisição:', error);
-    return res.status(500).json({ error: 'Erro interno do servidor', details: error.message });
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    return res.status(500).json({ error: 'Erro interno do servidor', details: errorMessage });
   }
 }
