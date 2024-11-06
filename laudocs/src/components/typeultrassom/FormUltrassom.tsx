@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import Questions from '@/utils/question';
 import { preencherSubstituicoes } from '@/utils/question';

@@ -1,10 +1,9 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Box } from '@mui/material';
 import { optionsMap } from '@/utils/consultations';
 import ConsultationCard from '@/components/ConsultationCard';
-import { useRouter } from 'next/navigation';
 import ProtectedLayout from '@/components/ProtectedLayout';
 import Image from 'next/image';
 import ModalErro from '@/components/ModalErro';
@@ -81,9 +80,15 @@ const ConsultaPage = () => {
                     </Box>
                 </div>
             </div>
-            <ModalErro open={showModal} errorMessage={error} onClose={() => setShowModal(false)} ></ModalErro>
+            <ModalErro open={showModal} errorMessage={error} onClose={() => setShowModal(false)} />
         </ProtectedLayout>
     );
 };
 
-export default ConsultaPage;
+export default function Page() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ConsultaPage />
+        </Suspense>
+    );
+}
