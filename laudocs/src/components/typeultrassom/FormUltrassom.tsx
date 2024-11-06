@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Questions from '@/utils/question';
 import { preencherSubstituicoes } from '@/utils/question';
-import router from 'next/router';
 
 interface FormUltrassomProps {
     tipo: string;
@@ -10,10 +9,14 @@ interface FormUltrassomProps {
     solicitingDoctor: string;
 }
 
+type FormState = {
+    [key: string]: string | boolean;
+};
+
 const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: FormUltrassomProps) => {
 
     const [data, setData] = useState(new Date().toISOString().split('T')[0]);
-    const [formState, setFormState] = useState<{ [key: string]: any }>({});
+    const [formState, setFormState] = useState<FormState>({});
     const [hasNodule, setHasNodule] = useState(false);
     const [hasLinfonodo, setHasLinfonodo] = useState(false);
 
@@ -79,7 +82,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                             <label className="block text-lg font-semibold">
                                 {question.label}
                                 <select
-                                    value={formState[question.label] || ""}
+                                    value={formState[question.label] as string || ""}
                                     onChange={(e) => handleSelectChange(question.label, e.target.value)}
                                     className="ml-2 p-2 border rounded-md"
                                 >
@@ -98,7 +101,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                         <label className="block text-lg font-semibold">
                             <input
                                 type="checkbox"
-                                checked={formState[question.label] || false}
+                                checked={formState[question.label] as boolean || false}
                                 onChange={(e) => setFormState((prevState) => ({
                                     ...prevState,
                                     [question.label]: e.target.checked

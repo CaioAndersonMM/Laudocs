@@ -31,11 +31,6 @@ const ConsultaPage = () => {
         }
     }, [consulta, patientId, patientName, patientAge, solicitingDoctor, router]);
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-        router.push('/consultas');
-    };
-
     const handleVoltar = () => {
         router.push('/consultas');
     };
