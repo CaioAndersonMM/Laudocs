@@ -1,21 +1,29 @@
-"use client";
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import Questions from '@/utils/question';
+import { preencherSubstituicoes } from '@/utils/question';
 
-const Axila = ({ title }: { title: string }) => {
+interface FormUltrassomProps {
+    tipo: string;
+}
+
+const FormUltrassom = ({ tipo }: FormUltrassomProps) => {
     const searchParams = useSearchParams();
     const router = useRouter();
 
-    const [hasNodule, setHasNodule] = useState(false);
-    const [noduleLocation, setNoduleLocation] = useState('');
     const [patient, setPatient] = useState('');
     const [age, setAge] = useState('');
     const [data, setData] = useState(new Date().toISOString().split('T')[0]);
     const [doctor, setDoctor] = useState('');
     const [error, setError] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [formState, setFormState] = useState<{ [key: string]: any }>({});
+    const [hasNodule, setHasNodule] = useState(false);
+    const [hasLinfonodo, setHasLinfonodo] = useState(false);
 
-    // Obter informações do paciente dos parâmetros da URL
+
+    const formQuestions = Questions[tipo] || { Selects: [], Checkbox: [] };
+
     useEffect(() => {
         if (searchParams) {
             const patientName = searchParams.get('patientName');
@@ -36,20 +44,26 @@ const Axila = ({ title }: { title: string }) => {
         }
     }, [searchParams, router]);
 
-    // Envio do form
+    const handleSelectChange = (questionLabel: string, value: string) => {
+        setFormState((prevState) => ({
+            ...prevState,
+            [questionLabel]: value
+        }));
+
+        if (questionLabel === 'Tem nódulo?') {
+            setHasNodule(value === 'Sim');
+        }
+
+        if (questionLabel === 'Linfonodos axilares têm aspecto não habitual?') {
+            setHasLinfonodo(value === 'Sim');
+        }
+
+    };
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const substituicoes = {
-            typeUltrassom: title,
-            patient,
-            age,
-            data,
-            doctor,
-            noduledireita: noduleLocation === 'direita' || noduleLocation === 'ambas' ? 'Nódulo encontrado na axila direita' : '',
-            noduleesquerda: noduleLocation === 'esquerda' || noduleLocation === 'ambas' ? 'Nódulo encontrado na axila esquerda' : '',
-            conclusao: 'Conclusão do exame, sem alterações significativas.'
-        };
+        const substituicoes = preencherSubstituicoes(formState, tipo, patient, age, data, doctor);
 
         try {
             const response = await fetch('/api/gerar-doc', {
@@ -73,40 +87,53 @@ const Axila = ({ title }: { title: string }) => {
         }
     };
 
+
     return (
         <div>
-            <h1 className="text-2xl font-bold text-center">Ultrassom de {title} do Paciente {patient}, {age} anos</h1>
+            <h1 className="text-2xl font-bold text-center">
+                Ultrassom de {tipo} do Paciente {patient}, {age} anos
+            </h1>
             <form onSubmit={handleSubmit} className="mt-4">
-                <div className="mb-4">
-                    <label className="block text-lg font-semibold">
-                        Tem nódulo?
-                        <select
-                            value={hasNodule ? 'sim' : 'nao'}
-                            onChange={(e) => setHasNodule(e.target.value === 'sim')}
-                            className="ml-2 p-2 border rounded-md"
-                        >
-                            <option value="nao">Não</option>
-                            <option value="sim">Sim</option>
-                        </select>
-                    </label>
-                </div>
-                {hasNodule && (
-                    <div className="mb-4">
+                {formQuestions.Selects.map((question, index) => {
+                    if (question.label === 'Onde está o Nódulo?' && !hasNodule) return null;
+                    if (question.label === 'Onde está o Linfonodo?' && !hasLinfonodo) return null;
+
+                    return (
+                        <div key={index} className="mb-4">
+                            <label className="block text-lg font-semibold">
+                                {question.label}
+                                <select
+                                    value={formState[question.label] || ""}
+                                    onChange={(e) => handleSelectChange(question.label, e.target.value)}
+                                    className="ml-2 p-2 border rounded-md"
+                                >
+                                    <option value="">Selecione</option>
+                                    {question.options.map((option, idx) => (
+                                        <option key={idx} value={option}>{option}</option>
+                                    ))}
+                                </select>
+                            </label>
+                        </div>
+                    );
+                })}
+
+                {formQuestions.Checkbox.map((question, index) => (
+                    <div className="mb-4" key={index}>
                         <label className="block text-lg font-semibold">
-                            Onde está o nódulo?
-                            <select
-                                value={noduleLocation}
-                                onChange={(e) => setNoduleLocation(e.target.value)}
-                                className="ml-2 p-2 border rounded-md"
-                            >
-                                <option value="">Selecione</option>
-                                <option value="esquerda">Esquerda</option>
-                                <option value="direita">Direita</option>
-                                <option value="ambas">Ambas</option>
-                            </select>
+                            <input
+                                type="checkbox"
+                                checked={formState[question.label] || false}
+                                onChange={(e) => setFormState((prevState) => ({
+                                    ...prevState,
+                                    [question.label]: e.target.checked
+                                }))}
+                                className="mr-2"
+                            />
+                            {question.label}
                         </label>
                     </div>
-                )}
+                ))}
+
                 <div className="mb-4">
                     <label className="block text-lg font-semibold">
                         Data:
@@ -129,5 +156,4 @@ const Axila = ({ title }: { title: string }) => {
         </div>
     );
 };
-
-export default Axila;
+export default FormUltrassom;
