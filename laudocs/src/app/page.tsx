@@ -84,7 +84,7 @@ export default function LoginPage() {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen bg-[#F1F2F3]">
-                <div className="w-1/3 bg-white p-4 rounded-lg shadow-lg text-center">
+                <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow-lg text-center">
                     <div className="animate-pulse">
                         <div className="h-6 bg-gray-300 rounded w-3/4 mx-auto mb-4"></div>
                         <div className="h-6 bg-gray-300 rounded w-full mb-4"></div>
@@ -98,7 +98,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex justify-center items-center h-screen bg-[#F1F2F3]">
-            <div className="w-1/3 flex flex-col">
+            <div className="w-full md:w-1/3 flex flex-col p-4 md:p-0">
                 <div className="bg-[#173D65] text-white text-center p-4 rounded-tl-lg rounded-tr-lg">
                     <h1 className="text-2xl font-extrabold">Entrar no Sistema Laudocs!</h1>
                     <p className='text-sm font-semibold mt-2 p-4'>
@@ -108,10 +108,18 @@ export default function LoginPage() {
                 <div className="bg-white text-[#173D65] text-center p-4 border-l border-r border-b border-[#173D65] rounded-bl-lg rounded-br-lg">
                     {credenciaisError && <p className="text-red-600 font-bold text-lg mb-5">{credenciaisError}</p>}
                     <p className="justify-start flex font-bold text-xl py-2">Email</p>
-                    <input onChange={(e) => setEmail(e.target.value)} type="email" className="w-full p-2 border-2 border-[#173D65] rounded-md px-4 py-4 mb-4" />
+                    <input 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        type="email" 
+                        className="w-full p-2 border-2 border-[#173D65] rounded-md mb-4 px-4 py-4"
+                    />
                     {emailError && <p className="text-red-600 font-bold text-sm mb-5 text-left">{emailError}</p>}
                     <p className="justify-start flex font-bold text-xl py-2">Senha</p>
-                    <input onChange={(e) => setPassword(e.target.value)} type="password" className="w-full p-2 border-2 border-[#173D65] rounded-md px-4 py-4 mb-4" />
+                    <input 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        type="password" 
+                        className="w-full p-2 border-2 border-[#173D65] rounded-md mb-4 px-4 py-4"
+                    />
                     {passwordError && <p className="text-red-600 font-bold text-sm mb-5 text-left">{passwordError}</p>}
                     <div className="flex items-center justify-between mb-4">
                         <label className="flex items-center">
@@ -126,7 +134,12 @@ export default function LoginPage() {
                         <a href="/suporte" className='text-[#173D65] font-bold'>Esqueci minha senha</a>
                     </div>
 
-                    <button onClick={handleForm} className="bg-[rgb(23,61,101)] text-white font-bold text-2xl rounded-md p-2 py-4 px-4 w-full">Entrar</button>
+                    <button 
+                        onClick={handleForm} 
+                        className="bg-[rgb(23,61,101)] text-white font-bold text-2xl rounded-md p-2 py-4 px-4 w-full"
+                    >
+                        Entrar
+                    </button>
                 </div>
             </div>
         </div>
