@@ -1,13 +1,11 @@
-const nextConfig = {
-    reactStrictMode: true,
-    swcMinify: true,
-    output: 'standalone',
-    experimental: {
-    },
-    compiler: {
-      swcMinify: true,
-    },
-  };
-  
-  export default nextConfig;
-  
+import { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
+  output: 'standalone',
+  srcDir: 'src',
+  compiler: {
+  },
+};
+
+export default nextConfig;
