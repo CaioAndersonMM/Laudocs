@@ -8,6 +8,7 @@ import ModalErro from '@/components/ModalErro';
 
 const TitlePage = () => {
     const router = useRouter();
+    const [tipo, setTipo] = useState('');
     const [patient, setPatient] = useState('');
     const [age, setAge] = useState('');
     const [doctor, setDoctor] = useState('');
@@ -22,15 +23,17 @@ const TitlePage = () => {
     useEffect(() => {
         if (isClient) {
             const urlParams = new URLSearchParams(window.location.search);
-
+            const path = window.location.pathname;
+            const tipo = path.split('/')[2];
             const patientName = urlParams.get('patientName');
             const patientAge = urlParams.get('patientAge');
             const solicitingDoctor = urlParams.get('doctor');
 
-            if (patientName && patientAge && solicitingDoctor) {
+            if (patientName && patientAge && solicitingDoctor && tipo) {
                 setPatient(patientName);
                 setAge(patientAge);
                 setDoctor(solicitingDoctor);
+                setTipo(tipo);
             } else {
                 setError('Dados do paciente não encontrados. Redirecionando para consultas...');
                 setShowModal(true);
@@ -44,7 +47,7 @@ const TitlePage = () => {
     const renderQuestions = () => {
         return (
             <FormUltrassom
-                tipo="Ultrassom"
+                tipo={tipo}
                 patientName={patient}
                 patientAge={age}
                 solicitingDoctor={doctor}
