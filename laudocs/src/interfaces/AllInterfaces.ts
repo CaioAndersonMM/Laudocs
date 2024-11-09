@@ -23,6 +23,7 @@ export interface ListPatientsProps {
     arrayOfPatients: CardPatientInterface[];
     onSelectPatient?: (patient: CardPatientInterface) => void;
     removePatient?: (id: string) => void;
+    updatePatients?: (updatedPatients: CardPatientInterface[]) => void;
 }
 
 
@@ -34,5 +35,6 @@ export interface ConsultationCardProps {
 
 export interface CardPatientProps extends CardPatientInterface {
     removePatient?: (id: string) => void;
-  }
+    updatePatients?: (updatedPatients: CardPatientInterface[]) => void;
+}
   

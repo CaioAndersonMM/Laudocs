@@ -3,7 +3,7 @@ import { ListPatientsProps } from "../interfaces/AllInterfaces";
 
 
 
-export default function ListPatients({ arrayOfPatients, onSelectPatient, removePatient }: ListPatientsProps) {
+export default function ListPatients({ arrayOfPatients, onSelectPatient, removePatient, updatePatients }: ListPatientsProps) {
   return (
     <div className="bg-[#173D65] text-white flex flex-col p-2 rounded-l-lg h-[97%]">
       <h1 className="mt-4 mb-7 text-center text-2xl font-bold" style={{ fontFamily: 'Inter, sans-serif' }}>Fila de Espera</h1>
@@ -27,7 +27,8 @@ export default function ListPatients({ arrayOfPatients, onSelectPatient, removeP
               name={patient.name} 
               age={patient.age} 
               solicitingDoctor={patient.solicitingDoctor} 
-              removePatient={removePatient} 
+              removePatient={removePatient}
+              updatePatients={updatePatients}
             />
           </div>
         ))}

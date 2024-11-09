@@ -47,6 +47,10 @@ function Consultas() {
     setSelectedPatient(null);
   };
 
+  const updatePatients = (updatedPatients: CardPatientInterface[]) => {
+    setPatients(updatedPatients);
+  };
+
   return (
      <ProtectedLayout>
     <div className="bg-gray-100 h-screen p-1">
@@ -68,7 +72,7 @@ function Consultas() {
           ) : error ? (
             <p>{error}</p>
           ) : (
-            <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} />
+            <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} updatePatients={updatePatients}/>
           )}
         </div>
         <div className="flex h-[97%]">

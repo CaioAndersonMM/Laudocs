@@ -17,21 +17,22 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get('/api/pacientes');
-        setPatients(response.data);
-      } catch (err) {
-        setError('Erro ao buscar pacientes');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPatients();
   }, []);
+
+  const fetchPatients = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('/api/pacientes');
+      setPatients(response.data);
+    } catch (err) {
+      setError('Erro ao buscar pacientes');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const addPatient = (patient: CardPatientInterface) => {
     setPatients((prevPatients) => [...prevPatients, patient]);
@@ -67,7 +68,7 @@ export default function Home() {
           ) : error ? (
             <p>{error}</p>
           ) : (
-            <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} removePatient={removePatient} />
+            <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} removePatient={removePatient}  updatePatients={fetchPatients} />
           )}
         </div>
 

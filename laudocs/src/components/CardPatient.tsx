@@ -7,26 +7,21 @@ import { useState } from 'react';
 import { CardPatientProps } from '@/interfaces/AllInterfaces';
 import Image from 'next/image';
 
-
-
-export default function CardPatient({ id, name, age, solicitingDoctor, removePatient }: CardPatientProps) {
+export default function CardPatient({ id, name, age, solicitingDoctor, removePatient, updatePatients}: CardPatientProps) {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editedName, setEditedName] = useState(name);
   const [editedAge, setEditedAge] = useState(age);
   const [editedDoctor, setEditedDoctor] = useState(solicitingDoctor);
 
-  const openModal = () => {
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-  };
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
 
   const handleEdit = async () => {
     try {
       await axios.put(`/api/pacientes/${id}`, { name: editedName, age: editedAge });
       closeModal();
+      const updatedPatients = await axios.get('/api/pacientes');
+      updatePatients?.(updatedPatients.data);
     } catch (error) {
       console.error('Erro ao atualizar paciente:', error);
     }
@@ -36,6 +31,8 @@ export default function CardPatient({ id, name, age, solicitingDoctor, removePat
     try {
       await axios.delete(`/api/pacientes/${id}`);
       removePatient(id);
+      const updatedPatients = await axios.get('/api/pacientes');
+      updatePatients?.(updatedPatients.data);
     } catch (error) {
       console.error('Erro ao deletar paciente:', error);
     }
@@ -63,7 +60,6 @@ export default function CardPatient({ id, name, age, solicitingDoctor, removePat
         </button>
       </div>
 
-      {/* Modal de edição */}
       <Modal open={isModalOpen} onClose={closeModal}>
         <Box sx={{ display: 'flex', flexDirection: 'column', p: 4, bgcolor: 'background.paper', borderRadius: 2, boxShadow: 24, width: 300, margin: 'auto', marginTop: '20vh' }}>
           <h2 className='text-cyan-800 font-bold mb-4'>Editar Paciente</h2>
@@ -93,7 +89,7 @@ export default function CardPatient({ id, name, age, solicitingDoctor, removePat
             value={editedDoctor}
             onChange={(e) => {
               const value = e.target.value;
-              if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) { // Permite letras acentuadas e espaços
+              if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
                 setEditedDoctor(value);
               }
             }}
