@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Box } from '@mui/material';
@@ -30,10 +30,6 @@ const ConsultaPage = () => {
         }
     }, [consulta, patientId, patientName, patientAge, solicitingDoctor, router]);
 
-    const handleVoltar = () => {
-        router.push('/consultas');
-    };
-
     const handleCardClick = (title: string) => {
         router.push(`/consulta/${title}?patientId=${patientId}&patientName=${patientName}&patientAge=${patientAge}&doctor=${solicitingDoctor}`);
     };
@@ -53,29 +49,33 @@ const ConsultaPage = () => {
 
     return (
         <ProtectedLayout>
-            <div className="bg-gray-100 h-screen p-6 rounded-lg">
+            <div className="bg-gray-100 min-h-screen p-4 md:p-6 rounded-lg">
                 <div className='text-[#173D65] border border-black rounded-md bg-white h-full'>
-                    <div className="relative">
-                        <button onClick={handleVoltar} className="absolute left-12 top-4 px-4 py-2 bg-cyan-800 text-white font-bold rounded-md shadow-lg hover:bg-cyan-700 transition duration-300 ease-in-out">
+                    <div className="relative flex flex-col items-center">
+                        <button
+                            onClick={() => router.back()}
+                            className="absolute left-4 top-4 px-4 py-2 text-[#173D65] bg-white border border-[#173D65] rounded-md mb-4 hover:bg-[#173D65] hover:text-white transition duration-200 md:left-12 md:top-6"
+                        >
                             Voltar
                         </button>
 
-                        <div className='text-center mt-6'>
+                        <div className='text-center mt-20 md:mt-6'>
                             <div className="flex items-center justify-center mb-1">
                                 <Image src="/assets/patientIcon.svg" alt="Ícone Médico" width={24} height={24} />
-                                <h3 className="ml-4 text-2xl font-bold">{patientName}, {patientAge} anos</h3>
+                                <h3 className="ml-4 text-xl font-bold md:text-2xl">{patientName}, {patientAge} anos</h3>
                             </div>
 
                             <div className="flex items-center justify-center mb-2">
                                 <Image src="/assets/medicIcon.svg" alt="Ícone Hospital" width={24} height={24} />
-                                <p className="ml-4 text-2xl font-bold">Médico Solicitante: {solicitingDoctor}</p>
+                                <p className="ml-4 text-lg font-bold md:text-2xl">Médico Solicitante: {solicitingDoctor}</p>
                             </div>
 
-                            <hr className='border-1 border-cyan-800 mt-7' />
                         </div>
+                        <hr className='border-1 border-cyan-800 mt-7 w-full' />
+
                     </div>
-                    <h1 className='text-2xl mt-4 ml-8'>Selecione uma opção da categoria {consulta}:</h1>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', padding: 2 }}>
+                    <h1 className='text-xl mt-4 ml-4 md:text-2xl md:ml-8'>Selecione uma opção da categoria {consulta}:</h1>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', padding: 2, justifyContent: 'center' }}>
                         {renderOptions()}
                     </Box>
                 </div>

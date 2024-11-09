@@ -58,6 +58,12 @@ const TitlePage = () => {
     return (
         <ProtectedLayout>
             <div className="bg-gray-100 h-screen p-6 rounded-lg">
+            <button
+                    onClick={() => router.back()}
+                    className="text-[#173D65] bg-white border border-[#173D65] rounded-md px-4 py-2 mb-4 hover:bg-[#173D65] hover:text-white transition duration-200"
+                >
+                    Voltar
+                </button>
                 <div className="text-[#173D65] border border-black rounded-md bg-white p-4">
                     {showModal && (
                         <ModalErro
