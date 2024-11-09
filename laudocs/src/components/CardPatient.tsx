@@ -18,7 +18,7 @@ export default function CardPatient({ id, name, age, solicitingDoctor, removePat
 
   const handleEdit = async () => {
     try {
-      await axios.put(`/api/pacientes/${id}`, { name: editedName, age: editedAge });
+      await axios.put(`/api/pacientes/${id}`, { name: editedName, age: editedAge, solicitingDoctor: editedDoctor });
       closeModal();
       const updatedPatients = await axios.get('/api/pacientes');
       updatePatients?.(updatedPatients.data);
