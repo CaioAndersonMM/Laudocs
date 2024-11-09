@@ -38,9 +38,9 @@ export default function LoginPage() {
         setEmailError('');
         setPasswordError('');
         setCredencialError('');
-
+    
         let hasError = false;
-
+    
         if (email.length < 5 || !validateEmail(email)) {
             setEmailError('Por favor, insira um email válido.');
             hasError = true;
@@ -49,13 +49,13 @@ export default function LoginPage() {
             setPasswordError('A senha deve ter pelo menos 5 caracteres.');
             hasError = true;
         }
-
+    
         if (hasError) {
             return;
         }
         try {
             const { error } = await signIn(email, password);
-
+    
             if (error) {
                 const firebaseError = error as FirebaseError;
                 if (firebaseError.code === 'auth/invalid-email') {
@@ -69,17 +69,23 @@ export default function LoginPage() {
                 }
                 return;
             }
-
+    
             if (saveCredentials) {
                 localStorage.setItem('userEmail', email);
                 localStorage.setItem('userPassword', password);
             }
-
-            router.push("/lista-de-pacientes");
+    
+            if (email === "docjuniorceara@hotmail.com") {
+                router.push("/consultas");
+            } else {
+                router.push("/lista-de-pacientes");
+            }
+            
         } catch (error) {
             console.error('Error: ', error);
         }
     };
+    
 
     if (loading) {
         return (
