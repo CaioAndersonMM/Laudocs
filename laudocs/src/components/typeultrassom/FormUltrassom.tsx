@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import Questions from '@/utils/question';
-import { preencherSubstituicoes } from '@/utils/question';
+import { preencherSubstituicoes, noduleQuestions } from '@/utils/question';
 
 interface FormUltrassomProps {
     tipo: string;
@@ -21,7 +21,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
     const [hasNodule, setHasNodule] = useState(false);
     const [hasLinfonodo, setHasLinfonodo] = useState(false);
 
-
     const formQuestions = Questions[tipo] || { Selects: [], Checkbox: [] };
 
     const handleSelectChange = (questionLabel: string, value: string) => {
@@ -37,7 +36,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
         if (questionLabel === 'Linfonodos axilares têm aspecto não habitual?') {
             setHasLinfonodo(value === 'Sim');
         }
-
     };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -67,6 +65,17 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
         }
     };
 
+    const initializeFormState = (questions: Array<{ label: string; options: string[] }>) => {
+        const initialState: FormState = {};
+        questions.forEach(question => {
+            initialState[question.label] = question.options[0];
+        });
+        return initialState;
+    };
+
+    if (hasNodule && Object.keys(formState).length === 0) {
+        setFormState(initializeFormState(noduleQuestions));
+    }
 
     return (
         <div>
@@ -83,11 +92,11 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                             <label className="block text-lg font-semibold">
                                 {question.label}
                                 <select
-                                    value={formState[question.label] as string || ""}
+                                    value={formState[question.label] as string || question.options[0]}
                                     onChange={(e) => handleSelectChange(question.label, e.target.value)}
                                     className="ml-2 p-2 border rounded-md"
                                 >
-                                    <option value="">Selecione</option>
+
                                     {question.options.map((option, idx) => (
                                         <option key={idx} value={option}>{option}</option>
                                     ))}
@@ -96,6 +105,37 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                         </div>
                     );
                 })}
+
+                {hasNodule && (
+                    <div className="grid grid-cols-4 gap-4">
+                        {noduleQuestions.map((question, index) => (
+                            <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md">
+                                <label className="block text-lg font-semibold">
+                                    {question.label}
+                                    {question.isNumberInput ? (
+                                        <input
+                                            type="number"
+                                            value={formState[question.label] as string || ""}
+                                            onChange={(e) => handleSelectChange(question.label, e.target.value)}
+                                            className="ml-2 p-2 border rounded-md w-full"
+                                            placeholder="Digite a medida"
+                                        />
+                                    ) : (
+                                        <select
+                                            value={formState[question.label] as string || question.options[0]}
+                                            onChange={(e) => handleSelectChange(question.label, e.target.value)}
+                                            className="ml-1 border rounded-md w-full p-2"
+                                        >
+                                            {question.options.map((option, idx) => (
+                                                <option key={idx} value={option}>{option}</option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 {formQuestions.Checkbox.map((question, index) => (
                     <div className="mb-4" key={index}>
@@ -136,4 +176,5 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
         </div>
     );
 };
+
 export default FormUltrassom;
