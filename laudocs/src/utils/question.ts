@@ -7,7 +7,7 @@ const Questions: Record<string, {
     Selects: [
       {
         label: 'Tem nódulo?',
-        options: ['Sim', 'Não'],
+        options: ['Não', 'Sim'],
       },
       {
         label: 'Onde está o Nódulo?',
@@ -35,7 +35,7 @@ const Questions: Record<string, {
     Selects: [
       {
         label: 'Tem nódulo?',
-        options: ['Sim', 'Não'],
+        options: ['Não', 'Sim'],
       },
       {
         label: 'Onde está o Nódulo?',
@@ -58,6 +58,18 @@ interface FormState {
 interface Substituicoes {
   [key: string]: string;
 }
+
+export const noduleQuestions = [
+  { label: 'Isoecogênico às hs?', options: ['Sim', 'Não'] },
+  { label: 'Posição', options: ['Paralelo', 'Não paralelo'] },
+  { label: 'Reforço acústico posterior', options: ['Com reforço', 'Sem reforço'] },
+  { label: 'Sombra', options: ['Sem', 'Com'] },
+  { label: 'Margens circunstritas', options: ['Sim', 'Não'] },
+  { label: 'Tecido vizinho', options: ['Não comprometido', 'Comprometido'] },
+  { label: 'Vascularização intranodal', options: ['Com vascularização', 'Sem vascularização'] },
+  { label: 'Medida em cm:', options: ['Sim', 'Não'], isNumberInput: true },
+  // { label: 'Distante em X cm da pele e cm do mamilo (caso mama)', options: [] },
+];
 
 export const preencherSubstituicoes = (formState: FormState, tipo: string, patient: string, age: string, data: string, doctor: string): Substituicoes => {
   const substituicoes: Substituicoes = {
