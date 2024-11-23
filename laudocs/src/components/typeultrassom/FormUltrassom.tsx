@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Questions from '@/utils/question';
 import { preencherSubstituicoes, noduleQuestions } from '@/utils/question';
 
@@ -106,36 +107,45 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                     );
                 })}
 
-                {hasNodule && (
-                    <div className="grid grid-cols-4 gap-4">
-                        {noduleQuestions.map((question, index) => (
-                            <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md">
-                                <label className="block text-lg font-semibold">
-                                    {question.label}
-                                    {question.isNumberInput ? (
-                                        <input
-                                            type="number"
-                                            value={formState[question.label] as string || ""}
-                                            onChange={(e) => handleSelectChange(question.label, e.target.value)}
-                                            className="ml-2 p-2 border rounded-md w-full"
-                                            placeholder="Digite a medida"
-                                        />
-                                    ) : (
-                                        <select
-                                            value={formState[question.label] as string || question.options[0]}
-                                            onChange={(e) => handleSelectChange(question.label, e.target.value)}
-                                            className="ml-1 border rounded-md w-full p-2"
-                                        >
-                                            {question.options.map((option, idx) => (
-                                                <option key={idx} value={option}>{option}</option>
-                                            ))}
-                                        </select>
-                                    )}
-                                </label>
-                            </div>
-                        ))}
-                    </div>
-                )}
+{hasNodule && (
+    <div>
+        <div className="flex items-center mb-6">
+        <Image src="/assets/nodule.svg" alt="Ícone Hospital" width={45} height={24} />
+        <h1 className="ml-4 font-semibold">
+                Informações sobre os nódulos encontrados
+            </h1>
+        </div>
+
+        <div className="grid grid-cols-4 gap-4">
+            {noduleQuestions.map((question, index) => (
+                <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300 ease-in-out">
+                    <label className="block text-lg font-semibold text-gray-700">
+                        {question.label}
+                        {question.isNumberInput ? (
+                            <input
+                                type="number"
+                                value={formState[question.label] as string || ""}
+                                onChange={(e) => handleSelectChange(question.label, e.target.value)}
+                                className="ml-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                placeholder="Digite a medida"
+                            />
+                        ) : (
+                            <select
+                                value={formState[question.label] as string || question.options[0]}
+                                onChange={(e) => handleSelectChange(question.label, e.target.value)}
+                                className="ml-1 border rounded-md w-full p-2 bg-white focus:ring-2 focus:ring-cyan-800"
+                            >
+                                {question.options.map((option, idx) => (
+                                    <option key={idx} value={option}>{option}</option>
+                                ))}
+                            </select>
+                        )}
+                    </label>
+                </div>
+            ))}
+        </div>
+    </div>
+)}
 
                 {formQuestions.Checkbox.map((question, index) => (
                     <div className="mb-4" key={index}>
