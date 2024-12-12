@@ -1,6 +1,6 @@
 const Questions: Record<string, {
-  Selects: { label: string; options: string[] }[]; 
-  Checkbox: { label: string }[]; 
+  Selects: { label: string; options: string[] }[];
+  Checkbox: { label: string }[];
   Markers: { [key: string]: string }
 }> = {
   Mamas: {
@@ -52,7 +52,7 @@ const Questions: Record<string, {
 };
 
 interface FormState {
-  [key: string]: string | boolean;
+  [key: string]: string | boolean | FormState;
 }
 
 interface Substituicoes {
@@ -60,15 +60,15 @@ interface Substituicoes {
 }
 
 export const noduleQuestions = [
-  { mark: 'isoecogenio', label: 'Isoecogênico às hs?', options: ['Sim', 'Não'] },
-  { mark: 'position', label: 'Posição', options: ['Paralelo', 'Não paralelo'] },
-  { mark: 'reforcoacustico',label: 'Reforço acústico posterior', options: ['Com reforço', 'Sem reforço'] },
-  { mark: 'sombra',label: 'Sombra', options: ['Sem', 'Com'] },
-  { mark: 'margens',label: 'Margens circunstritas', options: ['Sim', 'Não'] },
-  { mark: 'tecido',label: 'Tecido vizinho', options: ['Não comprometido', 'Comprometido'] },
-  { mark: 'vascuintranodal',label: 'Vascularização intranodal', options: ['Com vascularização', 'Sem vascularização'] },
-  { mark: 'medida',label: 'Medida em cm:', options: ['Sim', 'Não'], isNumberInput: true },
-    // { label: 'Distante em X cm da pele e cm do mamilo (caso mama)', options: [] },
+  { mark: 'isoecogenio', label: 'Isoecogênico às hs', options: ['Sim', 'Não'] },
+  { mark: 'position', label: 'Paralelo', options: ['Sim', 'Não'] },
+  { mark: 'reforcoacustico', label: 'Reforço acústico posterior', options: ['Com', 'Sem'] },
+  { mark: 'sombra', label: 'Sombra', options: ['Sem', 'Com'] },
+  { mark: 'margens', label: 'Margens circunstritas', options: ['Sim', 'Não'] },
+  { mark: 'tecido', label: 'Tecido vizinho', options: ['Não comprometido', 'Comprometido'] },
+  { mark: 'vascuintranodal', label: 'Vascularização intranodal', options: ['Sim', 'Não'] },
+  { mark: 'medida', label: 'Medida em cm:', options: ['Sim', 'Não'], isNumberInput: true },
+  // { label: 'Distante em X cm da pele e cm do mamilo (caso mama)', options: [] },
 
 ];
 
@@ -98,16 +98,50 @@ export const preencherSubstituicoes = (
       ? 'Nódulo encontrado na axila esquerda.'
       : '';
 
-  const noduleInfo: { [key: string]: string } = {};
-  noduleQuestions.forEach((question) => {
-    const questionAnswer = formState[question.label];
-    console.log(`Question: ${question.label}, Answer: ${questionAnswer}`);
-    if (questionAnswer) {
-      noduleInfo[question.mark] = typeof questionAnswer === 'string' ? questionAnswer : '';
+  const noduleInfoEsquerdo: string[] = [];
+  const noduleInfoDireito: string[] = [];
+
+  if (noduleLocation === 'Direita' || noduleLocation === 'Ambas') {
+    for (let i = 0; i < noduleQuestions.length; i++) {
+      const question = noduleQuestions[i];
+      const questionAnswer = formState['direita_' + question.mark];
+      console.log(`Question: ${question.label}, Answer: ${questionAnswer}`);
+      if (questionAnswer === 'Sim') {
+        noduleInfoEsquerdo.push(question.label);
+      } else if (questionAnswer === 'Não') {
+      } else if ((questionAnswer === 'Com') || (questionAnswer === 'Sem')) {
+        noduleInfoEsquerdo.push(questionAnswer + ' ' + question.label);
+      } 
+      else {
+        noduleInfoEsquerdo.push(question.label + ' ' + questionAnswer);
+      }
     }
-  });
-  console.log('noduleInfo after loop:', noduleInfo);
-  substituicoes['noduleInfo'] = noduleInfo;
+  }
+
+  if (noduleLocation === 'Esquerda' || noduleLocation === 'Ambas') {
+    for (let i = 0; i < noduleQuestions.length; i++) {
+      const question = noduleQuestions[i];
+      const questionAnswer = formState['esquerda_' + question.mark];
+      console.log(`Question: ${question.label}, Answer: ${questionAnswer}`);
+      if (questionAnswer === 'Sim') {
+        noduleInfoDireito.push(question.label);
+      } else if (questionAnswer === 'Não') {
+      } else if ((questionAnswer === 'Com') || (questionAnswer === 'Sem')) {
+        noduleInfoDireito.push(questionAnswer + ' ' + question.label);
+      } 
+      else {
+        noduleInfoDireito.push(question.label + ' ' + questionAnswer);
+      }
+    }
+  }
+
+  let noduleInfoDireitoString = noduleInfoDireito.join(', ');
+  noduleInfoDireitoString = noduleInfoDireitoString.toLowerCase();
+  noduleInfoDireitoString = noduleInfoDireitoString.charAt(0).toUpperCase() + noduleInfoDireitoString.slice(1);
+
+  let noduleInfoEsquerdoString = noduleInfoEsquerdo.join(', ');
+  noduleInfoEsquerdoString = noduleInfoEsquerdoString.toLowerCase();
+  noduleInfoEsquerdoString = noduleInfoEsquerdoString.charAt(0).toUpperCase() + noduleInfoEsquerdoString.slice(1);
 
   const lymphNodeLocation = formState['Onde está o Linfonodo?'];
   substituicoes['linfonododireito'] =
@@ -122,10 +156,13 @@ export const preencherSubstituicoes = (
   const hasNodule = formState['Tem nódulo?'] === 'Sim';
   const hasAbnormalLymphNodes = formState['Linfonodos axilares têm aspecto não habitual?'] === 'Sim';
 
+  substituicoes['noduleinfodireita'] = hasNodule ? noduleInfoDireitoString : '';
+  substituicoes['noduleinfoesquerda'] = hasNodule ? noduleInfoEsquerdoString : '';
+
   substituicoes['conclusao'] =
     hasNodule || hasAbnormalLymphNodes
       ? 'Alterações identificadas em ultrassom.'
-      : 'Conclusão do exame, sem alterações significativas.';
+      : 'Sem alterações significativas.';
 
   return substituicoes;
 };
