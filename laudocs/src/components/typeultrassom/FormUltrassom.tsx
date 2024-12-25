@@ -84,75 +84,76 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        console.log('Form State:', formState);
-
-        const substituicoes = preencherSubstituicoes(formState, tipo, patientName, patientAge, data, solicitingDoctor);
-
-        console.log(JSON.stringify(substituicoes));
-
-        try {
-            const response = await fetch('/api/gerar-doc', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ substituicoes })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Erro: ${errorData.message}`);
-            }
-
-            const data = await response.json();
-            alert(data.message);
-        } catch (error) {
-            console.error("Erro ao enviar o formulário:", error);
-            alert("Erro ao gerar o documento: " + (error as Error).message);
-        }
+        console.log(JSON.stringify(formState));
     };
 
     return (
         <div>
-            <h1 className="text-2xl font-bold text-center">
+            <h1 className="text-2xl font-bold text-center mb-6">
                 Ultrassom de {tipo} do Paciente {patientName}, {patientAge} anos
             </h1>
-            <form onSubmit={handleSubmit} className="mt-4">
-                {formQuestions.Selects.map((question, index) => {
-                    if (question.label === 'Onde está o Nódulo?' && !hasNodule) return null;
-                    if (question.label === 'Onde está o Linfonodo?' && !hasLinfonodo) return null;
+            <form onSubmit={handleSubmit} className="mt-4 space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                    {formQuestions.Selects.map((question, index) => {
+                        // Verifica se a pergunta 'Onde está o Nódulo?' ou 'Onde está o Linfonodo?' deve ser exibida
+                        if (question.label === 'Onde está o Nódulo?' && !hasNodule) return null;
+                        if (question.label === 'Onde está o Linfonodo?' && !hasLinfonodo) return null;
 
-                    return (
-                        <div key={index} className="mb-4">
-                            <label className="block text-lg font-semibold">
-                                {question.label}
-                                <select
-                                    value={formState[question.label] as string || question.options[0]}
-                                    onChange={(e) => handleSelectChange(question.label, e.target.value)}
-                                    className="ml-2 p-2 border rounded-md"
-                                >
-                                    {question.options.map((option, idx) => (
-                                        <option key={idx} value={option}>{option}</option>
-                                    ))}
-                                </select>
-                            </label>
-                        </div>
-                    );
-                })}
+                        return (
+                            <div key={index} className="flex flex-col">
+                                <label className="block text-lg font-semibold">
+                                    {question.label}
+                                    {question.isNumberInput ? (
+                                        <input
+                                            type="number"
+                                            value={formState[question.label] as string || ""}
+                                            onChange={(e) => handleInputChange(question.label, e.target.value)}
+                                            className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                            placeholder="Digite o valor"
+                                        />
+                                    ) : question.isTextInput ? (
+                                        <input
+                                            type="text"
+                                            value={formState[question.label] as string || ""}
+                                            onChange={(e) => handleInputChange(question.label, e.target.value)}
+                                            className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                            placeholder="Digite o texto"
+                                        />
+                                    ) : question.isDateInput ? (
+                                        <input
+                                            type="date"
+                                            value={formState[question.label] as string || ""}
+                                            onChange={(e) => handleInputChange(question.label, e.target.value)}
+                                            className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                        />
+                                    ) : (
+                                        <select
+                                            value={formState[question.label] as string || question.options[0]}
+                                            onChange={(e) => handleSelectChange(question.label, e.target.value)}
+                                            className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                        >
+                                            {question.options.map((option, idx) => (
+                                                <option key={idx} value={option}>{option}</option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </label>
+                            </div>
+                        );
+                    })}
+                </div>
 
                 {hasNodule && (
                     <div>
                         <div className="flex items-center mb-6">
                             <Image src="/assets/nodule.svg" alt="Ícone Hospital" width={45} height={24} />
-                            <h1 className="ml-4 font-semibold">
-                                Informações sobre os nódulos encontrados
-                            </h1>
+                            <h1 className="ml-4 font-semibold">Informações sobre os nódulos encontrados</h1>
                         </div>
 
                         {(noduleLocation === 'Esquerda' || noduleLocation === 'Ambas') && (
                             <>
                                 <h2 className="mt-6 text-xl font-semibold">Informações sobre o nódulo na posição Esquerda</h2>
-                                <div className="grid grid-cols-4 gap-4 mt-4">
+                                <div className="grid grid-cols-2 gap-4 mt-4">
                                     {noduleQuestions.map((question, index) => (
                                         <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300 ease-in-out">
                                             <label className="block text-lg font-semibold text-gray-700">
@@ -162,14 +163,14 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                                                         type="number"
                                                         value={formState[`esquerda_${question.mark}`] as string || ""}
                                                         onChange={(e) => handleInputChange(`esquerda_${question.mark}`, e.target.value)}
-                                                        className="ml-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                                        className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                         placeholder="Digite a medida"
                                                     />
                                                 ) : (
                                                     <select
                                                         value={formState[`esquerda_${question.mark}`] as string || question.options[0]}
                                                         onChange={(e) => handleInputChange(`esquerda_${question.mark}`, e.target.value)}
-                                                        className="ml-1 border rounded-md w-full p-2 bg-white focus:ring-2 focus:ring-cyan-800"
+                                                        className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                     >
                                                         {question.options.map((option, idx) => (
                                                             <option key={idx} value={option}>{option}</option>
@@ -186,7 +187,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                         {(noduleLocation === 'Direita' || noduleLocation === 'Ambas') && (
                             <>
                                 <h2 className="mt-6 text-xl font-semibold">Informações sobre o nódulo na posição Direita</h2>
-                                <div className="grid grid-cols-4 gap-4 mt-4">
+                                <div className="grid grid-cols-2 gap-4 mt-4">
                                     {noduleQuestions.map((question, index) => (
                                         <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300 ease-in-out">
                                             <label className="block text-lg font-semibold text-gray-700">
@@ -196,14 +197,14 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                                                         type="number"
                                                         value={formState[`direita_${question.mark}`] as string || ""}
                                                         onChange={(e) => handleInputChange(`direita_${question.mark}`, e.target.value)}
-                                                        className="ml-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                                        className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                         placeholder="Digite a medida"
                                                     />
                                                 ) : (
                                                     <select
                                                         value={formState[`direita_${question.mark}`] as string || question.options[0]}
                                                         onChange={(e) => handleInputChange(`direita_${question.mark}`, e.target.value)}
-                                                        className="ml-1 border rounded-md w-full p-2 bg-white focus:ring-2 focus:ring-cyan-800"
+                                                        className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                     >
                                                         {question.options.map((option, idx) => (
                                                             <option key={idx} value={option}>{option}</option>
@@ -245,12 +246,14 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                         />
                     </label>
                 </div>
-                <button
-                    type="submit"
-                    className="px-4 py-2 bg-cyan-800 text-white font-bold rounded-md shadow-lg hover:bg-cyan-700 transition duration-300 ease-in-out"
-                >
-                    Enviar
-                </button>
+                <div className="flex justify-center mt-8">
+                    <button
+                        type="submit"
+                        className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    >
+                        Enviar
+                    </button>
+                </div>
             </form>
         </div>
     );
