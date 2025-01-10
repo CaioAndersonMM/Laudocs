@@ -22,7 +22,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
     const [hasLinfonodo, setHasLinfonodo] = useState(false);
     const [noduleLocation, setNoduleLocation] = useState<string>('Esquerda');
 
-    const formQuestions = Questions[tipo] || { Selects: [], Checkbox: [] };
+    const formQuestions = Questions[tipo] || { Selects: [], Checkbox: [], ConditionalSections: {} };
 
     useEffect(() => {
         const initialFormState: FormState = {};
@@ -94,7 +94,64 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
             </h1>
             <form onSubmit={handleSubmit} className="mt-4 space-y-6">
                 <div className="grid grid-cols-2 gap-4">
+                    {formQuestions.Selects.map((select, index) => {
+                        const conditionField = formQuestions.ConditionalSections?.[select.mark];
+                        const isConditionMet = conditionField && formState[select.mark] === conditionField.condition;
+
+                        const value = typeof formState[select.mark] === 'boolean'
+                            ? formState[select.mark] ? 'Sim' : 'Não'
+                            : formState[select.mark] || select.options[0];
+
+                        if (select.mark.startsWith('condicional_')) {
+                            return (
+                                <div key={index} className="flex flex-col">
+                                    <label className="block text-lg font-semibold">
+                                        {select.label}
+                                        <select
+                                            value={typeof value === 'string' || typeof value === 'number' ? value : ''}
+                                            onChange={(e) => handleSelectChange(select.mark, e.target.value)}
+                                            className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                        >
+                                            {select.options.map((option, idx) => (
+                                                <option key={idx} value={option}>{option}</option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                    {isConditionMet && conditionField && (
+                                        <div className="mt-6">
+                                            <h2 className="text-xl font-semibold bg-cyan-900 text-white p-1">Informações sobre {select.label}</h2>
+                                            <div className="grid grid-cols-3 gap-4 mt-4 mb-4 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300 ease-in-out">
+                                                {conditionField.fields.map((field, index) => (
+                                                    <div key={index} className="flex flex-col">
+                                                        <label className="block text-lg font-semibold">
+                                                            {field.label}
+                                                            <select
+                                                                value={typeof formState[field.mark] === 'boolean'
+                                                                    ? (formState[field.mark] ? 'Sim' : 'Não')
+                                                                    : typeof formState[field.mark] === 'string' || typeof formState[field.mark] === 'number'
+                                                                        ? formState[field.mark] as string | number
+                                                                        : field.options[0]}
+                                                                onChange={(e) => handleInputChange(field.mark, e.target.value)}
+                                                                className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                                            >
+                                                                {field.options.map((option, idx) => (
+                                                                    <option key={idx} value={option}>{option}</option>
+                                                                ))}
+                                                            </select>
+                                                        </label>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        }
+                        return null;
+                    })}
                     {formQuestions.Selects.map((question, index) => {
+                        if (question.mark.startsWith('condicional_')) return null;
+
                         // Verifica se a pergunta 'Onde está o Nódulo?' ou 'Onde está o Linfonodo?' deve ser exibida
                         if (question.label === 'Onde está o Nódulo?' && !hasNodule) return null;
                         if (question.label === 'Onde está o Linfonodo?' && !hasLinfonodo) return null;
