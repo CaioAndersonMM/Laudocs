@@ -42,12 +42,12 @@ const Questions: Record<string, {
       conclusao: 'Conclusão sobre o exame',
     },
   },
-  "Axila": {
-    "Selects": [
+  Axila: {
+    Selects: [
       {
         "label": "Há Doppler?",
-        "options": ["Sim", "Não"],
-        "mark": "axila_doppler"
+        "options": ["Não", "Sim"],
+        "mark": "condicional_axila_doppler"
       },
       {
         "label": "Tem nódulo?",
@@ -60,14 +60,14 @@ const Questions: Record<string, {
         "mark": "axila_local_nodulo"
       },
     ],
-    "Checkbox": [],
-    "Markers": {
+    Checkbox: [],
+    Markers: {
       "noduledireita": "Nódulo na Direita",
       "noduleesquerda": "Nódulo na Esquerda",
       "conclusao": "Conclusão do diagnóstico"
     },
-    "ConditionalSections": {
-      "com_doppler": {
+    ConditionalSections: {
+      "condicional_axila_doppler": {
         "condition": "Sim",
         "fields": [
           {
