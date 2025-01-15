@@ -1789,7 +1789,7 @@ const Questions: Record<string, {
         "mark": "insercoes_musculares_normais"
       },
       {
-        "label": "Tem botinha?",
+        "label": "Há botinha?",
         "options": ["Sim", "Não"],
         "mark": "condicional_botinha_coxa"
       },
@@ -1853,14 +1853,14 @@ const Questions: Record<string, {
   Pe: {
     "Selects": [
       {
-        "label": "Exame com Doppler?",
-        "options": ["Sim", "Não"],
-        "mark": "com_doppler"
+        "label": "Há Doppler?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_doppler_pe"
       },
       {
-        "label": "Exame com botinha?",
-        "options": ["Sim", "Não"],
-        "mark": "com_botinha"
+        "label": "Há botinha?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_botinha_pe"
       },
       {
         "label": "Lateralidade",
@@ -1881,7 +1881,7 @@ const Questions: Record<string, {
     "Checkbox": [],
     "Markers": {},
     "ConditionalSections": {
-      "com_doppler": {
+      "condicional_doppler_pe": {
         "condition": "Sim",
         "fields": [
           {
@@ -1896,7 +1896,7 @@ const Questions: Record<string, {
           }
         ]
       },
-      "com_botinha": {
+      "condicional_botinha_pe": {
         "condition": "Sim",
         "fields": [
           {
@@ -1941,15 +1941,15 @@ const Questions: Record<string, {
         "mark": "ausencia_nodulos_cistos"
       },
       {
-        "label": "Exame com botinha?",
-        "options": ["Sim", "Não"],
-        "mark": "com_botinha_perna"
+        "label": "Há Botinha?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_botinha_perna"
       }
     ],
     "Checkbox": [],
     "Markers": {},
     "ConditionalSections": {
-      "com_botinha_perna": {
+      "condicional_botinha_perna": {
         "condition": "Sim",
         "fields": [
           {
@@ -2004,20 +2004,20 @@ const Questions: Record<string, {
         "mark": "sem_nodulos_cistos_punho"
       },
       {
-        "label": "Exame com doppler?",
-        "options": ["Sim", "Não"],
-        "mark": "doppler_punho"
+        "label": "Há Doppler?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_doppler_punho"
       },
       {
-        "label": "Exame com botinha?",
-        "options": ["Sim", "Não"],
-        "mark": "com_botinha_punho"
+        "label": "Há Botinha?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_botinha_punho"
       }
     ],
     "Checkbox": [],
     "Markers": {},
     "ConditionalSections": {
-      "doppler_punho": {
+      "condicional_doppler_punho": {
         "condition": "Sim",
         "fields": [
           {
@@ -2032,7 +2032,7 @@ const Questions: Record<string, {
           }
         ]
       },
-      "com_botinha_punho": {
+      "condicional_botinha_punho": {
         "condition": "Sim",
         "fields": [
           {
@@ -2062,15 +2062,15 @@ const Questions: Record<string, {
         "mark": "tendao_aquiles_normal"
       },
       {
-        "label": "Exame com botinha?",
-        "options": ["Sim", "Não"],
-        "mark": "com_botinha_tornozelo"
+        "label": "Há Botinha?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_botinha_tornozelo"
       }
     ],
     "Checkbox": [],
     "Markers": {},
     "ConditionalSections": {
-      "com_botinha_tornozelo": {
+      "condicional_botinha_tornozelo": {
         "condition": "Sim",
         "fields": [
           {
@@ -2117,6 +2117,11 @@ const Questions: Record<string, {
   Quadril: {
     "Selects": [
       {
+        "label": "É um exame de RN (Recém-nascido)?",
+        "options": ["Sim", "Não"],
+        "mark": "quadril_exame_rn"
+      },
+      {
         "label": "Tem nódulo?",
         "options": ["Não", "Sim"],
         "mark": "nodulo_quadril"
@@ -2130,11 +2135,6 @@ const Questions: Record<string, {
         "label": "Posição do quadril",
         "options": ["Esquerdo", "Direito", "Ambos"],
         "mark": "quadril_posicao"
-      },
-      {
-        "label": "É um exame de RN (Recém-nascido)?",
-        "options": ["Sim", "Não"],
-        "mark": "quadril_exame_rn"
       },
       {
         "label": "Musculatura, tendões e ligamentos com aspecto normal",
@@ -2238,20 +2238,20 @@ const Questions: Record<string, {
         "mark": "espacos_interosseos_alteracoes"
       },
       {
-        "label": "Há Doppler no exame?",
-        "options": ["Sim", "Não"],
-        "mark": "doppler_presente"
+        "label": "Há Doppler?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_doppler_mao"
       },
       {
-        "label": "Há botinha no exame?",
-        "options": ["Sim", "Não"],
-        "mark": "botinha_presente"
+        "label": "Há botinha?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_botinha_mao"
       }
     ],
     "Checkbox": [],
     "Markers": {},
     "ConditionalSections": {
-      "com_doppler": {
+      "condional_doppler_mao": {
         "condition": "Sim",
         "fields": [
           {
@@ -2261,7 +2261,7 @@ const Questions: Record<string, {
           }
         ]
       },
-      "com_botinha": {
+      "condicional_botinha_mao": {
         "condition": "Sim",
         "fields": [
           {
@@ -2316,15 +2316,15 @@ const Questions: Record<string, {
         "mark": "trato_ilio_tibial_normal"
       },
       {
-        "label": "Há Doppler no exame?",
-        "options": ["Sim", "Não"],
-        "mark": "doppler_presente"
+        "label": "Há Doppler?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_doppler_joelho"
       }
     ],
     "Checkbox": [],
     "Markers": {},
     "ConditionalSections": {
-      "com_doppler": {
+      "condicional_doppler_joelho": {
         condition: "Sim",
         "fields": [
           {
@@ -2367,12 +2367,17 @@ const Questions: Record<string, {
         "label": "Ausência de nodulações e/ou cistos",
         "options": ["Sim", "Não"],
         "mark": "ausencia_nodulacoes_cistos"
+      }, 
+      {
+        "label": "Há Botinha?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_botinha_cotovelo"
       }
     ],
     "Checkbox": [],
     "Markers": {},
     "ConditionalSections": {
-      "com_botinha": {
+      "condicional_botinha_cotovelo": {
         "condition": "Sim",
         "fields": [
           {
@@ -2426,11 +2431,16 @@ const Questions: Record<string, {
         "options": ["Sim", "Não"],
         "mark": "ausencia_nodulacoes_cistos"
       },
+      {
+        "label": "Há Botinha?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_botinha_antebraco"
+      }
     ],
     "Checkbox": [],
     "Markers": {},
     "ConditionalSections": {
-      "com_botinha": {
+      "condicional_botinha_antebraco": {
         "condition": "Sim",
         "fields": [
           {
@@ -2537,15 +2547,15 @@ const Questions: Record<string, {
         "mark": "insercoes_musculares_normais"
       },
       {
-        "label": "Há Doppler no exame?",
-        "options": ["Sim", "Não"],
-        "mark": "doppler_presente"
+        "label": "Há Doppler?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_doppler_fossapoplitea"
       }
     ],
     "Checkbox": [],
     "Markers": {},
     "ConditionalSections": {
-      "com_doppler": {
+      "condicional_doppler_fossapoplitea": {
         "condition": "Sim",
         "fields": [
           {
