@@ -2163,7 +2163,7 @@ const Questions: Record<string, {
     "Markers": {}
   },
   Ombro : {
-    "Selects": [
+    Selects: [
       {
         "label": "Tendão da cabeça longa do bíceps bem visualizado, sem sinais de rotura e sinais flogísticos",
         "options": ["Sim", "Não"],
@@ -2180,9 +2180,9 @@ const Questions: Record<string, {
         "mark": "tendao_musculos_infra_supra_espinhal"
       },
       {
-        "label": "Há Doppler no exame?",
+        "label": "Há Doppler?",
         "options": ["Sim", "Não"],
-        "mark": "doppler_presente"
+        "mark": "condicional_doppler_ombro"
       },
       {
         "label": "Vascularização dentro dos padrões de normalidade, sem sinais inflamatórios",
@@ -2190,8 +2190,25 @@ const Questions: Record<string, {
         "mark": "vascularizacao_normal"
       }
     ],
-    "Checkbox": [],
-    "Markers": {}
+    Checkbox: [],
+    Markers: {},
+     ConditionalSections: {
+      "condicional_doppler_ombro": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Pergunta condicional ombro",
+            "options": ["Sim", "Não"],
+            "mark": "doppler_ombro"
+          },
+          {
+            "label": "Pergunta condicional ombro",
+            "options": ["Sim", "Não"],
+            "mark": "doppler_ombro"
+          },
+        ]
+      }
+    }
   },
   Mao : {
     "Selects": [
