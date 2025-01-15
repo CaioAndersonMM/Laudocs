@@ -1740,7 +1740,7 @@ const Questions: Record<string, {
       {
         "label": "Tem nódulo?",
         "options": ["Não", "Sim"],
-        "mark": "condional_nodulo_gluteos"
+        "mark": "condicional_nodulo_gluteos"
       },
       {
         "label": "Onde está o Nódulo?",
@@ -1771,7 +1771,7 @@ const Questions: Record<string, {
       {
         "label": "Tem nódulo?",
         "options": ["Não", "Sim"],
-        "mark": "condional_nodulo_coxa"
+        "mark": "condicional_nodulo_coxa"
       },
       {
         "label": "Onde está o Nódulo?",
@@ -1805,9 +1805,9 @@ const Questions: Record<string, {
   Panturrilha: {
     "Selects": [
       {
-        "label": "Exame com Doppler?",
-        "options": ["Sim", "Não"],
-        "mark": "condional_doppler_panturrilha"
+        "label": "Há Doppler?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_doppler_panturrilha"
       },
       {
         "label": "Lateralidade",
@@ -1833,7 +1833,7 @@ const Questions: Record<string, {
     "Checkbox": [],
     "Markers": {},
     "ConditionalSections": {
-      "condional_doppler_panturrilha": {
+      "condicional_doppler_panturrilha": {
         "condition": "Sim",
         "fields": [
           {
@@ -2251,7 +2251,7 @@ const Questions: Record<string, {
     "Checkbox": [],
     "Markers": {},
     "ConditionalSections": {
-      "condional_doppler_mao": {
+      "condicional_doppler_mao": {
         "condition": "Sim",
         "fields": [
           {
