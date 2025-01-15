@@ -2181,7 +2181,7 @@ const Questions: Record<string, {
       },
       {
         "label": "Há Doppler?",
-        "options": ["Sim", "Não"],
+        "options": ["Não", "Sim"],
         "mark": "condicional_doppler_ombro"
       },
       {
