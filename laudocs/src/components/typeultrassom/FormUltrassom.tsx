@@ -40,6 +40,12 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
             initialFormState[`direita_${question.mark}`] = question.options[0] || "";
         });
 
+        Object.entries(formQuestions.ConditionalSections || {}).forEach(([key, section]) => {
+            section.fields.forEach((field) => {
+                initialFormState[field.label] = field.options[0] || "";
+            });
+        });
+
         setFormState((prevState) => ({
             ...prevState,
             ...initialFormState,
@@ -126,12 +132,12 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                                                         <label className="block text-lg font-semibold">
                                                             {field.label}
                                                             <select
-                                                                value={typeof formState[field.mark] === 'boolean'
-                                                                    ? (formState[field.mark] ? 'Sim' : 'Não')
-                                                                    : typeof formState[field.mark] === 'string' || typeof formState[field.mark] === 'number'
-                                                                        ? formState[field.mark] as string | number
+                                                                value={typeof formState[field.label] === 'boolean'
+                                                                    ? (formState[field.label] ? 'Sim' : 'Não')
+                                                                    : typeof formState[field.label] === 'string' || typeof formState[field.label] === 'number'
+                                                                        ? formState[field.label] as string | number
                                                                         : field.options[0]}
-                                                                onChange={(e) => handleInputChange(field.mark, e.target.value)}
+                                                                onChange={(e) => handleInputChange(field.label, e.target.value)}
                                                                 className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                             >
                                                                 {field.options.map((option, idx) => (
