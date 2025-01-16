@@ -18,7 +18,7 @@ const Questions: Record<string, {
       },
       {
         label: 'Linfonodos axilares têm aspecto não habitual?',
-        options: ['Sim', 'Não'],
+        options: ['Não', 'Sim'],
         mark: 'mamas_linfonodo',
       },
       {
@@ -722,9 +722,9 @@ const Questions: Record<string, {
         "mark": "pos_histerectomia"
       },
       {
-        "label": "Com Doppler",
-        "options": ["Sim", "Não"],
-        "mark": "com_doppler"
+        "label": "Há Doppler",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_transvarginal_doppler"
       },
       {
         "label": "Contagem de folículos",
@@ -746,6 +746,23 @@ const Questions: Record<string, {
       "volume_ovario_direito_cm3": "Volume do ovário direito (cm³)",
       "medidas_ovario_esquerdo_cm": "Medidas do ovário esquerdo (cm)",
       "volume_ovario_esquerdo_cm3": "Volume do ovário esquerdo (cm³)"
+    },
+    "ConditionalSections": {
+      "condicional_transvarginal_doppler": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Artéria uterina com fluxo pulsátil, sem alterações",
+            "options": ["Sim", "Não"],
+            "mark": "arteria_uterina_fluxo_normal"
+          },
+          {
+            "label": "Artéria ovariana com fluxo fásico, sem alterações",
+            "options": ["Sim", "Não"],
+            "mark": "arteria_ovariana_fluxo_normal"
+          }
+        ]
+      }
     }
   },
   Parede: {
@@ -1163,9 +1180,9 @@ const Questions: Record<string, {
   FigadoViaBilares: {
     "Selects": [
       {
-        "label": "Com Doppler",
-        "options": ["Sim", "Não"],
-        "mark": "exame_com_doppler"
+        "label": "Há Doppler",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_doppler_bilares"
       },
       {
         "label": "Fígado com topografia normal",
@@ -1234,7 +1251,34 @@ const Questions: Record<string, {
       },
     ],
     "Checkbox": [],
-    "Markers": {}
+    "Markers": {},
+    "ConditionalSections": {
+      "condicional_doppler_bilares": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Artéria hepática com fluxo presente",
+            "options": ["Sim", "Não"],
+            "mark": "arteria_hepatica_fluxo_presente"
+          },
+          {
+            "label": "Pico de velocidade sistólica da artéria hepática",
+            "options": ["Sim", "Não"],
+            "mark": "arteria_hepatica_pico_velocidade_sistolica"
+          },
+          {
+            "label": "Veia porta com fluxo presente",
+            "options": ["Sim", "Não"],
+            "mark": "veia_porta_fluxo_presente"
+          },
+          {
+            "label": "Pico de velocidade sistólica da veia porta",
+            "options": ["Sim", "Não"],
+            "mark": "veia_porta_pico_velocidade_sistolica"
+          }
+        ]
+      }
+    }
   },
   FID: {
     "Selects": [
@@ -1266,13 +1310,13 @@ const Questions: Record<string, {
     "Selects": [
       {
         "label": "É Pediátrico?",
-        "options": ["Sim", "Não"],
-        "mark": "pediatrico_aparelho_urinario"
+        "options": ["Não", "Sim"],
+        "mark": "condicional_pediatria"
       },
       {
-        "label": "Com Doppler",
-        "options": ["Sim", "Não"],
-        "mark": "aparelho_urinario_com_doppler"
+        "label": "Há Doppler",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_doppler_urinario"
       },
       {
         "label": "Rim direito com topografia, forma, contornos, mobilidade e dimensões normais",
@@ -1342,6 +1386,58 @@ const Questions: Record<string, {
     ],
     "Checkbox": [],
     "Markers": {},
+    "ConditionalSections": {
+      "condicional_doppler_urinario": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Artéria renal direita com fluxo presente",
+            "options": ["Sim", "Não"],
+            "mark": "arteria_renal_direita_fluxo_presente"
+          },
+          {
+            "label": "Pico de velocidade sistólica da artéria renal direita",
+            "options": ["Sim", "Não"],
+            "mark": "arteria_renal_direita_pico_velocidade_sistolica"
+          },
+          {
+            "label": "Artéria renal esquerda com fluxo presente",
+            "options": ["Sim", "Não"],
+            "mark": "arteria_renal_esquerda_fluxo_presente"
+          },
+          {
+            "label": "Pico de velocidade sistólica da artéria renal esquerda",
+            "options": ["Sim", "Não"],
+            "mark": "arteria_renal_esquerda_pico_velocidade_sistolica"
+          },
+          {
+            "label": "Relação aorta/artéria renal direita",
+            "options": ["Sim", "Não"],
+            "mark": "relacao_aorta_art_renal_direita"
+          },
+          {
+            "label": "Relação aorta/artéria renal esquerda",
+            "options": ["Sim", "Não"],
+            "mark": "relacao_aorta_art_renal_esquerda"
+          }
+        ]
+      },
+      "condicional_pediatria": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Rim direito com dimensões normais",
+            "options": ["Sim", "Não"],
+            "mark": "rim_direito_dimensoes_normais"
+          },
+          {
+            "label": "Rim esquerdo com dimensões normais",
+            "options": ["Sim", "Não"],
+            "mark": "rim_esquerdo_dimensoes_normais"
+          }
+        ]
+      }
+    }
   },
   RegiaoSacrococigea: {
     "Selects": [
@@ -1474,8 +1570,8 @@ const Questions: Record<string, {
         "mark": "condicional_tireoide_posterior"
       },
       {
-        "label": "Com Doppler",
-        "options": ["Sim", "Não"],
+        "label": "Há Doppler?",
+        "options": ["Não", "Sim"],
         "mark": "condicional_doppler_cervical"
       },
       {
@@ -1550,7 +1646,64 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
+    "Markers": {},
+    "ConditionalSections": {
+      "condicional_tireoide_cervical": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Tireóide Posterior?",
+            "options": ["Não", "Sim"],
+            "mark": "condicional_tireoide_posterior"
+          }
+        ]
+      },
+      "condicional_tireoide_posterior": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Há Doppler?",
+            "options": ["Não", "Sim"],
+            "mark": "condicional_doppler_cervical"
+          }
+        ]
+      },
+      "condicional_doppler_cervical": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Artéria tireoidea superior com fluxo presente",
+            "options": ["Sim", "Não"],
+            "mark": "art_tireoidea_superior_fluxo_presente"
+          },
+          {
+            "label": "Pico de velocidade sistólica da artéria tireoidea superior",
+            "options": ["Sim", "Não"],
+            "mark": "art_tireoidea_superior_pico_velocidade_sistolica"
+          },
+          {
+            "label": "Artéria tireoidea inferior com fluxo presente",
+            "options": ["Sim", "Não"],
+            "mark": "art_tireoidea_inferior_fluxo_presente"
+          },
+          {
+            "label": "Pico de velocidade sistólica da artéria tireoidea inferior",
+            "options": ["Sim", "Não"],
+            "mark": "art_tireoidea_inferior_pico_velocidade_sistolica"
+          },
+          {
+            "label": "Relação aorta/artéria tireoidea superior",
+            "options": ["Sim", "Não"],
+            "mark": "relacao_aorta_art_tireoidea_superior"
+          },
+          {
+            "label": "Relação aorta/artéria tireoidea inferior",
+            "options": ["Sim", "Não"],
+            "mark": "relacao_aorta_art_tireoidea_inferior"
+          }
+        ]
+      }
+    }
   },
   CouroCabeludo: {
     "Selects": [
@@ -1740,7 +1893,7 @@ const Questions: Record<string, {
       {
         "label": "Tem nódulo?",
         "options": ["Não", "Sim"],
-        "mark": "condicional_nodulo_gluteos"
+        "mark": "nodulo_gluteos"
       },
       {
         "label": "Onde está o Nódulo?",
@@ -1771,7 +1924,7 @@ const Questions: Record<string, {
       {
         "label": "Tem nódulo?",
         "options": ["Não", "Sim"],
-        "mark": "condicional_nodulo_coxa"
+        "mark": "nodulo_coxa"
       },
       {
         "label": "Onde está o Nódulo?",
@@ -1790,7 +1943,7 @@ const Questions: Record<string, {
       },
       {
         "label": "Há botinha?",
-        "options": ["Sim", "Não"],
+        "options": ["Não", "Sim"],
         "mark": "condicional_botinha_coxa"
       },
       {
@@ -1800,7 +1953,19 @@ const Questions: Record<string, {
       },
     ],
     "Checkbox": [],
-    "Markers": {}
+    "Markers": {},
+    "ConditionalSections": {
+      "condicional_botinha_coxa": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Pergunta botinha coxa",
+            "options": ["Sim", "Não"],
+            "mark": "botinha_coxa"
+          }
+        ]
+      }
+    }
   },
   Panturrilha: {
     "Selects": [
