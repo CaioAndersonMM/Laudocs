@@ -895,7 +895,9 @@ const Questions: Record<string, {
   },
   Total: {
     "Selects": [
-      { label: "É pedriático?", options: ["Sim", "Não"], mark: "total_pedriatico" }, //Se for precisamos tirar ou adicionar questoes
+      { "label": "É pedriático?", 
+        "options": ["Não", "Sim"], 
+        "mark": "condicional_pedriatico_total" },
       {
         "label": "Fígado com topografia e dimensões normais",
         "options": ["Sim", "Não"],
@@ -1023,7 +1025,54 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
+    "Markers": {},
+    "ConditionalSections": {
+      "condicional_pedriatico_total": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Rins com topografia, contornos, forma e mobilidade normais",
+            "options": ["Sim", "Não"],
+            "mark": "rins_topografia_contornos_normais"
+          },
+          {
+            "label": "Espessura e ecogenicidade do parênquima renal preservadas bilateralmente",
+            "options": ["Sim", "Não"],
+            "mark": "rins_parenquima_preservado"
+          },
+          {
+            "label": "Relação córtico-medular mantida de ambos os lados",
+            "options": ["Sim", "Não"],
+            "mark": "relacao_cortico_medular"
+          },
+          {
+            "label": "Ausência de sinais de hidronefrose ou dilatação dos sistemas pielocaliciais",
+            "options": ["Sim", "Não"],
+            "mark": "hidronefrose_dilatacao"
+          },
+          {
+            "label": "Espaços peri-renais livres",
+            "options": ["Sim", "Não"],
+            "mark": "espacos_peri_renais_livres"
+          },
+          {
+            "label": "Aorta com calibre e contornos normais",
+            "options": ["Sim", "Não"],
+            "mark": "aorta_calibre_contornos_normais"
+          },
+          {
+            "label": "Bexiga repleta, de forma normal, com paredes normoespessas e conteúdo anecóico",
+            "options": ["Sim", "Não"],
+            "mark": "bexiga_repleta_norma"
+          },
+          {
+            "label": "Ausência de massas ou líquido livre na cavidade abdominal",
+            "options": ["Sim", "Não"],
+            "mark": "masse_liquido_abdominal"
+          }
+        ]
+      }
+    }
   },
   RimEnxertado: {
     "Selects": [
@@ -1311,7 +1360,7 @@ const Questions: Record<string, {
       {
         "label": "É Pediátrico?",
         "options": ["Não", "Sim"],
-        "mark": "condicional_pediatria"
+        "mark": "condicional_pediatrico_urinario"
       },
       {
         "label": "Há Doppler",
@@ -1422,7 +1471,7 @@ const Questions: Record<string, {
           }
         ]
       },
-      "condicional_pediatria": {
+      "condicional_pediatrico_urinario": {
         "condition": "Sim",
         "fields": [
           {
