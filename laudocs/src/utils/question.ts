@@ -73,12 +73,12 @@ const Questions: Record<string, {
           {
             "label": "Artéria axilar com fluxo pulsátil, sem alterações",
             "options": ["Sim", "Não"],
-            "mark": "arteria_axilar_fluxo_normal"
+            "mark": "arteria_axilar_fluxo_normal_doppler"
           },
           {
             "label": "Veia axilar com fluxo fásico, sem alterações",
             "options": ["Sim", "Não"],
-            "mark": "veia_axilar_fluxo_normal"
+            "mark": "veia_axilar_fluxo_normal_doppler"
           }
         ]
       }
@@ -2907,14 +2907,14 @@ interface Substituicoes {
 }
 
 export const noduleQuestions = [
-  { mark: 'isoecogenio', label: 'Isoecogênico às hs', options: ['Sim', 'Não'] },
-  { mark: 'position', label: 'Paralelo', options: ['Sim', 'Não'] },
-  { mark: 'reforcoacustico', label: 'Reforço acústico posterior', options: ['Com', 'Sem'] },
-  { mark: 'sombra', label: 'Sombra', options: ['Sem', 'Com'] },
-  { mark: 'margens', label: 'Margens circunstritas', options: ['Sim', 'Não'] },
-  { mark: 'tecido', label: 'Tecido vizinho', options: ['Não comprometido', 'Comprometido'] },
-  { mark: 'vascuintranodal', label: 'Vascularização intranodal', options: ['Sim', 'Não'] },
-  { mark: 'medida', label: 'Medida em cm:', options: ['Sim', 'Não'], isNumberInput: true },
+  { mark: 'isoecogenio_nodulo', label: 'Isoecogênico às hs', options: ['Sim', 'Não'] },
+  { mark: 'position_nodulo', label: 'Paralelo', options: ['Sim', 'Não'] },
+  { mark: 'reforcoacustico_nodulo', label: 'Reforço acústico posterior', options: ['Com', 'Sem'] },
+  { mark: 'sombra_nodulo', label: 'Sombra', options: ['Sem', 'Com'] },
+  { mark: 'margens_nodulo', label: 'Margens circunstritas', options: ['Sim', 'Não'] },
+  { mark: 'tecido_nodulo', label: 'Tecido vizinho', options: ['Não comprometido', 'Comprometido'] },
+  { mark: 'vascuintranodal_nodulo', label: 'Vascularização intranodal', options: ['Sim', 'Não'] },
+  { mark: 'medida_nodulo', label: 'Medida em cm:', options: ['Sim', 'Não'], isNumberInput: true },
   // { label: 'Distante em X cm da pele e cm do mamilo (caso mama)', options: [] },
 
 ];
