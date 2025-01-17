@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Questions from '@/utils/question';
 import { preencherSubstituicoes, noduleQuestions } from '@/utils/question';
+import { useRouter } from 'next/navigation';
 
 interface FormUltrassomProps {
     tipo: string;
@@ -16,6 +17,7 @@ type FormState = {
 };
 
 const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: FormUltrassomProps) => {
+    const router = useRouter();
     const [data, setData] = useState(new Date().toISOString().split('T')[0]);
     const [formState, setFormState] = useState<FormState>({});
     const [hasNodule, setHasNodule] = useState(false);
@@ -73,6 +75,17 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
         }
     };
 
+    
+    const handleCondicionalChange = (questionLabel: string, questionMark: string, value: string) => {
+        setFormState((prevState) => ({
+            ...prevState,
+            [questionLabel]: value,
+            [questionMark]: value
+        }));
+
+        console.log(formState['Há Doppler?']);
+    };
+
     const handleInputChange = (questionLabel: string, value: string) => {
         setFormState((prevState) => ({
             ...prevState,
@@ -89,9 +102,70 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        formState.patientName = patientName;
+        formState.patientAge = patientAge;
+        formState.solicitingDoctor = solicitingDoctor;
+        formState.data = data;
 
-        console.log(JSON.stringify(formState));
-    };
+        if(formState['Tem nódulo?'] === 'Não') {
+            delete formState['Onde está o Nódulo?'];
+            delete formState['Nódulo na posição Esquerda'];
+            delete formState['Nódulo na posição Direita'];
+            delete formState['Nódulo na posição Ambas'];
+            Object.keys(formState).forEach(key => {
+                if (key.endsWith('_nodulo')) {
+                    delete formState[key];
+                }
+            });
+        }
+        if (formState['Há Doppler?'] === 'Não') {
+            delete formState['Há Doppler?'];
+
+            const Section = Questions[tipo];
+
+            if (Section?.ConditionalSections) {
+                Object.keys(Section.ConditionalSections).forEach(sectionKey => {
+                    const section = Section?.ConditionalSections?.[sectionKey];
+            
+                    if (section && section.fields) {
+                        // Remover os campos de `formState` que possuem `mark` ou `label` correspondentes
+                        section.fields.forEach(field => {
+                            if (field.mark && field.mark.endsWith('_doppler')) {
+                                delete formState[field.mark];
+                            }
+            
+                            if (field.label) {
+                                delete formState[field.label];
+                            }
+                        });
+            
+                        section.fields = section.fields.filter(field => {
+                            return !field.mark.endsWith('_doppler');
+                        });
+            
+                        if (section.fields.length === 0) {
+                            if (Section.ConditionalSections) {
+                                delete Section.ConditionalSections[sectionKey];
+                            }
+                        }
+                    }
+                });
+            }
+            
+        }
+
+        Object.keys(formState).forEach(key => {
+            if (key.startsWith('condicional_')) {
+                delete formState[key];
+            }
+        });
+        
+        if (typeof window !== "undefined") {
+          router.push(`/laudo?formState=${encodeURIComponent(JSON.stringify(formState))}`);
+        } else {
+          console.error("Router is not mounted in this environment.");
+        }
+      };
 
     return (
         <div>
@@ -115,7 +189,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                                         {select.label}
                                         <select
                                             value={typeof value === 'string' || typeof value === 'number' ? value : ''}
-                                            onChange={(e) => handleSelectChange(select.mark, e.target.value)}
+                                            onChange={(e) => handleCondicionalChange(select.label, select.mark, e.target.value)}
                                             className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                         >
                                             {select.options.map((option, idx) => (
