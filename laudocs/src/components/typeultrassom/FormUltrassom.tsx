@@ -12,14 +12,21 @@ interface FormUltrassomProps {
     solicitingDoctor: string;
 }
 
+type NoduleData = {
+    [key: string]: string;
+};
+
 type FormState = {
-    [key: string]: string | boolean | FormState;
+    [key: string]: string | boolean | FormState | { esquerda: NoduleData; direita: NoduleData } | NoduleData | { [key: string]: any };
+    noduleData: { esquerda: NoduleData; direita: NoduleData };
 };
 
 const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: FormUltrassomProps) => {
     const router = useRouter();
     const [data, setData] = useState(new Date().toISOString().split('T')[0]);
-    const [formState, setFormState] = useState<FormState>({});
+    const [formState, setFormState] = useState<FormState>({
+        noduleData: { esquerda: {}, direita: {} }
+    });
     const [hasNodule, setHasNodule] = useState(false);
     const [hasLinfonodo, setHasLinfonodo] = useState(false);
     const [noduleLocation, setNoduleLocation] = useState<string>('Esquerda');
@@ -27,7 +34,13 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
     const formQuestions = Questions[tipo] || { Selects: [], Checkbox: [], ConditionalSections: {} };
 
     useEffect(() => {
-        const initialFormState: FormState = {};
+        const initialFormState: FormState & { noduleData: { esquerda: NoduleData; direita: NoduleData } } = {
+            noduleData: {
+                esquerda: {},
+                direita: {},
+            },
+            dopplerData: {}
+        };
 
         formQuestions.Selects.forEach((question) => {
             initialFormState[question.label] = question.options[0] || "";
@@ -38,8 +51,8 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
         });
 
         noduleQuestions.forEach((question) => {
-            initialFormState[`esquerda_${question.mark}`] = question.options[0] || "";
-            initialFormState[`direita_${question.mark}`] = question.options[0] || "";
+            initialFormState.noduleData.esquerda[question.label] = question.options[0] || "";
+            initialFormState.noduleData.direita[question.label] = question.options[0] || "";
         });
 
         Object.entries(formQuestions.ConditionalSections || {}).forEach(([key, section]) => {
@@ -64,6 +77,21 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
 
         if (questionLabel === 'Tem nódulo?') {
             setHasNodule(value === 'Sim');
+
+            if (value === 'Sim') {
+                setFormState((prevState) => {
+                    const newState = { ...prevState };
+                    noduleQuestions.forEach((question) => {
+                        if (!newState.noduleData.esquerda[question.label]) {
+                            newState.noduleData.esquerda[question.label] = question.options[0] || "";
+                        }
+                        if (!newState.noduleData.direita[question.label]) {
+                            newState.noduleData.direita[question.label] = question.options[0] || "";
+                        }
+                    });
+                    return newState;
+                });
+            }
         }
 
         if (questionLabel === 'Linfonodos axilares têm aspecto não habitual?') {
@@ -75,15 +103,12 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
         }
     };
 
-    
     const handleCondicionalChange = (questionLabel: string, questionMark: string, value: string) => {
         setFormState((prevState) => ({
             ...prevState,
             [questionLabel]: value,
             [questionMark]: value
         }));
-
-        console.log(formState['Há Doppler?']);
     };
 
     const handleInputChange = (questionLabel: string, value: string) => {
@@ -100,49 +125,96 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
         }));
     };
 
+    const handleNoduleChange = (side: "esquerda" | "direita", questionLabel: string, value: string) => {
+
+        setFormState((prevState) => ({
+            ...prevState,
+            noduleData: {
+                ...prevState.noduleData,
+                [side]: {
+                    ...prevState.noduleData[side],
+                    [questionLabel]: value,
+                },
+            },
+        }));
+    };
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        formState.tipo = tipo;
         formState.patientName = patientName;
         formState.patientAge = patientAge;
         formState.solicitingDoctor = solicitingDoctor;
         formState.data = data;
 
-        if(formState['Tem nódulo?'] === 'Não') {
-            delete formState['Onde está o Nódulo?'];
-            delete formState['Nódulo na posição Esquerda'];
-            delete formState['Nódulo na posição Direita'];
-            delete formState['Nódulo na posição Ambas'];
-            Object.keys(formState).forEach(key => {
+        const cleanedFormState = Object.keys(formState).reduce((acc, key) => {
+            if (!key.includes('_')) {
+                acc[key] = formState[key];
+            }
+            return acc;
+        }, {} as FormState);
+
+        const updatedFormState = cleanedFormState;
+
+        if (hasNodule) {
+
+            if (updatedFormState['Onde está o Nódulo?'] === 'Esquerda') {
+                noduleQuestions.forEach((question) => {
+                    delete updatedFormState.noduleData.direita[question.label];
+                });
+            } else if (updatedFormState['Onde está o Nódulo?'] === 'Direita') {
+                noduleQuestions.forEach((question) => {
+                    delete updatedFormState.noduleData.esquerda[question.label];
+                });
+            } else {
+                noduleQuestions.forEach((question) => {
+                    if (!updatedFormState.noduleData.esquerda[question.label]) {
+                        updatedFormState.noduleData.esquerda[question.label] = question.options[0] || "";
+                    }
+                    if (!updatedFormState.noduleData.direita[question.label]) {
+                        updatedFormState.noduleData.direita[question.label] = question.options[0] || "";
+                    }
+                });
+            }
+
+        } else {
+            noduleQuestions.forEach((question) => {
+                delete updatedFormState.noduleData.esquerda[question.label];
+                delete updatedFormState.noduleData.direita[question.label];
+            });
+            Object.keys(updatedFormState).forEach(key => {
                 if (key.endsWith('_nodulo')) {
-                    delete formState[key];
+                    delete updatedFormState[key];
                 }
             });
         }
+
         if (formState['Há Doppler?'] === 'Não') {
-            delete formState['Há Doppler?'];
+            delete updatedFormState['Há Doppler?'];
 
             const Section = Questions[tipo];
 
             if (Section?.ConditionalSections) {
                 Object.keys(Section.ConditionalSections).forEach(sectionKey => {
                     const section = Section?.ConditionalSections?.[sectionKey];
-            
+
                     if (section && section.fields) {
                         // Remover os campos de `formState` que possuem `mark` ou `label` correspondentes
                         section.fields.forEach(field => {
                             if (field.mark && field.mark.endsWith('_doppler')) {
-                                delete formState[field.mark];
+                                delete updatedFormState[field.mark];
                             }
-            
+
                             if (field.label) {
-                                delete formState[field.label];
+                                delete updatedFormState[field.label];
                             }
                         });
-            
+
                         section.fields = section.fields.filter(field => {
                             return !field.mark.endsWith('_doppler');
                         });
-            
+
                         if (section.fields.length === 0) {
                             if (Section.ConditionalSections) {
                                 delete Section.ConditionalSections[sectionKey];
@@ -151,7 +223,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                     }
                 });
             }
-            
         }
 
         Object.keys(formState).forEach(key => {
@@ -159,13 +230,13 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                 delete formState[key];
             }
         });
-        
+
         if (typeof window !== "undefined") {
-          router.push(`/laudo?formState=${encodeURIComponent(JSON.stringify(formState))}`);
+            router.push(`/laudo?formState=${encodeURIComponent(JSON.stringify(updatedFormState))}`);
         } else {
-          console.error("Router is not mounted in this environment.");
+            console.error("Router is not mounted in this environment.");
         }
-      };
+    };
 
     return (
         <div>
@@ -298,15 +369,15 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                                                 {question.isNumberInput ? (
                                                     <input
                                                         type="number"
-                                                        value={formState[`esquerda_${question.mark}`] as string || ""}
-                                                        onChange={(e) => handleInputChange(`esquerda_${question.mark}`, e.target.value)}
+                                                        value={formState.noduleData.esquerda[question.label] || ""}
+                                                        onChange={(e) => handleNoduleChange("esquerda", question.mark, e.target.value)}
                                                         className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                         placeholder="Digite a medida"
                                                     />
                                                 ) : (
                                                     <select
-                                                        value={formState[`esquerda_${question.mark}`] as string || question.options[0]}
-                                                        onChange={(e) => handleInputChange(`esquerda_${question.mark}`, e.target.value)}
+                                                        value={formState.noduleData.esquerda[question.label] || question.options[0]}
+                                                        onChange={(e) => handleNoduleChange("esquerda", question.label, e.target.value)}
                                                         className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                     >
                                                         {question.options.map((option, idx) => (
@@ -332,15 +403,15 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                                                 {question.isNumberInput ? (
                                                     <input
                                                         type="number"
-                                                        value={formState[`direita_${question.mark}`] as string || ""}
-                                                        onChange={(e) => handleInputChange(`direita_${question.mark}`, e.target.value)}
+                                                        value={formState.noduleData.direita[question.label] || ""}
+                                                        onChange={(e) => handleNoduleChange("direita", question.mark, e.target.value)}
                                                         className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                         placeholder="Digite a medida"
                                                     />
                                                 ) : (
                                                     <select
-                                                        value={formState[`direita_${question.mark}`] as string || question.options[0]}
-                                                        onChange={(e) => handleInputChange(`direita_${question.mark}`, e.target.value)}
+                                                        value={formState.noduleData.direita[question.label] || question.options[0]}
+                                                        onChange={(e) => handleNoduleChange("direita", question.label, e.target.value)}
                                                         className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                     >
                                                         {question.options.map((option, idx) => (
@@ -356,7 +427,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                         )}
                     </div>
                 )}
-
                 {formQuestions.Checkbox.map((question, index) => (
                     <div className="mb-4" key={index}>
                         <label className="block text-lg font-semibold">
