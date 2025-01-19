@@ -17,7 +17,7 @@ const Questions: Record<string, {
         mark: 'mamas_local_nodulo',
       },
       {
-        label: 'Linfonodos axilares têm aspecto não habitual?',
+        label: 'Linfonodos têm aspecto não habitual?',
         options: ['Não', 'Sim'],
         mark: 'mamas_linfonodo',
       },
@@ -1517,9 +1517,9 @@ const Questions: Record<string, {
   Facial: {
     "Selects": [
       {
-        label: 'Linfonodos axilares têm aspecto não habitual?',
+        label: 'Linfonodos têm aspecto não habitual?',
         options: ['Não', 'Sim'],
-        mark: 'mamas_linfonodo',
+        mark: 'linfonodos_normais_facial',
       },
       {
         label: 'Onde está o Linfonodo?',
@@ -1546,16 +1546,6 @@ const Questions: Record<string, {
         "options": ["Sim", "Não"],
         "mark": "ausencia_alteracoes_pele_subcutaneo_direita"
       },
-      {
-        "label": "Linfonodos de aspecto e tamanho normais na lateral esquerda",
-        "options": ["Sim", "Não"],
-        "mark": "linfonodos_normais_esquerda"
-      },
-      {
-        "label": "Linfonodos de aspecto e tamanho normais na lateral direita",
-        "options": ["Sim", "Não"],
-        "mark": "linfonodos_normais_direita"
-      }
     ],
     "Checkbox": [],
     "Markers": {}
@@ -1609,6 +1599,16 @@ const Questions: Record<string, {
   Cervical: {
     "Selects": [
       {
+        "label": "Há Doppler?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_doppler_cervical"
+      },
+      {
+        "label": "Linfonodos têm aspecto não habitual?",
+        "options": ["Não", "Sim"],
+        "mark": "linfonodos_normais_cervical"
+      },
+      {
         "label": "Tem tireóide?",
         "options": ["Não", "Sim"],
         "mark": "condicional_tireoide_cervical"
@@ -1617,11 +1617,6 @@ const Questions: Record<string, {
         "label": "Tireóide Posterior?",
         "options": ["Não", "Sim"],
         "mark": "condicional_tireoide_posterior"
-      },
-      {
-        "label": "Há Doppler?",
-        "options": ["Não", "Sim"],
-        "mark": "condicional_doppler_cervical"
       },
       {
         "label": "Tireóide com topografia normal",
@@ -1688,11 +1683,6 @@ const Questions: Record<string, {
         "options": ["Sim", "Não"],
         "mark": "cordas_vocais_normais"
       },
-      {
-        "label": "Linfonodos cervicais com aspecto, tamanho e forma normais",
-        "options": ["Sim", "Não"],
-        "mark": "linfonodos_cervicais_normais"
-      }
     ],
     "Checkbox": [],
     "Markers": {},
@@ -1824,9 +1814,9 @@ const Questions: Record<string, {
         "mark": "estruturas_superficiais_sem_alteracoes_lateral_pescoco"
       },
       {
-        "label": "Linfonodos axilares têm aspecto não habitual?",
+        "label": "Linfonodos têm aspecto não habitual?",
         "options": ["Não", "Sim"],
-        "mark": "condicional_linfonodo_lateral_pescoco"
+        "mark": "linfonodos_normais_lateral_pescoco"
       },
       {
         "label": "Onde está o Linfonodo?",
@@ -1866,9 +1856,9 @@ const Questions: Record<string, {
         "mark": "estruturas_superficiais_sem_alteracoes_periauricular"
       },
       {
-        "label": "Linfonodos axilares têm aspecto não habitual?",
+        "label": "Linfonodos têm aspecto não habitual?",
         "options": ["Não", "Sim"],
-        "mark": "condicional_linfonodo_lateral_pescoco"
+        "mark": "linfo_nodos_normais_periauricular"
       },
       {
         "label": "Onde está o Linfonodo?",
@@ -2914,7 +2904,7 @@ export const noduleQuestions = [
   { mark: 'margens_nodulo', label: 'Margens circunstritas', options: ['Sim', 'Não'] },
   { mark: 'tecido_nodulo', label: 'Tecido vizinho', options: ['Não comprometido', 'Comprometido'] },
   { mark: 'vascuintranodal_nodulo', label: 'Vascularização intranodal', options: ['Sim', 'Não'] },
-  { mark: 'medida_nodulo', label: 'Medida em cm:', options: ['Sim', 'Não'], isNumberInput: true },
+  { mark: 'medida_nodulo', label: 'Medida em cm:', options: [], isNumberInput: true },
   // { label: 'Distante em X cm da pele e cm do mamilo (caso mama)', options: [] },
 
 ];
@@ -3000,7 +2990,7 @@ export const preencherSubstituicoes = (
       : '';
 
   const hasNodule = formState['Tem nódulo?'] === 'Sim';
-  const hasAbnormalLymphNodes = formState['Linfonodos axilares têm aspecto não habitual?'] === 'Sim';
+  const hasAbnormalLymphNodes = formState['Linfonodos têm aspecto não habitual?'] === 'Sim';
 
   substituicoes['noduleinfodireita'] = hasNodule ? noduleInfoDireitoString : '';
   substituicoes['noduleinfoesquerda'] = hasNodule ? noduleInfoEsquerdoString : '';
