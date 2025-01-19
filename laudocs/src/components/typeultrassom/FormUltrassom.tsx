@@ -16,16 +16,23 @@ type NoduleData = {
     [key: string]: string;
 };
 
+type ConditionalSectionData = {
+    conditionMet: boolean;
+    fields: { [key: string]: string };
+};
+
 type FormState = {
     [key: string]: string | boolean | FormState | { esquerda: NoduleData; direita: NoduleData } | NoduleData | { [key: string]: any };
     noduleData: { esquerda: NoduleData; direita: NoduleData };
+    conditionalData: { [key: string]: ConditionalSectionData };
 };
 
 const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: FormUltrassomProps) => {
     const router = useRouter();
     const [data, setData] = useState(new Date().toISOString().split('T')[0]);
     const [formState, setFormState] = useState<FormState>({
-        noduleData: { esquerda: {}, direita: {} }
+        noduleData: { esquerda: {}, direita: {} },
+        conditionalData: {}
     });
     const [hasNodule, setHasNodule] = useState(false);
     const [hasLinfonodo, setHasLinfonodo] = useState(false);
@@ -39,7 +46,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                 esquerda: {},
                 direita: {},
             },
-            dopplerData: {}
+            conditionalData: {},
         };
 
         formQuestions.Selects.forEach((question) => {
@@ -56,10 +63,15 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
         });
 
         Object.entries(formQuestions.ConditionalSections || {}).forEach(([key, section]) => {
+            initialFormState.conditionalData[key] = {
+                conditionMet: false,
+                fields: {},
+            };
             section.fields.forEach((field) => {
-                initialFormState[field.label] = field.options[0] || "";
+                initialFormState.conditionalData[key].fields[field.label] = field.options[0] || "";
             });
         });
+
 
         setFormState((prevState) => ({
             ...prevState,
@@ -70,6 +82,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
     }, [formQuestions]);
 
     const handleSelectChange = (questionLabel: string, value: string) => {
+        console.log(questionLabel, value);
         setFormState((prevState) => ({
             ...prevState,
             [questionLabel]: value
@@ -94,6 +107,10 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
             }
         }
 
+        if (questionLabel.endsWith('_doppler')) {
+            formState['Há Doppler?'] = value
+        }
+
         if (questionLabel === 'Linfonodos axilares têm aspecto não habitual?') {
             setHasLinfonodo(value === 'Sim');
         }
@@ -101,13 +118,36 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
         if (questionLabel === 'Onde está o Nódulo?') {
             setNoduleLocation(value);
         }
+
+        Object.entries(formQuestions.ConditionalSections || {}).forEach(([key, section]) => {
+            if (key === questionLabel) {
+                setFormState((prevState) => ({
+                    ...prevState,
+                    conditionalData: {
+                        ...prevState.conditionalData,
+                        [key]: {
+                            ...prevState.conditionalData[key],
+                            conditionMet: value === section.condition,
+                        },
+                    },
+                }));
+            }
+        });
     };
 
-    const handleCondicionalChange = (questionLabel: string, questionMark: string, value: string) => {
+    const handleConditionalChange = (sectionMark: string, fieldLabel: string, value: string) => {
         setFormState((prevState) => ({
             ...prevState,
-            [questionLabel]: value,
-            [questionMark]: value
+            conditionalData: {
+                ...prevState.conditionalData,
+                [sectionMark]: {
+                    ...prevState.conditionalData[sectionMark],
+                    fields: {
+                        ...prevState.conditionalData[sectionMark].fields,
+                        [fieldLabel]: value,
+                    },
+                },
+            },
         }));
     };
 
@@ -225,12 +265,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
             }
         }
 
-        Object.keys(formState).forEach(key => {
-            if (key.startsWith('condicional_')) {
-                delete formState[key];
-            }
-        });
-
         if (typeof window !== "undefined") {
             router.push(`/laudo?formState=${encodeURIComponent(JSON.stringify(updatedFormState))}`);
         } else {
@@ -259,8 +293,8 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                                     <label className="block text-lg font-semibold">
                                         {select.label}
                                         <select
-                                            value={typeof value === 'string' || typeof value === 'number' ? value : ''}
-                                            onChange={(e) => handleCondicionalChange(select.label, select.mark, e.target.value)}
+                                            value={formState[select.mark] as string || select.options[0]}
+                                            onChange={(e) => handleSelectChange(select.mark, e.target.value)}
                                             className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                         >
                                             {select.options.map((option, idx) => (
@@ -277,12 +311,10 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                                                         <label className="block text-lg font-semibold">
                                                             {field.label}
                                                             <select
-                                                                value={typeof formState[field.label] === 'boolean'
-                                                                    ? (formState[field.label] ? 'Sim' : 'Não')
-                                                                    : typeof formState[field.label] === 'string' || typeof formState[field.label] === 'number'
-                                                                        ? formState[field.label] as string | number
-                                                                        : field.options[0]}
-                                                                onChange={(e) => handleInputChange(field.label, e.target.value)}
+                                                                value={typeof formState.conditionalData[select.mark]?.fields[field.label] === 'boolean'
+                                                                    ? (formState.conditionalData[select.mark]?.fields[field.label] ? 'Sim' : 'Não')
+                                                                    : formState.conditionalData[select.mark]?.fields[field.label] || field.options[0]}
+                                                                onChange={(e) => handleConditionalChange(select.mark, field.label, e.target.value)}
                                                                 className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                             >
                                                                 {field.options.map((option, idx) => (
