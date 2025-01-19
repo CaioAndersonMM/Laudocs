@@ -2,46 +2,13 @@
 
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
+import { formatDate, processFormState } from '../../utils/processFormState';
 
 const Laudo = () => {
     const searchParams = useSearchParams();
     const formState = searchParams ? searchParams.get('formState') : null;
 
-    const formatDate = (dateString: string) => {
-        const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'long', year: 'numeric' };
-        return new Date(dateString).toLocaleDateString('pt-BR', options);
-    };
-
-    let parsedFormState = formState ? JSON.parse(formState as string) : {};
-
-    let newParsedFormState: { [key: string]: any } = {};
-
-    if (parsedFormState['Tem nódulo?'] === 'Sim') {
-        if (parsedFormState['Onde está o Nódulo?'] === 'Esquerda') {
-            newParsedFormState['Nódulo esquerdo'] = 'Presente';
-        } else if (parsedFormState['Onde está o Nódulo?'] === 'Direita') {
-            newParsedFormState['Nódulo direito'] = 'Presente';
-        } else if (parsedFormState['Onde está o Nódulo?'] === 'Ambos') {
-            newParsedFormState['Nódulo esquerdo'] = 'Presente';
-            newParsedFormState['Nódulo direito'] = 'Presente';
-        }
-        newParsedFormState = { ['Presença de nódulo']: 'Sim', ...newParsedFormState };
-    } else if (parsedFormState['Tem nódulo?'] === 'Não') {
-        newParsedFormState['Nenhum nódulo encontrado'] = 'Sim';
-    }
-
-    if (parsedFormState['Há Doppler?'] === 'Sim') {
-        newParsedFormState['Doppler presente'] = 'Sim';
-    }
-
-    delete parsedFormState['Tem nódulo?'];
-    delete parsedFormState['Onde está o Nódulo?'];
-    delete parsedFormState['Há Doppler?'];
-
-    parsedFormState = { ...newParsedFormState, ...parsedFormState };
-
-    const idadePaciente = parsedFormState.patientAge;
-    delete parsedFormState.patientAge;
+    const { parsedFormState, idadePaciente } = processFormState(formState);
 
     const renderField = (key: string, value: string) => {
         console.log(key, value);
@@ -74,7 +41,7 @@ const Laudo = () => {
                         height: 100%;
                         page-break-inside: avoid;
                     }
-                    .print-header, .print-footer {Q
+                    .print-header, .print-footer {
                         page-break-before: always;
                     }
                 }
@@ -111,7 +78,7 @@ const Laudo = () => {
                 <h2 className="text-2xl font-semibold mb-4 text-cyan-900 opacity-70">Resultados do Ultrassom</h2>
                 <div className="space-y-4">
                     {Object.entries(parsedFormState)
-                        .filter(([key, value]) => /^[A-Z]/.test(key)) // Filtrar os que começm letra maiúscula
+                        .filter(([key, value]) => value === 'Sim' || value === 'Normal' || value === 'Alterado')
                         .map(([key, value]) => renderField(key, value as string))}
                 </div>
                 {parsedFormState.noduleData && (
@@ -145,7 +112,7 @@ const Laudo = () => {
                                     })()}
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    {Object.entries(parsedFormState.conditionalData[sectionKey].fields).map(([key, value]) =>
+                                    {Object.entries(parsedFormState.conditionalData[sectionKey].fields).map(([key, value]) => 
                                         renderField(key, value as string)
                                     )}
                                 </div>
