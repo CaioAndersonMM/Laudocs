@@ -14,40 +14,41 @@ const Laudo = () => {
 
     let parsedFormState = formState ? JSON.parse(formState as string) : {};
 
-    console.log(parsedFormState.noduleData.esquerda);
+    let newParsedFormState: { [key: string]: any } = {};
 
     if (parsedFormState['Tem nódulo?'] === 'Sim') {
-        delete parsedFormState['Tem nódulo?'];
-
         if (parsedFormState['Onde está o Nódulo?'] === 'Esquerda') {
-            parsedFormState['Nódulo esquerdo'] = 'Presente';
+            newParsedFormState['Nódulo esquerdo'] = 'Presente';
         } else if (parsedFormState['Onde está o Nódulo?'] === 'Direita') {
-            parsedFormState['Nódulo direito'] = 'Presente';
+            newParsedFormState['Nódulo direito'] = 'Presente';
         } else if (parsedFormState['Onde está o Nódulo?'] === 'Ambos') {
-            parsedFormState['Nódulo esquerdo'] = 'Presente';
-            parsedFormState['Nódulo direito'] = 'Presente';
+            newParsedFormState['Nódulo esquerdo'] = 'Presente';
+            newParsedFormState['Nódulo direito'] = 'Presente';
         }
-
-        parsedFormState['Presença de nódulo'] = 'Sim';
-        delete parsedFormState['Onde está o Nódulo?'];
+        newParsedFormState = { ['Presença de nódulo']: 'Sim', ...newParsedFormState };
     } else if (parsedFormState['Tem nódulo?'] === 'Não') {
-        parsedFormState['Nenhum nódulo encontrado'] = 'Sim';
-        delete parsedFormState['Tem nódulo?'];
+        newParsedFormState['Nenhum nódulo encontrado'] = 'Sim';
     }
 
     if (parsedFormState['Há Doppler?'] === 'Sim') {
-        parsedFormState['Doppler presente'] = 'Sim';
-        delete parsedFormState['Há Doppler?'];
+        newParsedFormState['Doppler presente'] = 'Sim';
     }
+
+    delete parsedFormState['Tem nódulo?'];
+    delete parsedFormState['Onde está o Nódulo?'];
+    delete parsedFormState['Há Doppler?'];
+
+    parsedFormState = { ...newParsedFormState, ...parsedFormState };
 
     const idadePaciente = parsedFormState.patientAge;
     delete parsedFormState.patientAge;
 
     const renderField = (key: string, value: string) => {
+        console.log(key, value);
         let label = key;
         if (value === 'Com' || value === 'Sem') {
             label = `${value} ${key}`;
-        } else if (value === 'Comprometido' || value === 'Não comprometido') {
+        } else if (value === 'Comprometido' || value === 'Não comprometido' || value === 'Normal' || value === 'Alterado') {
             label = `${key} ${value}`;
         }
         return (
@@ -61,7 +62,24 @@ const Laudo = () => {
 
     return (
         <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
-            <header className="text-center mb-8">
+            <style jsx>{`
+                @media print {
+                    body {
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                    }
+                    .print-container {
+                        width: 100%;
+                        height: 100%;
+                        page-break-inside: avoid;
+                    }
+                    .print-header, .print-footer {Q
+                        page-break-before: always;
+                    }
+                }
+            `}</style>
+            <header className="text-center mb-8 print-header">
                 <h1 className="text-3xl font-bold text-cyan-700">Consultório Doutor Mauro</h1>
                 <p className="text-lg text-gray-600">Ultrassom de {parsedFormState.tipo}</p>
             </header>
@@ -69,7 +87,7 @@ const Laudo = () => {
             <p className="mb-8 text-gray-900 text-justify leading-relaxed">
                 Exame realizado em equipamento dinâmico, com transdutor linear, bidimensional, na frequência de 12,0 MHz.
             </p>
-            <section className="mb-8">
+            <section className="mb-8 print-container">
                 <div className="grid grid-cols-2 gap-4">
                     <div>
                         <label className="block text-lg font-semibold text-cyan-900 opacity-55">Nome do Paciente</label>
@@ -89,18 +107,18 @@ const Laudo = () => {
                     </div>
                 </div>
             </section>
-            <section className="mb-8">
+            <section className="mb-8 print-container">
                 <h2 className="text-2xl font-semibold mb-4 text-cyan-900 opacity-70">Resultados do Ultrassom</h2>
                 <div className="space-y-4">
                     {Object.entries(parsedFormState)
-                        .filter(([key, value]) => value === 'Sim')
+                        .filter(([key, value]) => /^[A-Z]/.test(key)) // Filtrar os que começm letra maiúscula
                         .map(([key, value]) => renderField(key, value as string))}
                 </div>
                 {parsedFormState.noduleData && (
                     <div className="grid grid-cols-2 gap-4 mt-4">
                         {parsedFormState.noduleData.esquerda && Object.keys(parsedFormState.noduleData.esquerda).length > 0 && (
                             <div>
-                                <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded max-w-xs mb-3">Nódulo esquerdo</h3>
+                                <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded max-w-xs mb-3 text-ce">Nódulo esquerdo</h3>
                                 <div className="space-y-2">
                                     {Object.entries(parsedFormState.noduleData.esquerda).map(([key, value]) => renderField(key, value as string))}
                                 </div>
@@ -116,22 +134,28 @@ const Laudo = () => {
                         )}
                     </div>
                 )}
-
-                {parsedFormState.dopplerData && (
-                    <div className="grid grid-cols-2 gap-4 mt-4">
-                        {Object.keys(parsedFormState.dopplerData).length > 0 && (
+                {parsedFormState.conditionalData && Object.keys(parsedFormState.conditionalData).map((sectionKey) => (
+                    <div key={sectionKey} className="mt-4 print-container">
+                        {parsedFormState.conditionalData[sectionKey].conditionMet && Object.keys(parsedFormState.conditionalData[sectionKey].fields).length > 0 && (
                             <div>
-                                <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded max-w-xs mb-3">Doppler</h3>
-                                <div className="space-y-2">
-                                    {Object.entries(parsedFormState.dopplerData).map(([key, value]) => renderField(key, value as string))}
+                                <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded mb-3 text-center">
+                                    {(() => {
+                                        const sectionName = sectionKey.split('_').pop();
+                                        return sectionName ? sectionName.charAt(0).toUpperCase() + sectionName.slice(1) : '';
+                                    })()}
+                                </h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    {Object.entries(parsedFormState.conditionalData[sectionKey].fields).map(([key, value]) =>
+                                        renderField(key, value as string)
+                                    )}
                                 </div>
                             </div>
                         )}
                     </div>
-                )}
+                ))}
             </section>
 
-            <div className="mt-24 text-center">
+            <div className="mt-24 text-center print-footer">
                 <hr className="border-t border-gray-900 mb-4 w-1/2 mx-auto" />
                 <p className="text-lg font-semibold text-gray-500">Dr. MAURO P. F. DE CARVALHO JÚNIOR</p>
                 <p className="text-lg text-gray-600">CRM-RN 4868</p>
