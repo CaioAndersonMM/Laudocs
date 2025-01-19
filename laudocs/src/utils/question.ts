@@ -143,11 +143,11 @@ const Questions: Record<string, {
         options: ['Não', 'Sim'],
         mark: 'pelvis_nodulo',
       },
-      // {
-      //   label: 'Onde está o Nódulo?',
-      //   options: ['Esquerda', 'Direita', 'Ambas'],
-      //   mark: 'pelvis_local_nodulo',
-      // },
+      {
+        label: 'Onde está o Nódulo?',
+        options: ['Esquerda', 'Direita', 'Ambas'],
+        mark: 'pelvis_local_nodulo',
+      },
       {
         label: 'Próstata em localização habitual',
         options: ['Sim', 'Não'],
@@ -2888,14 +2888,6 @@ const Questions: Record<string, {
 
 };
 
-interface FormState {
-  [key: string]: string | boolean | FormState;
-}
-
-interface Substituicoes {
-  [key: string]: string | { [key: string]: string };
-}
-
 export const noduleQuestions = [
   { mark: 'isoecogenio_nodulo', label: 'Isoecogênico às hs', options: ['Sim', 'Não'] },
   { mark: 'position_nodulo', label: 'Paralelo', options: ['Sim', 'Não'] },
@@ -2908,116 +2900,5 @@ export const noduleQuestions = [
   // { label: 'Distante em X cm da pele e cm do mamilo (caso mama)', options: [] },
 
 ];
-export const preencherSubstituicoes = (
-  formState: FormState,
-  tipo: string,
-  patient: string,
-  age: string,
-  data: string,
-  doctor: string
-): Substituicoes => {
-  const substituicoes: Substituicoes = {
-    typeUltrassom: tipo,
-    patient,
-    age,
-    data,
-    doctor,
-  };
-
-  const noduleLocation = formState['Onde está o Nódulo?'];
-  substituicoes['noduledireita'] =
-    noduleLocation === 'Direita' || noduleLocation === 'Ambas'
-      ? 'Nódulo encontrado na axila direita.'
-      : '';
-  substituicoes['noduleesquerda'] =
-    noduleLocation === 'Esquerda' || noduleLocation === 'Ambas'
-      ? 'Nódulo encontrado na axila esquerda.'
-      : '';
-
-  const noduleInfoEsquerdo: string[] = [];
-  const noduleInfoDireito: string[] = [];
-
-  if (noduleLocation === 'Direita' || noduleLocation === 'Ambas') {
-    for (let i = 0; i < noduleQuestions.length; i++) {
-      const question = noduleQuestions[i];
-      const questionAnswer = formState['direita_' + question.mark];
-      console.log(`Question: ${question.label}, Answer: ${questionAnswer}`);
-      if (questionAnswer === 'Sim') {
-        noduleInfoEsquerdo.push(question.label);
-      } else if (questionAnswer === 'Não') {
-      } else if ((questionAnswer === 'Com') || (questionAnswer === 'Sem')) {
-        noduleInfoEsquerdo.push(questionAnswer + ' ' + question.label);
-      } else {
-        noduleInfoEsquerdo.push(question.label + ' ' + questionAnswer);
-      }
-    }
-  }
-
-  if (noduleLocation === 'Esquerda' || noduleLocation === 'Ambas') {
-    for (let i = 0; i < noduleQuestions.length; i++) {
-      const question = noduleQuestions[i];
-      const questionAnswer = formState['esquerda_' + question.mark];
-      console.log(`Question: ${question.label}, Answer: ${questionAnswer}`);
-      if (questionAnswer === 'Sim') {
-        noduleInfoDireito.push(question.label);
-      } else if (questionAnswer === 'Não') {
-      } else if ((questionAnswer === 'Com') || (questionAnswer === 'Sem')) {
-        noduleInfoDireito.push(questionAnswer + ' ' + question.label);
-      } else {
-        noduleInfoDireito.push(question.label + ' ' + questionAnswer);
-      }
-    }
-  }
-
-  let noduleInfoDireitoString = noduleInfoDireito.join(', ');
-  noduleInfoDireitoString = noduleInfoDireitoString.toLowerCase();
-  noduleInfoDireitoString =
-    noduleInfoDireitoString.charAt(0).toUpperCase() + noduleInfoDireitoString.slice(1);
-
-  let noduleInfoEsquerdoString = noduleInfoEsquerdo.join(', ');
-  noduleInfoEsquerdoString = noduleInfoEsquerdoString.toLowerCase();
-  noduleInfoEsquerdoString =
-    noduleInfoEsquerdoString.charAt(0).toUpperCase() + noduleInfoEsquerdoString.slice(1);
-
-  const lymphNodeLocation = formState['Onde está o Linfonodo?'];
-  substituicoes['linfonododireito'] =
-    lymphNodeLocation === 'Direita' || lymphNodeLocation === 'Ambas'
-      ? 'Linfonodo axilar direito com aspecto não habitual.'
-      : '';
-  substituicoes['linfonodoesquerdo'] =
-    lymphNodeLocation === 'Esquerda' || lymphNodeLocation === 'Ambas'
-      ? 'Linfonodo axilar esquerdo com aspecto não habitual.'
-      : '';
-
-  const hasNodule = formState['Tem nódulo?'] === 'Sim';
-  const hasAbnormalLymphNodes = formState['Linfonodos têm aspecto não habitual?'] === 'Sim';
-
-  substituicoes['noduleinfodireita'] = hasNodule ? noduleInfoDireitoString : '';
-  substituicoes['noduleinfoesquerda'] = hasNodule ? noduleInfoEsquerdoString : '';
-
-  substituicoes['conclusao'] =
-    hasNodule || hasAbnormalLymphNodes
-      ? 'Alterações identificadas em ultrassom.'
-      : 'Sem alterações significativas.';
-
-  // Processamento dos testículos
-  const testiculoEsquerdo = formState['Testículo Esquerdo em cm:'];
-  const testiculoDireito = formState['Testículo Direito em cm:'];
-
-  if (testiculoEsquerdo && testiculoEsquerdo !== '') {
-    substituicoes['testiculoesquerdo'] = `Testículo esquerdo: ${testiculoEsquerdo} cm.`;
-  } else {
-    substituicoes['testiculoesquerdo'] = 'Testículo esquerdo não informado.';
-  }
-
-  if (testiculoDireito && testiculoDireito !== '') {
-    substituicoes['testiculodireito'] = `Testículo direito: ${testiculoDireito} cm.`;
-  } else {
-    substituicoes['testiculodireito'] = 'Testículo direito não informado.';
-  }
-
-  return substituicoes;
-};
-
 
 export default Questions;
