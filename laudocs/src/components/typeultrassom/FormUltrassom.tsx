@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Questions from '@/utils/question';
-import { preencherSubstituicoes, noduleQuestions } from '@/utils/question';
+import { noduleQuestions } from '@/utils/question';
 import { useRouter } from 'next/navigation';
 
 interface FormUltrassomProps {
@@ -111,7 +111,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
             formState['Há Doppler?'] = value
         }
 
-        if (questionLabel === 'Linfonodos axilares têm aspecto não habitual?') {
+        if (questionLabel === 'Linfonodos têm aspecto não habitual?') {
             setHasLinfonodo(value === 'Sim');
         }
 
