@@ -8,12 +8,12 @@ const Laudo = () => {
     const searchParams = useSearchParams();
     const formState = searchParams ? searchParams.get('formState') : null;
 
-    const { parsedFormState, idadePaciente } = processFormState(formState); // Nosso tratamento de dados do formulário
+    const { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, medicoSolicitante, noduleData, condicionalData } = processFormState(formState);
 
     const renderField = (key: string, value: string) => {
         console.log(key, value);
         let label = key;
-        if (value === 'Com' || value === 'Sem') {
+        if (value === 'Com' || value === 'Sem' || value == 'Presença' || value === 'Ausência' || value === 'Presença de' || value === 'Ausência de') {
             label = `${value} ${key}`;
         } else if (value === 'Comprometido' || value === 'Não comprometido' || value === 'Normal' || value === 'Alterado') {
             label = `${key} ${value}`;
@@ -48,7 +48,7 @@ const Laudo = () => {
             `}</style>
             <header className="text-center mb-8 print-header">
                 <h1 className="text-3xl font-bold text-cyan-700">Consultório Doutor Mauro</h1>
-                <p className="text-lg text-gray-600">Ultrassom de {parsedFormState.tipo}</p>
+                <p className="text-lg text-gray-600">Ultrassom de {tipoExame}</p>
             </header>
 
             <p className="mb-8 text-gray-900 text-justify leading-relaxed">
@@ -58,7 +58,7 @@ const Laudo = () => {
                 <div className="grid grid-cols-2 gap-4">
                     <div>
                         <label className="block text-lg font-semibold text-cyan-900 opacity-55">Nome do Paciente</label>
-                        <p className="mt-2 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{parsedFormState.patientName}</p>
+                        <p className="mt-2 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{nomePaciente}</p>
                     </div>
                     <div>
                         <label className="block text-lg font-semibold text-cyan-900 opacity-55">Idade do Paciente</label>
@@ -66,11 +66,11 @@ const Laudo = () => {
                     </div>
                     <div>
                         <label className="block text-lg font-semibold text-cyan-900 opacity-55">Médico Solicitante</label>
-                        <p className="mt-2 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{parsedFormState.solicitingDoctor}</p>
+                        <p className="mt-2 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{medicoSolicitante}</p>
                     </div>
                     <div>
                         <label className="block text-lg font-semibold text-cyan-900 opacity-55">Data</label>
-                        <p className="mt-2 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold">{formatDate(parsedFormState.data)}</p>
+                        <p className="mt-2 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold">{formatDate(dataExame)}</p>
                     </div>
                 </div>
             </section>
@@ -78,36 +78,36 @@ const Laudo = () => {
                 <h2 className="text-2xl font-semibold mb-4 text-cyan-900 opacity-70">Resultados do Ultrassom</h2>
                 <div className="space-y-4">
                     {Object.entries(parsedFormState)
-                        .filter(([key, value]) => value === 'Sim' || value === 'Normal' || value === 'Alterado')
+                        .filter(([key, value]) => value !== 'Não')
                         .map(([key, value]) => renderField(key, value as string))}
                 </div>
-                {parsedFormState.noduleData && (
+                {noduleData && (
                     <div className="grid grid-cols-2 gap-4 mt-4">
-                        {parsedFormState.noduleData.esquerda && Object.keys(parsedFormState.noduleData.esquerda).length > 0 && (
+                        {noduleData.esquerda && Object.keys(noduleData.esquerda).length > 0 && (
                             <div>
                                 <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded max-w-xs mb-3 text-ce">Nódulo esquerdo</h3>
                                 <div className="space-y-2">
-                                    {Object.entries(parsedFormState.noduleData.esquerda)
-                                        .filter(([key, value]) => value === 'Sim' || value === 'Normal' || value === 'Alterado')
+                                    {Object.entries(noduleData.esquerda)
+                                        .filter(([key, value]) => value !== 'Não')
                                         .map(([key, value]) => renderField(key, value as string))}
                                 </div>
                             </div>
                         )}
-                        {parsedFormState.noduleData.direita && Object.keys(parsedFormState.noduleData.direita).length > 0 && (
+                        {noduleData.direita && Object.keys(noduleData.direita).length > 0 && (
                             <div>
                                 <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded max-w-xs">Nódulo direito</h3>
                                 <div className="space-y-2">
-                                    {Object.entries(parsedFormState.noduleData.direita)
-                                        .filter(([key, value]) => value === 'Sim' || value === 'Normal' || value === 'Alterado')
+                                    {Object.entries(noduleData.direita)
+                                        .filter(([key, value]) => value !== 'Não')
                                         .map(([key, value]) => renderField(key, value as string))}
                                 </div>
                             </div>
                         )}
                     </div>
                 )}
-                {parsedFormState.conditionalData && Object.keys(parsedFormState.conditionalData).map((sectionKey) => (
+                {condicionalData && Object.keys(condicionalData).map((sectionKey) => (
                     <div key={sectionKey} className="mt-4 print-container">
-                        {parsedFormState.conditionalData[sectionKey].conditionMet && Object.keys(parsedFormState.conditionalData[sectionKey].fields).length > 0 && (
+                        {condicionalData[sectionKey].conditionMet && Object.keys(condicionalData[sectionKey].fields).length > 0 && (
                             <div>
                                 <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded mb-3 text-center">
                                     {(() => {
@@ -116,8 +116,8 @@ const Laudo = () => {
                                     })()}
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    {Object.entries(parsedFormState.conditionalData[sectionKey].fields)
-                                        .filter(([key, value]) => value === 'Sim' || value === 'Normal' || value === 'Alterado')
+                                    {Object.entries(condicionalData[sectionKey].fields)
+                                        .filter(([key, value]) => value !== 'Não')
                                         .map(([key, value]) =>
                                             renderField(key, value as string)
                                         )}
