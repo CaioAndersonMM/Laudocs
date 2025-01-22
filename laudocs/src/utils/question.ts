@@ -1,7 +1,6 @@
 const Questions: Record<string, {
   Selects: { label: string; options: string[]; isNumberInput?: boolean; isTextInput?: boolean; isDateInput?: boolean; mark: string }[];
   Checkbox: { label: string; mark: string }[];
-  Markers: { [key: string]: string };
   ConditionalSections?: { [key: string]: { condition: string; fields: { label: string; options: string[]; mark: string }[] } }
 }> = {
   Mamas: {
@@ -34,13 +33,6 @@ const Questions: Record<string, {
       },
     ],
     Checkbox: [],
-    Markers: {
-      noduledireita: 'Nódulo na Direita',
-      noduleesquerda: 'Nódulo na Esquerda',
-      linfonododireito: 'Linfonodo na Direita',
-      linfonodoesquerdo: 'Linfonodo na Esquerda',
-      conclusao: 'Conclusão sobre o exame',
-    },
   },
   Axila: {
     Selects: [
@@ -61,27 +53,22 @@ const Questions: Record<string, {
       },
     ],
     Checkbox: [],
-    Markers: {
-      "noduledireita": "Nódulo na Direita",
-      "noduleesquerda": "Nódulo na Esquerda",
-      "conclusao": "Conclusão do diagnóstico"
-    },
     ConditionalSections: {
       "condicional_axila_doppler": {
         "condition": "Sim",
         "fields": [
           {
-            "label": "Artéria axilar com fluxo pulsátil, sem alterações",
+            "label": "Artéria axilar com fluxo pulsátil",
             "options": ["Sim", "Não"],
             "mark": "arteria_axilar_fluxo_normal_doppler"
           },
           {
-            "label": "Veia axilar com fluxo fásico, sem alterações",
+            "label": "Veia axilar com fluxo fásico",
             "options": ["Sim", "Não"],
             "mark": "veia_axilar_fluxo_normal_doppler"
           }
         ]
-      }
+      },
     }
   },
   Escrotal: {
@@ -130,11 +117,6 @@ const Questions: Record<string, {
       },
     ],
     Checkbox: [],
-    Markers: {
-      noduledireita: 'Nódulo na Direita',
-      noduleesquerda: 'Nódulo na Esquerda',
-      conclusao: 'Conclusão do diagnóstico',
-    },
   },
   Pelvis: {
     Selects: [
@@ -213,7 +195,6 @@ const Questions: Record<string, {
       },
     ],
     Checkbox: [],
-    Markers: {},
   },
   Prostata: {
     Selects: [
@@ -283,7 +264,6 @@ const Questions: Record<string, {
       },
     ],
     Checkbox: [],
-    Markers: {},
   },
   Transretal: {
     Selects: [
@@ -347,7 +327,6 @@ const Questions: Record<string, {
       },
     ],
     Checkbox: [],
-    Markers: {},
   },
   Obstetrica: {
     Selects: [
@@ -489,7 +468,6 @@ const Questions: Record<string, {
       },
     ],
     Checkbox: [],
-    Markers: {},
   },
   Morfologicas: {
     "Selects": [
@@ -620,9 +598,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {
-
-    }
   },
   Transvarginal: {
     "Selects": [
@@ -738,15 +713,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {
-      "espessura_endometrial_mm": "Espessura do eco endometrial (em mm)",
-      "medidas_utero_cm": "Medidas do útero (cm)",
-      "volume_utero_cm3": "Volume do útero (cm³)",
-      "medidas_ovario_direito_cm": "Medidas do ovário direito (cm)",
-      "volume_ovario_direito_cm3": "Volume do ovário direito (cm³)",
-      "medidas_ovario_esquerdo_cm": "Medidas do ovário esquerdo (cm)",
-      "volume_ovario_esquerdo_cm3": "Volume do ovário esquerdo (cm³)"
-    },
     "ConditionalSections": {
       "condicional_transvarginal_doppler": {
         "condition": "Sim",
@@ -799,7 +765,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
 
   },
   Superior: {
@@ -891,13 +856,14 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   Total: {
     "Selects": [
-      { "label": "É pedriático?", 
-        "options": ["Não", "Sim"], 
-        "mark": "condicional_pedriatico_total" },
+      {
+        "label": "É pedriático?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_pedriatico_total"
+      },
       {
         "label": "Fígado com topografia e dimensões normais",
         "options": ["Sim", "Não"],
@@ -1025,7 +991,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_pedriatico_total": {
         "condition": "Sim",
@@ -1148,7 +1113,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   Hipocondrio: {
     "Selects": [
@@ -1224,7 +1188,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   FigadoViaBilares: {
     "Selects": [
@@ -1300,7 +1263,6 @@ const Questions: Record<string, {
       },
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_doppler_bilares": {
         "condition": "Sim",
@@ -1353,7 +1315,7 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
+    
   },
   AparelhoUrinario: {
     "Selects": [
@@ -1434,7 +1396,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_doppler_urinario": {
         "condition": "Sim",
@@ -1512,7 +1473,7 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
+    
   },
   Facial: {
     "Selects": [
@@ -1548,7 +1509,7 @@ const Questions: Record<string, {
       },
     ],
     "Checkbox": [],
-    "Markers": {}
+    
   },
   Tireoide: {
     "Selects": [
@@ -1594,7 +1555,7 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
+    
   },
   Cervical: {
     "Selects": [
@@ -1685,7 +1646,6 @@ const Questions: Record<string, {
       },
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_tireoide_cervical": {
         "condition": "Sim",
@@ -1758,7 +1718,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   Glandulas: {
     "Selects": [
@@ -1804,7 +1763,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   LateralPescoco: {
     "Selects": [
@@ -1825,7 +1783,6 @@ const Questions: Record<string, {
       },
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   RegiaoParietal: {
     "Selects": [
@@ -1841,7 +1798,6 @@ const Questions: Record<string, {
       },
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   RegiaoAuricularSubmentoniana: {
     "Selects": [
@@ -1867,7 +1823,6 @@ const Questions: Record<string, {
       },
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   Transfontanelear: {
     "Selects": [
@@ -1925,7 +1880,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   Gluteos: {
     "Selects": [
@@ -1951,7 +1905,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   Coxa: {
     "Selects": [
@@ -1992,7 +1945,6 @@ const Questions: Record<string, {
       },
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_botinha_coxa": {
         "condition": "Sim",
@@ -2035,7 +1987,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_doppler_panturrilha": {
         "condition": "Sim",
@@ -2083,7 +2034,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_doppler_pe": {
         "condition": "Sim",
@@ -2151,7 +2101,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_botinha_perna": {
         "condition": "Sim",
@@ -2219,7 +2168,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_doppler_punho": {
         "condition": "Sim",
@@ -2272,7 +2220,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_botinha_tornozelo": {
         "condition": "Sim",
@@ -2316,7 +2263,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   Quadril: {
     "Selects": [
@@ -2364,9 +2310,8 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
-  Ombro : {
+  Ombro: {
     Selects: [
       {
         "label": "Tendão da cabeça longa do bíceps bem visualizado, sem sinais de rotura e sinais flogísticos",
@@ -2395,8 +2340,7 @@ const Questions: Record<string, {
       }
     ],
     Checkbox: [],
-    Markers: {},
-     ConditionalSections: {
+    ConditionalSections: {
       "condicional_doppler_ombro": {
         "condition": "Sim",
         "fields": [
@@ -2414,7 +2358,7 @@ const Questions: Record<string, {
       }
     }
   },
-  Mao : {
+  Mao: {
     "Selects": [
       {
         "label": "Musculatura bem visualizada, sem sinais flogísticos e sem roturas",
@@ -2453,7 +2397,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_doppler_mao": {
         "condition": "Sim",
@@ -2486,8 +2429,8 @@ const Questions: Record<string, {
         ]
       }
     }
-  }, 
-  Joelho : {
+  },
+  Joelho: {
     "Selects": [
       {
         "label": "Musculatura com aspecto normal",
@@ -2526,7 +2469,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_doppler_joelho": {
         condition: "Sim",
@@ -2540,7 +2482,7 @@ const Questions: Record<string, {
       }
     }
   },
-  Cotovelo : {
+  Cotovelo: {
     "Selects": [
       {
         "label": "Tem nódulo?",
@@ -2571,7 +2513,7 @@ const Questions: Record<string, {
         "label": "Ausência de nodulações e/ou cistos",
         "options": ["Sim", "Não"],
         "mark": "ausencia_nodulacoes_cistos"
-      }, 
+      },
       {
         "label": "Há Botinha?",
         "options": ["Não", "Sim"],
@@ -2579,7 +2521,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_botinha_cotovelo": {
         "condition": "Sim",
@@ -2598,12 +2539,12 @@ const Questions: Record<string, {
       }
     }
   },
-  BracoAntebraco : {
+  BracoAntebraco: {
     "Selects": [
       {
-      "label": "Braço ou Antebraço?",
-      "options": ["Braço", "Antebraço"],
-      "mark": "braco_antebraco"
+        "label": "Braço ou Antebraço?",
+        "options": ["Braço", "Antebraço"],
+        "mark": "braco_antebraco"
       },
       {
         "label": "Lateralidade",
@@ -2642,7 +2583,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_botinha_antebraco": {
         "condition": "Sim",
@@ -2661,7 +2601,7 @@ const Questions: Record<string, {
       }
     }
   },
-  Calcaneo : {
+  Calcaneo: {
     "Selects": [
       {
         "label": "Musculatura bem visualizada, sem sinais flogísticos, sem roturas",
@@ -2686,9 +2626,8 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
-  Dedo : {
+  Dedo: {
     "Selects": [
       {
         "label": "Tem nódulo?",
@@ -2727,13 +2666,13 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
-  FossaPoplitea : {
-"Selects": [
-      {"label": "Lateralidade",
-      "options": ["Esquerda", "Direita", "Ambas"],
-      "mark": "lateralidade_fossa_poplitea"
+  FossaPoplitea: {
+    "Selects": [
+      {
+        "label": "Lateralidade",
+        "options": ["Esquerda", "Direita", "Ambas"],
+        "mark": "lateralidade_fossa_poplitea"
       },
       {
         "label": "Musculatura da perna apresentando inserção em sua localização habitual",
@@ -2757,7 +2696,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {},
     "ConditionalSections": {
       "condicional_doppler_fossapoplitea": {
         "condition": "Sim",
@@ -2771,7 +2709,7 @@ const Questions: Record<string, {
       }
     },
   },
-  Deltoides : {
+  Deltoides: {
     "Selects": [
       {
         "label": "Posição do Deltóide",
@@ -2800,9 +2738,8 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
-  BursasTrocantericas : {
+  BursasTrocantericas: {
     "Selects": [
       {
         "label": "Inserções musculares bem visualizadas, sem sinais de rotura",
@@ -2821,10 +2758,9 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
   MusculaturaAbdominal: {
- "Selects": [
+    "Selects": [
       {
         "label": "Músculos retos abdominais sem alterações",
         "options": ["Sim", "Não"],
@@ -2847,15 +2783,14 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   },
-  TerceiroPododaclito : {
+  TerceiroPododaclito: {
     "Selects": [
       {
         "label": "Tem nódulo?",
         "options": ["Não", "Sim"],
         "mark": "nodulo_terceiro_pododactilo"
-      }, 
+      },
       {
         "label": "Onde está o Nódulo?",
         "options": ["Esquerdo", "Direito", "Ambos"],
@@ -2883,7 +2818,6 @@ const Questions: Record<string, {
       }
     ],
     "Checkbox": [],
-    "Markers": {}
   }
 
 };
