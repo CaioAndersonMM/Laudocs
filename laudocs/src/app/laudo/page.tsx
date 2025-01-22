@@ -8,7 +8,7 @@ const Laudo = () => {
     const searchParams = useSearchParams();
     const formState = searchParams ? searchParams.get('formState') : null;
 
-    const { parsedFormState, idadePaciente } = processFormState(formState);
+    const { parsedFormState, idadePaciente } = processFormState(formState); // Nosso tratamento de dados do formulário
 
     const renderField = (key: string, value: string) => {
         console.log(key, value);
@@ -87,7 +87,9 @@ const Laudo = () => {
                             <div>
                                 <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded max-w-xs mb-3 text-ce">Nódulo esquerdo</h3>
                                 <div className="space-y-2">
-                                    {Object.entries(parsedFormState.noduleData.esquerda).map(([key, value]) => renderField(key, value as string))}
+                                    {Object.entries(parsedFormState.noduleData.esquerda)
+                                        .filter(([key, value]) => value === 'Sim' || value === 'Normal' || value === 'Alterado')
+                                        .map(([key, value]) => renderField(key, value as string))}
                                 </div>
                             </div>
                         )}
@@ -95,7 +97,9 @@ const Laudo = () => {
                             <div>
                                 <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded max-w-xs">Nódulo direito</h3>
                                 <div className="space-y-2">
-                                    {Object.entries(parsedFormState.noduleData.direita).map(([key, value]) => renderField(key, value as string))}
+                                    {Object.entries(parsedFormState.noduleData.direita)
+                                        .filter(([key, value]) => value === 'Sim' || value === 'Normal' || value === 'Alterado')
+                                        .map(([key, value]) => renderField(key, value as string))}
                                 </div>
                             </div>
                         )}
@@ -112,9 +116,11 @@ const Laudo = () => {
                                     })()}
                                 </h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    {Object.entries(parsedFormState.conditionalData[sectionKey].fields).map(([key, value]) => 
-                                        renderField(key, value as string)
-                                    )}
+                                    {Object.entries(parsedFormState.conditionalData[sectionKey].fields)
+                                        .filter(([key, value]) => value === 'Sim' || value === 'Normal' || value === 'Alterado')
+                                        .map(([key, value]) =>
+                                            renderField(key, value as string)
+                                        )}
                                 </div>
                             </div>
                         )}
