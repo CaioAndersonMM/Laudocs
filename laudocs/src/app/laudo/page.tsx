@@ -15,12 +15,15 @@ const Laudo = () => {
         let label = key;
         if (value === 'Com' || value === 'Sem' || value == 'Presença' || value === 'Ausência' || value === 'Presença de' || value === 'Ausência de') {
             label = `${value} ${key}`;
-        } else if (value === 'Comprometido' || value === 'Não comprometido' || value === 'Normal' || value === 'Alterado') {
+        } else if (value === 'Sim' ){
+            label = `${key}`;
+        } else {
             label = `${key} ${value}`;
         }
+        label = label.charAt(0).toUpperCase() + label.slice(1).toLowerCase();
         return (
             <div key={key} className="flex items-center space-x-2">
-                <span className="block text-lg font-semibold text-cyan-900 truncate" title={label}>
+                <span className="block font-semibold text-cyan-900 truncate text-md" title={label}>
                     - {label}
                 </span>
             </div>
@@ -29,23 +32,7 @@ const Laudo = () => {
 
     return (
         <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
-            <style jsx>{`
-                @media print {
-                    body {
-                        margin: 0;
-                        padding: 0;
-                        box-sizing: border-box;
-                    }
-                    .print-container {
-                        width: 100%;
-                        height: 100%;
-                        page-break-inside: avoid;
-                    }
-                    .print-header, .print-footer {
-                        page-break-before: always;
-                    }
-                }
-            `}</style>
+          
             <header className="text-center mb-8 print-header">
                 <h1 className="text-3xl font-bold text-cyan-700">Consultório Doutor Mauro</h1>
                 <p className="text-lg text-gray-600">Ultrassom de {tipoExame}</p>
@@ -75,7 +62,7 @@ const Laudo = () => {
                 </div>
             </section>
             <section className="mb-8 print-container">
-                <h2 className="text-2xl font-semibold mb-4 text-cyan-900 opacity-70">Resultados do Ultrassom</h2>
+                <h2 className="text-xl font-semibold mb-4 text-cyan-900 opacity-70">Resultados do Ultrassom</h2>
                 <div className="space-y-4">
                     {Object.entries(parsedFormState)
                         .filter(([key, value]) => value !== 'Não')
@@ -109,13 +96,13 @@ const Laudo = () => {
                     <div key={sectionKey} className="mt-4 print-container">
                         {condicionalData[sectionKey].conditionMet && Object.keys(condicionalData[sectionKey].fields).length > 0 && (
                             <div>
-                                <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded mb-3 text-center">
+                                <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-1 rounded mb-3 text-center">
                                     {(() => {
                                         const sectionName = sectionKey.split('_').pop();
-                                        return sectionName ? sectionName.charAt(0).toUpperCase() + sectionName.slice(1) : '';
+                                        return sectionName ? sectionName.replace(/([A-Z])/g, ' $1').trim() : '';
                                     })()}
                                 </h3>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-4 text-sm">
                                     {Object.entries(condicionalData[sectionKey].fields)
                                         .filter(([key, value]) => value !== 'Não')
                                         .map(([key, value]) =>
