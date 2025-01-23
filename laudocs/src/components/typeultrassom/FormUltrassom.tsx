@@ -274,11 +274,11 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
 
     return (
         <div>
-            <h1 className="text-2xl font-bold text-center mb-6">
+            <h1 className="text-md font-extrabold text-center mb-6">
                 Ultrassom de {tipo} do Paciente {patientName}, {patientAge} anos
             </h1>
-            <form onSubmit={handleSubmit} className="mt-4 space-y-6">
-                <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="mt-2 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {formQuestions.Selects.map((select, index) => {
                         const conditionField = formQuestions.ConditionalSections?.[select.mark];
                         const isConditionMet = conditionField && formState[select.mark] === conditionField.condition;
@@ -290,7 +290,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                         if (select.mark.startsWith('condicional_')) {
                             return (
                                 <div key={index} className="flex flex-col">
-                                    <label className="block text-lg font-semibold">
+                                    <label className="block text-sm font-semibold">
                                         {select.label}
                                         <select
                                             value={formState[select.mark] as string || select.options[0]}
@@ -303,19 +303,19 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                                         </select>
                                     </label>
                                     {isConditionMet && conditionField && (
-                                        <div className="mt-6">
-                                            <h2 className="text-xl font-semibold bg-cyan-900 text-white p-1">Informações sobre {select.label}</h2>
-                                            <div className="grid grid-cols-3 gap-4 mt-4 mb-4 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300 ease-in-out">
+                                        <div>
+                                            <h2 className="text-sm font-semibold bg-cyan-900 text-white p-1 rounded text-center">Informações sobre {select.label}</h2>
+                                            <div className="grid grid-cols-3 gap-4 mb-4 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300 ease-in-out">
                                                 {conditionField.fields.map((field, index) => (
                                                     <div key={index} className="flex flex-col">
-                                                        <label className="block text-lg font-semibold">
+                                                        <label className="block text-xs font-semibold">
                                                             {field.label}
                                                             <select
                                                                 value={typeof formState.conditionalData[select.mark]?.fields[field.label] === 'boolean'
                                                                     ? (formState.conditionalData[select.mark]?.fields[field.label] ? 'Sim' : 'Não')
                                                                     : formState.conditionalData[select.mark]?.fields[field.label] || field.options[0]}
                                                                 onChange={(e) => handleConditionalChange(select.mark, field.label, e.target.value)}
-                                                                className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                                                className="mt-2 p-2 border rounded-md w-full bg-white text-xs focus:ring-2 focus:ring-cyan-800"
                                                             >
                                                                 {field.options.map((option, idx) => (
                                                                     <option key={idx} value={option}>{option}</option>
@@ -341,7 +341,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
 
                         return (
                             <div key={index} className="flex flex-col">
-                                <label className="block text-lg font-semibold">
+                                <label className="block text-sm font-semibold">
                                     {question.label}
                                     {question.isNumberInput ? (
                                         <input
@@ -385,32 +385,32 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
 
                 {hasNodule && (
                     <div>
-                        <div className="flex items-center mb-6">
+                        <div className="flex items-center mb-6 ">
                             <Image src="/assets/nodule.svg" alt="Ícone Hospital" width={45} height={24} />
                             <h1 className="ml-4 font-semibold">Informações sobre os nódulos encontrados</h1>
                         </div>
 
                         {(noduleLocation === 'Esquerda' || noduleLocation === 'Ambas') && (
                             <>
-                                <h2 className="mt-6 text-xl font-semibold">Informações sobre o nódulo na posição Esquerda</h2>
-                                <div className="grid grid-cols-2 gap-4 mt-4">
+                                <h2 className="mt-6 text-lg font-semibold">Informações sobre o nódulo na posição Esquerda</h2>
+                                <div className="grid grid-cols-4 gap-4 mt-4">
                                     {noduleQuestions.map((question, index) => (
                                         <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300 ease-in-out">
-                                            <label className="block text-lg font-semibold text-gray-700">
+                                            <label className="block text-sm font-semibold text-gray-700">
                                                 {question.label}
                                                 {question.isNumberInput ? (
                                                     <input
                                                         type="number"
                                                         value={formState.noduleData.esquerda[question.label] || ""}
                                                         onChange={(e) => handleNoduleChange("esquerda", question.mark, e.target.value)}
-                                                        className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                                        className="text-sm mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                         placeholder="Digite a medida"
                                                     />
                                                 ) : (
                                                     <select
                                                         value={formState.noduleData.esquerda[question.label] || question.options[0]}
                                                         onChange={(e) => handleNoduleChange("esquerda", question.label, e.target.value)}
-                                                        className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                                        className="text-sm mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                     >
                                                         {question.options.map((option, idx) => (
                                                             <option key={idx} value={option}>{option}</option>
@@ -426,25 +426,25 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
 
                         {(noduleLocation === 'Direita' || noduleLocation === 'Ambas') && (
                             <>
-                                <h2 className="mt-6 text-xl font-semibold">Informações sobre o nódulo na posição Direita</h2>
-                                <div className="grid grid-cols-2 gap-4 mt-4">
+                                <h2 className="mt-6 text-lg font-semibold">Informações sobre o nódulo na posição Direita</h2>
+                                <div className="grid grid-cols-4 gap-4 mt-4">
                                     {noduleQuestions.map((question, index) => (
                                         <div key={index} className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300 ease-in-out">
-                                            <label className="block text-lg font-semibold text-gray-700">
+                                            <label className="block text-sm font-semibold text-gray-700">
                                                 {question.label}
                                                 {question.isNumberInput ? (
                                                     <input
                                                         type="number"
                                                         value={formState.noduleData.direita[question.label] || ""}
                                                         onChange={(e) => handleNoduleChange("direita", question.mark, e.target.value)}
-                                                        className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                                        className="text-sm mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                         placeholder="Digite a medida"
                                                     />
                                                 ) : (
                                                     <select
                                                         value={formState.noduleData.direita[question.label] || question.options[0]}
                                                         onChange={(e) => handleNoduleChange("direita", question.label, e.target.value)}
-                                                        className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                                                        className="text-sm mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
                                                     >
                                                         {question.options.map((option, idx) => (
                                                             <option key={idx} value={option}>{option}</option>
@@ -474,13 +474,13 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                 ))}
 
                 <div className="mb-4">
-                    <label className="block text-lg font-semibold">
+                    <label className="block text-sm font-semibold">
                         Data:
                         <input
                             type="date"
                             value={data}
                             onChange={(e) => setData(e.target.value)}
-                            className="ml-2 p-2 border rounded-md"
+                            className="ml-2 p-1 border rounded-md"
                             required
                         />
                     </label>
