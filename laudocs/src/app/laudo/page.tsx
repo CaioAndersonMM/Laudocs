@@ -15,7 +15,7 @@ const Laudo = () => {
         let label = key;
         if (value === 'Com' || value === 'Sem' || value == 'Presença' || value === 'Ausência' || value === 'Presença de' || value === 'Ausência de') {
             label = `${value} ${key}`;
-        } else if (value === 'Sim' ){
+        } else if (value === 'Sim') {
             label = `${key}`;
         } else {
             label = `${key} ${value}`;
@@ -32,9 +32,20 @@ const Laudo = () => {
 
     return (
         <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
-          
+
+            <style jsx global>{`
+                @media print {
+                 @page {
+                    margin: 1cm;
+                }
+                    .no-print {
+                        display: none;
+                    }
+                }
+            `}</style>
+
             <header className="text-center mb-8 print-header">
-                <h1 className="text-3xl font-bold text-cyan-700">Consultório Doutor Mauro</h1>
+                <h1 className="text-2xl font-bold text-cyan-700">Consultório Doutor Mauro</h1>
                 <p className="text-lg text-gray-600">Ultrassom de {tipoExame}</p>
             </header>
 
@@ -44,20 +55,20 @@ const Laudo = () => {
             <section className="mb-8 print-container">
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-lg font-semibold text-cyan-900 opacity-55">Nome do Paciente</label>
-                        <p className="mt-2 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{nomePaciente}</p>
+                        <label className="block text-md font-semibold text-cyan-900 opacity-55">Nome do Paciente</label>
+                        <p className="mt-1 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{nomePaciente}</p>
                     </div>
                     <div>
-                        <label className="block text-lg font-semibold text-cyan-900 opacity-55">Idade do Paciente</label>
-                        <p className="mt-2 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{idadePaciente}</p>
+                        <label className="block text-md font-semibold text-cyan-900 opacity-55">Idade do Paciente</label>
+                        <p className="mt-1 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{idadePaciente}</p>
                     </div>
                     <div>
-                        <label className="block text-lg font-semibold text-cyan-900 opacity-55">Médico Solicitante</label>
-                        <p className="mt-2 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{medicoSolicitante}</p>
+                        <label className="block text-md font-semibold text-cyan-900 opacity-55">Médico Solicitante</label>
+                        <p className="mt-1 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{medicoSolicitante}</p>
                     </div>
                     <div>
-                        <label className="block text-lg font-semibold text-cyan-900 opacity-55">Data</label>
-                        <p className="mt-2 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold">{formatDate(dataExame)}</p>
+                        <label className="block text-md font-semibold text-cyan-900 opacity-55">Data</label>
+                        <p className="mt-1 p-2 border rounded-md bg-gray-100 text-cyan-900 font-semibold">{formatDate(dataExame)}</p>
                     </div>
                 </div>
             </section>
@@ -72,7 +83,7 @@ const Laudo = () => {
                     <div className="grid grid-cols-2 gap-4 mt-4">
                         {noduleData.esquerda && Object.keys(noduleData.esquerda).length > 0 && (
                             <div>
-                                <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded max-w-xs mb-3 text-ce">Nódulo esquerdo</h3>
+                                <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-1 text-center rounded max-w-xs mb-3 capitalize">Nódulo esquerdo</h3>
                                 <div className="space-y-2">
                                     {Object.entries(noduleData.esquerda)
                                         .filter(([key, value]) => value !== 'Não')
@@ -82,7 +93,7 @@ const Laudo = () => {
                         )}
                         {noduleData.direita && Object.keys(noduleData.direita).length > 0 && (
                             <div>
-                                <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-2 rounded max-w-xs">Nódulo direito</h3>
+                                <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-1 text-center rounded max-w-xs mb-3 capitalize">Nódulo direito</h3>
                                 <div className="space-y-2">
                                     {Object.entries(noduleData.direita)
                                         .filter(([key, value]) => value !== 'Não')
@@ -99,10 +110,10 @@ const Laudo = () => {
                                 <h3 className="text-xl font-semibold text-bl bg-cyan-700 p-1 rounded mb-3 text-center">
                                     {(() => {
                                         const sectionName = sectionKey.split('_').pop();
-                                        return sectionName ? sectionName.replace(/([A-Z])/g, ' $1').trim() : '';
+                                        return sectionName ? sectionName.replace(/([A-Z])/g, ' $1').trim().charAt(0).toUpperCase() + sectionName.slice(1) : '';
                                     })()}
                                 </h3>
-                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div className="grid grid-cols-2 gap-4 text-md">
                                     {Object.entries(condicionalData[sectionKey].fields)
                                         .filter(([key, value]) => value !== 'Não')
                                         .map(([key, value]) =>
@@ -115,13 +126,12 @@ const Laudo = () => {
                 ))}
             </section>
 
-            <div className="mt-24 text-center print-footer">
+            <div className="mt-10 text-center print-footer">
                 <hr className="border-t border-gray-900 mb-4 w-1/2 mx-auto" />
-                <p className="text-lg font-semibold text-gray-500">Dr. MAURO P. F. DE CARVALHO JÚNIOR</p>
-                <p className="text-lg text-gray-600">CRM-RN 4868</p>
+                <p className="text-md font-semibold text-gray-500">Dr. MAURO P. F. DE CARVALHO JÚNIOR</p>
+                <p className="text-sm text-gray-600">CRM-RN 4868</p>
             </div>
-
-            <div className="flex justify-center mt-8">
+            <div className="flex justify-center mt-8 no-print">
                 <button
                     onClick={() => window.print()}
                     className="w-2/3 px-6 py-2 bg-green-700 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
