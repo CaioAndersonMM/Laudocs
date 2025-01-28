@@ -1,7 +1,27 @@
 const Questions: Record<string, {
   Selects: { label: string; options: string[]; mark: string; isNumberInput?: boolean; isTextInput?: boolean; isDateInput?: boolean }[];
   Checkbox: { label: string; mark: string }[];
-  ConditionalSections?: { [key: string]: { condition: string; fields: { label: string; options: string[]; mark: string; isNumberInput?: boolean; isTextInput?: boolean; isDateInput?: boolean }[] } }
+  ConditionalSections?: { 
+    [key: string]: { 
+      condition: string; 
+      fields: { 
+        label: string; 
+        options: string[]; 
+        mark: string; 
+        isNumberInput?: boolean; 
+        isTextInput?: boolean; 
+        isDateInput?: boolean; 
+        questions?: { 
+          label: string; 
+          options: string[]; 
+          mark: string; 
+          isNumberInput?: boolean; 
+          isTextInput?: boolean; 
+          isDateInput?: boolean; 
+        }[] 
+      }[] 
+    } 
+  }
 }> = {
   Mamas: {
     Selects: [
@@ -41,6 +61,11 @@ const Questions: Record<string, {
         "options": ["Não", "Sim"],
         "mark": "condicional_axila_doppler"
       },
+      // {
+      //   "label": "Qual Axila?",
+      //   "options": ["Esquerda", "Direita", "Ambas"],
+      //   "mark": "axila_lado"
+      // },
       {
         "label": "Tem nódulo?",
         "options": ["Não", "Sim"],
@@ -616,7 +641,11 @@ const Questions: Record<string, {
         "options": ["Não", "Sim"],
         "mark": "condicional_alteracoes_utero"
       },
-
+      {
+        "label": "Endométrio no Exame?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_alteracoes_endometrio"
+      },
       {
         "label": "Ovario Esquerdo no Exame?",
         "options": ["Não", "Sim"],
@@ -690,6 +719,18 @@ const Questions: Record<string, {
         "condition": "Sim",
         "fields": [
           {
+            "label": "Medida do Útero:",
+            "options": [''],
+            "isTextInput": true,
+            "mark": "medidas_utero_volume"
+          },
+          {
+            "label": "Medida do Corpo:",
+            "options": [''],
+            "isTextInput": true,
+            "mark": "medidas_corpo_volume"
+          },
+          {
             "label": "Alterações acústicas",
             "options": ["Sem", "Com"],
             "mark": "alteracoes_acusticas_vagina"
@@ -705,7 +746,7 @@ const Questions: Record<string, {
             "mark": "utero_centrado"
           },
           {
-            "label": "Contornos",
+            "label": "Contornos da serosa",
             "options": ["Regulares", "Não Regulares"],
             "mark": "utero_contornos_regulares"
           },
@@ -720,16 +761,90 @@ const Questions: Record<string, {
             "mark": "miometrio_ecotextura"
           },
           {
-            "label": "Eco endometrial",
-            "options": ["Regular", "Não regular"],
-            "mark": "eco_endometrial_regular"
+            "label": "Lesões miometriais",
+            "options": ["Ausentes", "Presentes"],
+            "mark": "lesoes_miometriais",
+            "questions": [
+              {
+                "label": "Quantidade lesões miometriais",
+                "options": [],
+                "isNumberInput": true,
+                "mark": "quantidade_lesoes_miometriais"
+            },
+            {
+                "label": "Hipoecogênica",
+                "options": ["Sim", "Não"],
+                "mark": "hipoecogenicidade_lesoes_miometriais"
+            },
+            {
+                "label": "Parede",
+                "options": ["Posterior", "Anterior", "Lateral", "Fundica"],
+                "mark": "parede_lesoes_miometriais"
+            },
+            {
+                "label": "Tipo",
+                "options": ["2-5", "0", "1", "2", "3", "4", "5", "6", "7", "8"],
+                "mark": "tipo_lesoes_miometriais"
+            },
+            {
+                "label": "Medida das lesões",
+                "options": [],
+                "isTextInput": true,
+                "mark": "medida_lesoes_miometriais"
+            },
+            {
+                "label": "IC",
+                "options": ["1", "2", "3", "4", "5"],
+                "mark": "ic_utero"
+            }
+            ]
           },
+        ]
+      },
+      "condicional_alteracoes_endometrio": {
+        "condition": "Sim",
+        "fields": [
           {
-            "label": "Espessura",
+            "label": "Medida: ",
             "options": [],
             "isNumberInput": true,
-            "mark": "espessura_endometrial"
+            "mark": "medida_endometrio"
           },
+          {
+            "label": "Ecotextura",
+            "options": ["Isoecogênica", "Hipoecogênica", "Hiperecogênica"],
+            "mark": "ecotextura_endometrio"
+          },
+          {
+            "label": "Uniformidade",
+            "options": ["Homogênea", "Não Homogênea"],
+            "mark": "uniformidade_endometrio"
+          },
+          {
+            "label": "Linha endometrial central",
+            "options": ["Linear", "Ondulada"],
+            "mark": "linha_endometrial"
+          },
+          {
+            "label": "Junção endometrio-miométrio",
+            "options": ["Regular", "Não regular"],
+            "mark": "juncao_endometrio_miometrio"
+          },
+          {
+            "label": "Líquido intra-cavitário",
+            "options": ["Ausente", "Presente"],
+            "mark": "liquido_intra_cavitario"
+          },
+          {
+            "label": "Lesões intra-cavitárias",
+            "options": ["Ausentes", "Presentes"],
+            "mark": "lesoes_intra_cavitarias"
+          },
+          {
+            "label": "IC",
+            "options": ["1", "2", "3", "4", "5"],
+            "mark": "ic"
+          }
         ]
       },
       "condicional_alteracoes_OvarioDireito": {
@@ -1204,7 +1319,7 @@ const Questions: Record<string, {
       },
       {
         "label": "Fígado no Exame?",
-        "options": ["Não", "Sim"],
+        "options": ["Não Visualizado", "Sim"],
         "mark": "condicional_alteracoes_fígado"
       },
       {
