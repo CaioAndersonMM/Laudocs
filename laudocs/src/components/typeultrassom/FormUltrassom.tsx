@@ -25,8 +25,8 @@ type ConditionalSectionData = {
 };
 
 type FormState = {
-    [key: string]: string | boolean | FormState | { esquerda: NoduleData; direita: NoduleData } | NoduleData | { [key: string]: any };
-    noduleData: { esquerda: NoduleData; direita: NoduleData };
+    [key: string]: string | boolean | FormState | { esquerda: NoduleData[]; direita: NoduleData[] } | NoduleData | { [key: string]: any };
+    noduleData: { esquerda: NoduleData[]; direita: NoduleData[] };
     conditionalData: { [key: string]: ConditionalSectionData };
 };
 
@@ -34,7 +34,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
     const router = useRouter();
     const [data, setData] = useState(new Date().toISOString().split('T')[0]);
     const [formState, setFormState] = useState<FormState>({
-        noduleData: { esquerda: {}, direita: {} },
+        noduleData: { esquerda: [], direita: [] }, // Agora é um array de nódulos
         conditionalData: {}
     });
     const [hasNodule, setHasNodule] = useState(false);
@@ -44,10 +44,10 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
     const formQuestions = Questions[tipo] || { Selects: [], Checkbox: [], ConditionalSections: {} };
 
     useEffect(() => {
-        const initialFormState: FormState & { noduleData: { esquerda: NoduleData; direita: NoduleData } } = {
+        const initialFormState: FormState = {
             noduleData: {
-                esquerda: {},
-                direita: {},
+                esquerda: [],
+                direita: [],
             },
             conditionalData: {},
         };
@@ -60,11 +60,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
             initialFormState[question.label] = false;
         });
 
-        noduleQuestions.forEach((question) => {
-            initialFormState.noduleData.esquerda[question.label] = question.options[0] || "";
-            initialFormState.noduleData.direita[question.label] = question.options[0] || "";
-        });
-
         Object.entries(formQuestions.ConditionalSections || {}).forEach(([key, section]) => {
             initialFormState.conditionalData[key] = {
                 conditionMet: false,
@@ -75,7 +70,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
             });
         });
 
-
         setFormState((prevState) => ({
             ...prevState,
             ...initialFormState,
@@ -85,7 +79,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
     }, [formQuestions]);
 
     const handleSelectChange = (questionLabel: string, value: string) => {
-        console.log(questionLabel, value);
         setFormState((prevState) => ({
             ...prevState,
             [questionLabel]: value
@@ -93,25 +86,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
 
         if (questionLabel === 'Tem nódulo?') {
             setHasNodule(value === 'Sim');
-
-            if (value === 'Sim') {
-                setFormState((prevState) => {
-                    const newState = { ...prevState };
-                    noduleQuestions.forEach((question) => {
-                        if (!newState.noduleData.esquerda[question.label]) {
-                            newState.noduleData.esquerda[question.label] = question.options[0] || "";
-                        }
-                        if (!newState.noduleData.direita[question.label]) {
-                            newState.noduleData.direita[question.label] = question.options[0] || "";
-                        }
-                    });
-                    return newState;
-                });
-            }
-        }
-
-        if (questionLabel.endsWith('_doppler')) {
-            formState['Há Doppler?'] = value
         }
 
         if (questionLabel === 'Linfonodos têm aspecto não habitual?') {
@@ -168,103 +142,54 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
         }));
     };
 
-    const handleNoduleChange = (side: "esquerda" | "direita", questionLabel: string, value: string) => {
-
-        setFormState((prevState) => ({
-            ...prevState,
-            noduleData: {
-                ...prevState.noduleData,
-                [side]: {
-                    ...prevState.noduleData[side],
-                    [questionLabel]: value,
+    const handleNoduleChange = (side: "esquerda" | "direita", questionLabel: string, value: string, noduleIndex: number) => {
+        setFormState((prevState) => {
+            const updatedNodules = [...prevState.noduleData[side]];
+            updatedNodules[noduleIndex] = {
+                ...updatedNodules[noduleIndex],
+                [questionLabel]: value,
+            };
+            return {
+                ...prevState,
+                noduleData: {
+                    ...prevState.noduleData,
+                    [side]: updatedNodules,
                 },
-            },
-        }));
+            };
+        });
+    };
+
+    const handleAddNodule = (side: "esquerda" | "direita") => {
+        setFormState((prevState) => {
+            const newNodule: NoduleData = {};
+            noduleQuestions.forEach((question) => {
+                newNodule[question.label] = question.options[0] || "";
+            });
+            return {
+                ...prevState,
+                noduleData: {
+                    ...prevState.noduleData,
+                    [side]: [...prevState.noduleData[side], newNodule],
+                },
+            };
+        });
     };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        formState.tipo = tipo;
-        formState.patientName = patientName;
-        formState.patientAge = patientAge;
-        formState.solicitingDoctor = solicitingDoctor;
-        formState.data = data;
+        const updatedFormState = {
+            ...formState,
+            tipo,
+            patientName,
+            patientAge,
+            solicitingDoctor,
+            data,
+        };
 
-        const cleanedFormState = Object.keys(formState).reduce((acc, key) => {
-            if (!key.includes('_')) {
-                acc[key] = formState[key];
-            }
-            return acc;
-        }, {} as FormState);
-
-        const updatedFormState = cleanedFormState;
-
-        if (hasNodule) {
-
-            if (updatedFormState['Onde está o Nódulo?'] === 'Esquerda') {
-                noduleQuestions.forEach((question) => {
-                    delete updatedFormState.noduleData.direita[question.label];
-                });
-            } else if (updatedFormState['Onde está o Nódulo?'] === 'Direita') {
-                noduleQuestions.forEach((question) => {
-                    delete updatedFormState.noduleData.esquerda[question.label];
-                });
-            } else {
-                noduleQuestions.forEach((question) => {
-                    if (!updatedFormState.noduleData.esquerda[question.label]) {
-                        updatedFormState.noduleData.esquerda[question.label] = question.options[0] || "";
-                    }
-                    if (!updatedFormState.noduleData.direita[question.label]) {
-                        updatedFormState.noduleData.direita[question.label] = question.options[0] || "";
-                    }
-                });
-            }
-
-        } else {
-            noduleQuestions.forEach((question) => {
-                delete updatedFormState.noduleData.esquerda[question.label];
-                delete updatedFormState.noduleData.direita[question.label];
-            });
-            Object.keys(updatedFormState).forEach(key => {
-                if (key.endsWith('_nodulo')) {
-                    delete updatedFormState[key];
-                }
-            });
-        }
-
-        if (formState['Há Doppler?'] === 'Não') {
-            delete updatedFormState['Há Doppler?'];
-
-            const Section = Questions[tipo];
-
-            if (Section?.ConditionalSections) {
-                Object.keys(Section.ConditionalSections).forEach(sectionKey => {
-                    const section = Section?.ConditionalSections?.[sectionKey];
-
-                    if (section && section.fields) {
-                        // Remover os campos de `formState` que possuem `mark` ou `label` correspondentes
-                        section.fields.forEach(field => {
-                            if (field.mark && field.mark.endsWith('_doppler')) {
-                                delete updatedFormState[field.mark];
-                            }
-
-                            if (field.label) {
-                                delete updatedFormState[field.label];
-                            }
-                        });
-
-                        section.fields = section.fields.filter(field => {
-                            return !field.mark.endsWith('_doppler');
-                        });
-
-                        if (section.fields.length === 0) {
-                            if (Section.ConditionalSections) {
-                                delete Section.ConditionalSections[sectionKey];
-                            }
-                        }
-                    }
-                });
+        for (const key in updatedFormState) {
+            if (key.includes('_')) {
+                delete (updatedFormState as any)[key];
             }
         }
 
@@ -275,7 +200,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
         }
     };
 
- 
     return (
         <div>
             <h1 className="text-md font-extrabold text-center mb-6">
@@ -286,10 +210,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                     {formQuestions.Selects.map((select, index) => {
                         const conditionField = formQuestions.ConditionalSections?.[select.mark];
                         const isConditionMet = conditionField && formState[select.mark] === conditionField.condition;
-
-                        const value = typeof formState[select.mark] === 'boolean'
-                            ? formState[select.mark] ? 'Sim' : 'Não'
-                            : formState[select.mark] || select.options[0];
 
                         if (select.mark.startsWith('condicional_')) {
                             return (
@@ -309,7 +229,6 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                     {formQuestions.Selects.map((question, index) => {
                         if (question.mark.startsWith('condicional_')) return null;
 
-                        // Verifica se a pergunta 'Onde está o Nódulo?' ou 'Onde está o Linfonodo?' deve ser exibida
                         if (question.label === 'Onde está o Nódulo?' && !hasNodule) return null;
                         if (question.label === 'Onde está o Linfonodo?' && !hasLinfonodo) return null;
 
@@ -330,6 +249,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
                         noduleLocation={noduleLocation}
                         formState={formState}
                         handleNoduleChange={handleNoduleChange}
+                        handleAddNodule={handleAddNodule}
                     />
                 )}
                 {formQuestions.Checkbox.map((question, index) => (
