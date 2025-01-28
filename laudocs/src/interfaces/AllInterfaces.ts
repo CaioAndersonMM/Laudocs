@@ -1,29 +1,32 @@
-export interface CardPatientInterface {
-    id?: string; 
-    name: string;
-    solicitingDoctor: string;
-    age: number;
-    priority?: boolean;
+export interface CardConsultaInterface {
+    id: number;
+    dataConsulta: string;
+    pacienteId: number;
+    medicoSolicitante: string;
+    laudoId?: number | null;
+    nomePaiente: string;
+    idadePaciente: number;
+
 }
 
 export interface SignUpProps {
-    addPatient: (patient: { id: string; name: string; age: number; solicitingDoctor: string; priority?: boolean; }) => void;
+    addConsulta: (consulta: CardConsultaInterface) => void;
 }
 
-export interface SelectPatientProps {
-    selectedPatient: CardPatientInterface | null;
+export interface SelectConsultaProps {
+    selectedConsulta: CardConsultaInterface | null;
     removePatientSelected: () => void;
 }
 
 export interface ListTypeConsultProps {
-    patient: CardPatientInterface;
+    consulta: CardConsultaInterface;
 }
 
-export interface ListPatientsProps {
-    arrayOfPatients: CardPatientInterface[];
-    onSelectPatient?: (patient: CardPatientInterface) => void;
-    removePatient?: (id: string) => void;
-    updatePatients?: (updatedPatients: CardPatientInterface[]) => void;
+export interface ListConsultaProps {
+    arrayOfConsultas: CardConsultaInterface[];
+    onSelectConsulta?: (consulta: CardConsultaInterface) => void;
+    removeConsulta?: (id: number) => void;
+    updateConsulta?: (updatedPatients: CardConsultaInterface[]) => void;
 }
 
 
@@ -33,8 +36,8 @@ export interface ConsultationCardProps {
     onClick: () => void; 
 }
 
-export interface CardPatientProps extends CardPatientInterface {
-    removePatient?: (id: string) => void;
-    updatePatients?: (updatedPatients: CardPatientInterface[]) => void;
+export interface CardPatientProps extends CardConsultaInterface {
+    removePatient?: (id: number) => void;
+    updatePatients?: (updatedPatients: CardConsultaInterface[]) => void;
 }
   

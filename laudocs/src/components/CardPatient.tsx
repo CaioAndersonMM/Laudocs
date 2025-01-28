@@ -7,18 +7,22 @@ import { useState } from 'react';
 import { CardPatientProps } from '@/interfaces/AllInterfaces';
 import Image from 'next/image';
 
-export default function CardPatient({ id, name, age, solicitingDoctor, removePatient, updatePatients}: CardPatientProps) {
+export default function CardPatient({ id, pacienteId,nomePaiente, dataConsulta,idadePaciente, medicoSolicitante, removePatient, updatePatients}: CardPatientProps) {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [editedName, setEditedName] = useState(name);
-  const [editedAge, setEditedAge] = useState(age);
-  const [editedDoctor, setEditedDoctor] = useState(solicitingDoctor);
+  const [editedName, setEditedName] = useState(nomePaiente);
+  const [editedAge, setEditedAge] = useState(idadePaciente);
+  const [editedDoctor, setEditedDoctor] = useState(medicoSolicitante);
+
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
   const handleEdit = async () => {
     try {
-      await axios.put(`/api/pacientes/${id}`, { name: editedName, age: editedAge, solicitingDoctor: editedDoctor });
+      await axios.put(`/api/pacientes/${id}`, {
+         name: editedName, age: editedAge, solicitingDoctor: editedDoctor 
+        });
       closeModal();
       const updatedPatients = await axios.get('/api/pacientes');
       updatePatients?.(updatedPatients.data);
@@ -27,12 +31,13 @@ export default function CardPatient({ id, name, age, solicitingDoctor, removePat
     }
   };
 
-  const remove = async (id: string, removePatient: (id: string) => void) => {
+  const remove = async (id: number, removePatient: (id: number) => void) => {
     try {
-      await axios.delete(`/api/pacientes/${id}`);
+      await axios.delete(`${baseURL}/api/v1/consultas/${id}`);
       removePatient(id);
-      const updatedPatients = await axios.get('/api/pacientes');
-      updatePatients?.(updatedPatients.data);
+      const response = await axios.get(`${baseURL}/api/v1/consultas`);
+      updatePatients?.(response.data);
+      console.log('Paciente deletado com sucesso');
     } catch (error) {
       console.error('Erro ao deletar paciente:', error);
     }
@@ -43,7 +48,7 @@ export default function CardPatient({ id, name, age, solicitingDoctor, removePat
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center ml-2">
           <Image src="/assets/patientIcon.svg" alt="Icone Médico" width={24} height={24} className="mr-2" />
-          <h2 className="text-base font-extrabold text-cyan-800">{name}, {age} anos</h2>
+          <h2 className="text-base font-extrabold text-cyan-800">{nomePaiente}, {idadePaciente} anos</h2>
         </div>
         <button className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center" onClick={openModal}>
           <span className="text-xs font-bold"> <EditIcon /> </span>
@@ -53,7 +58,7 @@ export default function CardPatient({ id, name, age, solicitingDoctor, removePat
 
         <div className="flex items-center ml-2">
           <Image src="/assets/medicIcon.svg" alt="Icone Hospital" width={24} height={24} className="mr-2" />
-          <p className="text-cyan-800 font-bold">{solicitingDoctor}</p>
+          <p className="text-cyan-800 font-bold">{medicoSolicitante}</p>
         </div>
         <button className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center" onClick={() => id && removePatient && remove(id, removePatient)}>
           <span className="text-xs font-bold"><DeleteIcon /></span>

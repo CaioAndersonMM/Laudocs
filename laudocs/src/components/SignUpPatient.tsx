@@ -20,7 +20,7 @@ const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
     },
 }));
 
-export default function SignUp({ addPatient }: SignUpProps) {
+export default function SignUp({ addConsulta }: SignUpProps) {
     const [cpf, setCpf] = useState('');
     const [name, setName] = useState('');
     const [birthDate, setBirthDate] = useState('');
@@ -109,7 +109,8 @@ export default function SignUp({ addPatient }: SignUpProps) {
                     dataConsulta: today,
                 };
 
-                await axios.post(`${baseURL}/api/v1/consultas`, newAppointment);
+               const response=  await axios.post(`${baseURL}/api/v1/consultas`, newAppointment);
+               addConsulta(response.data);
                 console.log('Consulta adicionada:', newAppointment);
 
             } catch (error) {
@@ -132,7 +133,8 @@ export default function SignUp({ addPatient }: SignUpProps) {
                     dataConsulta: today,
                 };
 
-                await axios.post(`${baseURL}/api/v1/consultas`, newAppointment);
+                const response2 = await axios.post(`${baseURL}/api/v1/consultas`, newAppointment);
+                addConsulta(response2.data);
                 console.log('Paciente e consulta adicionados:', externalPatient, newAppointment);
             }
 

@@ -3,28 +3,29 @@
 import SignUp from '@/components/SignUpPatient';
 import React, { useState, useEffect } from 'react';
 import ListPatients from '@/components/ListPatients';
-import { CardPatientInterface } from '@/interfaces/AllInterfaces';
+import { CardConsultaInterface } from '@/interfaces/AllInterfaces';
 import axios from 'axios';
 import LoadingCard from '@/components/LoadingCard';
 import LogOutComponent from '@/components/LogOutButton';
 import ProtectedLayout from '@/components/ProtectedLayout';
 
 export default function Home() {
-  const [patients, setPatients] = useState<CardPatientInterface[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedPatient, setSelectedPatient] = useState<CardPatientInterface | null>(null);
+  const [consultas, setConsultas] = useState<CardConsultaInterface[]>([]);
+  const [selectedConsulta, setSelectedConsulta] = useState<CardConsultaInterface | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   useEffect(() => {
-    fetchPatients();
+    fetchConsultas();
   }, []);
 
-  const fetchPatients = async () => {
+  const fetchConsultas = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/pacientes');
-      setPatients(response.data);
+      const response = await axios.get(`${baseURL}/api/v1/consultas`);
+      setConsultas(response.data);
     } catch (err) {
       setError('Erro ao buscar pacientes');
       console.error(err);
@@ -34,16 +35,16 @@ export default function Home() {
   };
 
 
-  const addPatient = (patient: CardPatientInterface) => {
-    setPatients((prevPatients) => [...prevPatients, patient]);
+  const addConsulta = (consulta: CardConsultaInterface) => {
+    setConsultas((prevConsultas) => [...prevConsultas, consulta]);
   };
 
-  const removePatient = (id: string) => {
-    setPatients((prevPatients) => prevPatients.filter((patient) => patient.id !== id));
+  const removeConsulta = (id: number) => {
+    setConsultas((prevConsultas) => prevConsultas.filter((consulta) => consulta.id!== id));
   };
 
-  const handleSelectPatient = (patient: CardPatientInterface) => {
-    setSelectedPatient(patient);
+  const handleSelectConsulta = (consulta: CardConsultaInterface) => {
+    setSelectedConsulta(consulta);
   };
 
   return (
@@ -68,12 +69,12 @@ export default function Home() {
           ) : error ? (
             <p>{error}</p>
           ) : (
-            <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} removePatient={removePatient}  updatePatients={fetchPatients} />
+            <ListPatients arrayOfConsultas={consultas} onSelectConsulta={handleSelectConsulta} removeConsulta={removeConsulta}  updateConsulta={fetchConsultas} />
           )}
         </div>
 
         <div className="flex h-[97%]">
-          <SignUp addPatient={addPatient} />
+          <SignUp addConsulta={addConsulta} />
         </div>
 
       </div>

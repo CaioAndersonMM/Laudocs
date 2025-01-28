@@ -1,9 +1,9 @@
 import CardPatient from "./CardPatient";
-import { ListPatientsProps } from "../interfaces/AllInterfaces";
+import { ListConsultaProps } from "../interfaces/AllInterfaces";
 
 
 
-export default function ListPatients({ arrayOfPatients, onSelectPatient, removePatient, updatePatients }: ListPatientsProps) {
+export default function ListConsultas({ arrayOfConsultas, onSelectConsulta, removeConsulta, updateConsulta }: ListConsultaProps) {
   return (
     <div className="bg-[#173D65] text-white flex flex-col p-2 rounded-l-lg h-[97%]">
       <h1 className="mt-4 mb-7 text-center text-2xl font-bold" style={{ fontFamily: 'Inter, sans-serif' }}>Fila de Espera</h1>
@@ -16,19 +16,23 @@ export default function ListPatients({ arrayOfPatients, onSelectPatient, removeP
           scrollbarColor: '#4A5568 #CBD5E0',
         }}
       >
-        {arrayOfPatients.map((patient) => (
+        {arrayOfConsultas.map((consulta) => (
+          console.log("id da consulta", consulta.id),
+          console.log("consulta", consulta),
           <div 
-            key={patient.id} 
-            onClick={() => onSelectPatient?.(patient)}
+            key={consulta.id} 
+            onClick={() => onSelectConsulta?.(consulta)}
             className="cursor-pointer"
           >
             <CardPatient 
-              id={patient.id} 
-              name={patient.name} 
-              age={patient.age} 
-              solicitingDoctor={patient.solicitingDoctor} 
-              removePatient={removePatient}
-              updatePatients={updatePatients}
+              pacienteId={consulta.pacienteId}
+              id={consulta.id} 
+              dataConsulta={consulta.dataConsulta} 
+              nomePaiente={consulta.nomePaiente}
+              idadePaciente={consulta.idadePaciente}
+              medicoSolicitante={consulta.medicoSolicitante} 
+              removePatient={removeConsulta}
+              updatePatients={updateConsulta}
             />
           </div>
         ))}

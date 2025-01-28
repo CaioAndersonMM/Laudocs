@@ -2,53 +2,50 @@
 import React, { useState, useEffect } from 'react';
 import SelectPatient from '@/components/SelectPatient';
 import ListPatients from '@/components/ListPatients';
-import { CardPatientInterface } from '@/interfaces/AllInterfaces';
+import { CardConsultaInterface } from '@/interfaces/AllInterfaces';
 import { database } from '../../../services/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import LoadingCard from '@/components/LoadingCard';
 import ProtectedLayout from '@/components/ProtectedLayout';
 import LogOutComponent from '@/components/LogOutButton';
+import axios from 'axios';
 
 function Consultas() {
-  const [patients, setPatients] = useState<CardPatientInterface[]>([]);
+  const [consultas, setConsultas] = useState<CardConsultaInterface[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPatient, setSelectedPatient] = useState<CardPatientInterface | null>(null);
+  const [selectedConsulta, setSelectedConsulta] = useState<CardConsultaInterface | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   useEffect(() => {
-    if (!database) {
-      setError('Database is not initialized');
-      setIsLoading(false);
-      return;
-    }
-    const pacientesRef = collection(database, 'pacientes');
-
     setIsLoading(true);
+    const fetchConsultas = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/api/v1/consultas`);
+        setConsultas(response.data);
+        setError(null);
+      } catch (error: any) {
+        setError('Erro ao escutar pacientes: ' + error.message);
+        console.error('Erro ao escutar pacientes:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    const unsubscribe = onSnapshot(pacientesRef, (snapshot) => {
-      const pacientesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as CardPatientInterface[];
-      setPatients(pacientesData);
-      setError(null);
-      setIsLoading(false);
-    }, (error) => {
-      setError('Erro ao escutar pacientes: ' + error.message);
-      console.error('Erro ao escutar pacientes:', error);
-      setIsLoading(false);
-    });
+    fetchConsultas();
+  }, [baseURL]);
 
-    return () => unsubscribe();
-  }, []);
-
-  const handleSelectPatient = (patient: CardPatientInterface) => {
-    setSelectedPatient(patient);
+  const handleSelectConsulta = (consulta: CardConsultaInterface) => {
+    setSelectedConsulta(consulta);
   };
 
   const removePatientSelected = () => {
-    setSelectedPatient(null);
+    setSelectedConsulta(null);
   };
 
-  const updatePatients = (updatedPatients: CardPatientInterface[]) => {
-    setPatients(updatedPatients);
+  const updateConsulta = (updatedConsulta: CardConsultaInterface[]) => {
+    setConsultas(updatedConsulta);
   };
 
   return (
@@ -72,11 +69,11 @@ function Consultas() {
           ) : error ? (
             <p>{error}</p>
           ) : (
-            <ListPatients arrayOfPatients={patients} onSelectPatient={handleSelectPatient} updatePatients={updatePatients}/>
+            <ListPatients arrayOfConsultas={consultas} onSelectConsulta={handleSelectConsulta} updateConsulta={updateConsulta}/>
           )}
         </div>
         <div className="flex h-[97%]">
-          <SelectPatient selectedPatient={selectedPatient} removePatientSelected={removePatientSelected} />
+          <SelectPatient selectedConsulta={selectedConsulta} removePatientSelected={removePatientSelected} />
         </div>
       </div>
     </div>
