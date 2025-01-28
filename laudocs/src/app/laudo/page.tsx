@@ -53,6 +53,46 @@ const Laudo = () => {
         );
     };
 
+    const renderConditionalSection = (sectionKey: string, sectionData: any) => {
+        if (sectionData.conditionMet) {
+            return (
+                <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <h3 className="text-lg font-semibold text-white bg-cyan-900 p-1 rounded mb-3 text-center flex items-center justify-center">
+                        {(() => {
+                            const sectionName = sectionKey.split('_').pop();
+                            return sectionName ? sectionName.replace(/([A-Z])/g, ' $1').trim().charAt(0).toUpperCase() + sectionName.slice(1) : '';
+                        })()}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        {Object.entries(sectionData.fields)
+                            .filter(([key, value]) => value !== 'Não' && value !== '')
+                            .map(([key, value]) => (
+                               renderField(key, value as string)
+                            ))}
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <h3 className="text-lg font-semibold text-white bg-cyan-900 p-1 rounded mb-3 text-center flex items-center justify-center">
+                        {(() => {
+                            const sectionName = sectionKey.split('_').pop();
+                            return sectionName ? sectionName.replace(/([A-Z])/g, ' $1').trim().charAt(0).toUpperCase() + sectionName.slice(1) : '';
+                        })()}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-1 gap-1 text-sm">
+                        <div className="bg-white p-3 rounded-lg shadow-xs">
+                            <span className="block text-md text-cyan-900 truncate" title="Não há alterações">
+                                - Não há alterações ou não visualizado
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+    };
+
     return (
         <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
 
@@ -148,28 +188,7 @@ const Laudo = () => {
 
             {condicionalData && Object.keys(condicionalData).map((sectionKey) => (
                 <div key={sectionKey} className="mt-4 print-container">
-                    {condicionalData[sectionKey].conditionMet && Object.keys(condicionalData[sectionKey].fields).length > 0 && (
-                        <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                            <h3 className="text-lg font-semibold text-white bg-cyan-900 p-1 rounded mb-3 text-center flex items-center justify-center">
-                                {/* <FaCheckCircle className="mr-2" /> */}
-                                {(() => {
-                                    const sectionName = sectionKey.split('_').pop();
-                                    return sectionName ? sectionName.replace(/([A-Z])/g, ' $1').trim().charAt(0).toUpperCase() + sectionName.slice(1) : '';
-                                })()}
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                {Object.entries(condicionalData[sectionKey].fields)
-                                    .filter(([key, value]) => value !== 'Não' && value !== '')
-                                    .map(([key, value]) => (
-                                        <div key={key} className="bg-white p-3 rounded-lg shadow-xs">
-                                            <span className="block text-md text-cyan-900 truncate" title={`${key} ${value}`}>
-                                                - {key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()} {value as string}
-                                            </span>
-                                        </div>
-                                    ))}
-                            </div>
-                        </div>
-                    )}
+                    {renderConditionalSection(sectionKey, condicionalData[sectionKey])}
                 </div>
             ))}
 
