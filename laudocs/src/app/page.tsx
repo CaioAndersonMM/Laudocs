@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import signIn from '../../services/auth/SignIn';
 
 export default function LoginPage() {
-    const base_url = "http://localhost:8080";
+    const base_url = process.env.NEXT_PUBLIC_BASE_URL;
+
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -80,7 +80,7 @@ export default function LoginPage() {
                 setCredencialError(`Email e senha não coincidem.`);
             }
         } catch (error) {
-            setCredencialError("Erro ao fazer a requisição");
+            setCredencialError("Erro ao fazer a requisição. Servidor não alcançado.");
         }
 
     };
