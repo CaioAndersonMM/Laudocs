@@ -7,8 +7,6 @@ import LoadingCard from "@/components/LoadingCard";
 import ProtectedLayout from "@/components/ProtectedLayout";
 import LogOutComponent from "@/components/LogOutButton";
 import axios from "axios";
-import SockJS from "sockjs-client";
-import { Stomp } from "@stomp/stompjs";
 
 function Consultas() {
   const [consultas, setConsultas] = useState<CardConsultaInterface[]>([]);
@@ -16,61 +14,52 @@ function Consultas() {
   const [selectedConsulta, setSelectedConsulta] = useState<CardConsultaInterface | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-  let stompClient: any = null;
 
-  // Função para conectar ao WebSocket
-  const connectWebSocket = () => {
-    const socket = new SockJS(`${baseURL}/ws`); // Endpoint do WebSocket do backend
-    stompClient = Stomp.over(socket);
-
-    stompClient.connect({}, () => {
-      console.log("Conectado ao WebSocket");
-
-      // Inscreve-se para receber atualizações das consultas
-      stompClient.subscribe("/topic/consultas", (message: { body: string; }) => {
-        console.log("Nova mensagem do WebSocket:", message.body);
-        const updatedConsultas = JSON.parse(message.body);
-        setConsultas(updatedConsultas);
-      });
-    });
-
-    stompClient.onDisconnect = () => {
-      console.log("Desconectado do WebSocket");
-    };
+  // Função para buscar consultas
+  const fetchConsultas = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`${baseURL}/api/v1/consultas`);
+      setConsultas(response.data);
+      setError(null);
+    } catch (error: any) {
+      setError("Erro ao buscar pacientes: " + error.message);
+      console.error("Erro ao buscar pacientes:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Busca as consultas na primeira renderização e inicia WebSocket
+
   useEffect(() => {
-    const fetchConsultas = async () => {
-      try {
-        const response = await axios.get(`${baseURL}/api/v1/consultas`);
-        setConsultas(response.data);
-        setError(null);
-      } catch (error: any) {
-        setError("Erro ao buscar consultas: " + error.message);
-        console.error("Erro ao buscar consultas:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchConsultas();
-    connectWebSocket();
 
+    
+    const eventSource = new EventSource("http://localhost:8080/sse/subscribe");
+
+    // Evento de nova consulta recebida
+    eventSource.addEventListener("consulta-adicionada", (event) => {
+      console.log("Nova consulta recebida via SSE:", event.data);
+      fetchConsultas();
+    });
+    eventSource.addEventListener('consulta-atualizada', (event) => {
+      const consulta = JSON.parse(event.data);
+      console.log('Consulta atualizada:', consulta);
+      // Atualize a lista de consultas no frontend
+      fetchConsultas(); // Chame o endpoint de listar consultas
+  });
+  
+  // Escuta eventos de consulta removida
+  eventSource.addEventListener('consulta-removida', (event) => {
+      const consultaId = JSON.parse(event.data);
+      console.log('Consulta removida:', consultaId);
+      // Atualize a lista de consultas no frontend
+      fetchConsultas(); // Chame o endpoint de listar consultas
+  });
     return () => {
-      if (stompClient) {
-        stompClient.disconnect();
-      }
+      eventSource.close();
     };
   }, [baseURL]);
-
-  const handleSelectConsulta = (consulta: CardConsultaInterface) => {
-    setSelectedConsulta(consulta);
-  };
-
-  const removePatientSelected = () => {
-    setSelectedConsulta(null);
-  };
 
   return (
     <ProtectedLayout>
@@ -94,11 +83,11 @@ function Consultas() {
             ) : error ? (
               <p>{error}</p>
             ) : (
-              <ListPatients arrayOfConsultas={consultas} onSelectConsulta={handleSelectConsulta} />
+              <ListPatients arrayOfConsultas={consultas} onSelectConsulta={setSelectedConsulta} updateConsulta={setConsultas} />
             )}
           </div>
           <div className="flex h-[97%]">
-            <SelectPatient selectedConsulta={selectedConsulta} removePatientSelected={removePatientSelected} />
+            <SelectPatient selectedConsulta={selectedConsulta} removePatientSelected={() => setSelectedConsulta(null)} />
           </div>
         </div>
       </div>
