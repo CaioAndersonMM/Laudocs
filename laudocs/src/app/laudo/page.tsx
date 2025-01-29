@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import { formatDate, processFormState } from '../../utils/processFormState';
 
 const Laudo = () => {
@@ -9,6 +11,41 @@ const Laudo = () => {
     const formState = searchParams ? searchParams.get('formState') : null;
 
     const { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, medicoSolicitante, noduleData, condicionalData } = processFormState(formState);
+
+    const handlePrintAndSend = async () => {
+        const input = document.getElementById('laudo-content');
+        const printButton = document.getElementById('print-button');
+        if (input) {
+            if (printButton) printButton.style.display = 'none'; 
+
+            input.style.zoom = '1';
+
+            const canvas = await html2canvas(input, { scale: 2, useCORS: true });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            const pdfBlob = pdf.output('blob');
+
+            input.style.zoom = '0.75';
+            pdf.save('laudo.pdf');
+            const formData = new FormData();
+            formData.append('file', pdfBlob, 'laudo.pdf');
+
+            await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (printButton) printButton.style.display = 'block'; // Show the print button again
+
+            // Imprimir a página
+            window.print();
+        }
+    };
 
     const renderField = (key: string, value: string) => {
         let label = key;
@@ -118,20 +155,26 @@ const Laudo = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
-
+        <div id="laudo-content" className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg" style={{ zoom: '0.75' }}>
             <style jsx global>{`
                 @media print {
                     @page {
+                        size: A4;
                         margin: 1cm;
                     }
                     body {
-                        -webkit-print-color-adjust: exact;
+                       width: 210mm; /* Ajuste o tamanho para A4 */
+                        height: 297mm;
+                        margin: 0 auto;
+                        padding: 1cm;
+                        box-sizing: border-box;
+                    }
+                    .page-break {
+                        page-break-after: always; /* Força uma quebra de página */
                     }
                     .no-print {
                         display: none;
                     }
-                   
                     .bg-gray-100 {
                         background-color: #f3f4f6 !important;
                     }
@@ -161,6 +204,139 @@ const Laudo = () => {
                     .text-xl {
                         font-size: 18px;
                     }
+                }
+                .flex {
+                    display: flex;
+                    align-items: center;
+                }
+                .items-center {
+                    align-items: center;
+                }
+                .space-x-1 > * + * {
+                    margin-left: 0.25rem;
+                }
+                .truncate {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .text-md {
+                    font-size: 1rem;
+                }
+                .text-cyan-900 {
+                    color: #065f46;
+                }
+                .bg-gray-50 {
+                    background-color: #f9fafb;
+                }
+                .bg-gray-100 {
+                    background-color: #f3f4f6;
+                }
+                .bg-cyan-900 {
+                    background-color: #164e63;
+                }
+                .bg-white {
+                    background-color: #ffffff;
+                }
+                .rounded-lg {
+                    border-radius: 0.5rem;
+                }
+                .shadow-sm {
+                    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+                }
+                .shadow-xs {
+                    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
+                }
+                .p-1 {
+                    padding: 0.25rem;
+                }
+                .p-2 {
+                    padding: 0.5rem;
+                }
+                .p-3 {
+                    padding: 0.75rem;
+                }
+                .p-4 {
+                    padding: 1rem;
+                }
+                .mt-4 {
+                    margin-top: 1rem;
+                }
+                .mt-6 {
+                    margin-top: 1.5rem;
+                }
+                .mt-20 {
+                    margin-top: 5rem;
+                }
+                .mb-3 {
+                    margin-bottom: 0.75rem;
+                }
+                .mb-6 {
+                    margin-bottom: 1.5rem;
+                }
+                .leading-relaxed {
+                    line-height: 1.625;
+                }
+                .text-center {
+                    text-align: center;
+                }
+                .text-justify {
+                    text-align: justify;
+                }
+                .text-lg {
+                    font-size: 1.125rem;
+                }
+                .text-xl {
+                    font-size: 1.25rem;
+                }
+                .text-2xl {
+                    font-size: 1.5rem;
+                }
+                .font-bold {
+                    font-weight: 700;
+                }
+                .font-semibold {
+                    font-weight: 600;
+                }
+                .capitalize {
+                    text-transform: capitalize;
+                }
+                .opacity-55 {
+                    opacity: 0.55;
+                }
+                .border {
+                    border-width: 1px;
+                }
+                .rounded-md {
+                    border-radius: 0.375rem;
+                }
+                .block {
+                    display: block;
+                }
+                .w-1/2 {
+                    width: 50%;
+                }
+                .w-2/3 {
+                    width: 66.666667%;
+                }
+                .hover\\:bg-blue-600:hover {
+                    background-color: #2563eb;
+                }
+                .focus\\:outline-none:focus {
+                    outline: 2px solid transparent;
+                    outline-offset: 2px;
+                }
+                .focus\\:ring-2:focus {
+                    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+                }
+                .focus\\:ring-blue-300:focus {
+                    box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.5);
+                }
+                .bg-green-700 {
+                    background-color: #047857;
+                }
+                .text-white {
+                    color: #ffffff;
                 }
             `}</style>
 
@@ -224,7 +400,8 @@ const Laudo = () => {
 
             <div className="flex justify-center mt-6 no-print">
                 <button
-                    onClick={() => window.print()}
+                    id="print-button"
+                    onClick={handlePrintAndSend}
                     className="w-2/3 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 >
                     Imprimir
