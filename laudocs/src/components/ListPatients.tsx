@@ -30,7 +30,8 @@ export default function ListConsultas({ arrayOfConsultas, onSelectConsulta, remo
               dataConsulta={consulta.dataConsulta} 
               nomePaiente={consulta.nomePaiente}
               idadePaciente={consulta.idadePaciente}
-              medicoSolicitante={consulta.medicoSolicitante} 
+              medicoSolicitante={consulta.medicoSolicitante}
+              dataNascPaciente={consulta.dataNascPaciente} 
               removePatient={removeConsulta}
               updatePatients={updateConsulta}
             />

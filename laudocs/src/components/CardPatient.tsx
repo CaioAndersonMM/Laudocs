@@ -6,11 +6,12 @@ import axios from 'axios';
 import { useState } from 'react';
 import { CardPatientProps } from '@/interfaces/AllInterfaces';
 import Image from 'next/image';
+import dayjs from 'dayjs';
 
-export default function CardPatient({ id, pacienteId,nomePaiente, dataConsulta,idadePaciente, medicoSolicitante, removePatient, updatePatients}: CardPatientProps) {
+export default function CardPatient({ id, pacienteId,nomePaiente,dataNascPaciente,dataConsulta,idadePaciente, medicoSolicitante, removePatient, updatePatients}: CardPatientProps) {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editedName, setEditedName] = useState(nomePaiente);
-  const [editedAge, setEditedAge] = useState(idadePaciente);
+  const [editedDataNasc, setEditeDataNasc] = useState<string>(dayjs(dataNascPaciente).format('DD/MM/YYYY'));
   const [editedDoctor, setEditedDoctor] = useState(medicoSolicitante);
 
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -18,17 +19,42 @@ export default function CardPatient({ id, pacienteId,nomePaiente, dataConsulta,i
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
+  const validateBirthDate = (date: string) => {
+          const [day, month, year] = date.split('/').map(Number);
+          const isValidDate = dayjs(`${year}-${month}-${day}`).isValid();
+          const isWithinRange = year <= dayjs().year();
+          return isValidDate && day <= 31 && month <= 12 && isWithinRange;
+      };
+  
+      const calculateAge = (birthDate: string) => {
+          const [day, month, year] = birthDate.split('/').map(Number);
+          const birth = dayjs(`${year}-${month}-${day}`);
+          return dayjs().diff(birth, 'year');
+      };
+
   const handleEdit = async () => {
+      if (validateBirthDate(editedDataNasc) && editedName.trim().length >= 5 && editedDoctor.trim().length >= 5) {
     try {
-      await axios.put(`/api/pacientes/${id}`, {
-         name: editedName, age: editedAge, solicitingDoctor: editedDoctor 
-        });
+      const pacienteAtualiado = {
+        
+        id: id,
+        dataNascPaciente: editedDataNasc,
+        pacienteId: pacienteId,
+        medicoSolicitante: editedDoctor,
+        nomePaciente: editedName,
+    };
+    console.log(pacienteAtualiado);
+      const response = await axios.put(`${baseURL}/api/v1/consultas/${id}`, pacienteAtualiado);
       closeModal();
-      const updatedPatients = await axios.get('/api/pacientes');
-      updatePatients?.(updatedPatients.data);
+      const response2 = await axios.get(`${baseURL}/api/v1/consultas`);
+      updatePatients?.(response2.data);
     } catch (error) {
       console.error('Erro ao atualizar paciente:', error);
     }
+  }
+  else {
+    console.error('Erro ao atualizar paciente: Dados inválidos');
+  }
   };
 
   const remove = async (id: number, removePatient: (id: number) => void) => {
@@ -81,11 +107,11 @@ export default function CardPatient({ id, pacienteId,nomePaiente, dataConsulta,i
             margin="normal"
           />
           <TextField
-            label="Idade"
+            label="data de Nascimento"
             variant="outlined"
-            type="number"
-            value={editedAge}
-            onChange={(e) => setEditedAge(Number(e.target.value))}
+            type="text"
+            value={editedDataNasc}
+            onChange={(e) => setEditeDataNasc((e.target.value))}
             margin="normal"
           />
           <TextField

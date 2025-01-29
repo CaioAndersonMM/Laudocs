@@ -6,6 +6,7 @@ export interface CardConsultaInterface {
     laudoId?: number | null;
     nomePaiente: string;
     idadePaciente: number;
+    dataNascPaciente: string;
 
 }
 
