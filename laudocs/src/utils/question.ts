@@ -1,7 +1,27 @@
 const Questions: Record<string, {
-  Selects: { label: string; options: string[]; isNumberInput?: boolean; isTextInput?: boolean; isDateInput?: boolean; mark: string }[];
+  Selects: { label: string; options: string[]; mark: string; isNumberInput?: boolean; isTextInput?: boolean; isDateInput?: boolean }[];
   Checkbox: { label: string; mark: string }[];
-  ConditionalSections?: { [key: string]: { condition: string; fields: { label: string; options: string[]; mark: string }[] } }
+  ConditionalSections?: { 
+    [key: string]: { 
+      condition: string; 
+      fields: { 
+        label: string; 
+        options: string[]; 
+        mark: string; 
+        isNumberInput?: boolean; 
+        isTextInput?: boolean; 
+        isDateInput?: boolean; 
+        questions?: { 
+          label: string; 
+          options: string[]; 
+          mark: string; 
+          isNumberInput?: boolean; 
+          isTextInput?: boolean; 
+          isDateInput?: boolean; 
+        }[] 
+      }[] 
+    } 
+  }
 }> = {
   Mamas: {
     Selects: [
@@ -41,6 +61,11 @@ const Questions: Record<string, {
         "options": ["Não", "Sim"],
         "mark": "condicional_axila_doppler"
       },
+      // {
+      //   "label": "Qual Axila?",
+      //   "options": ["Esquerda", "Direita", "Ambas"],
+      //   "mark": "axila_lado"
+      // },
       {
         "label": "Tem nódulo?",
         "options": ["Não", "Sim"],
@@ -602,85 +627,36 @@ const Questions: Record<string, {
   Transvarginal: {
     "Selects": [
       {
-        "label": "Bexiga vazia",
-        "options": ["Sim", "Não"],
+        "label": "Bexiga",
+        "options": ["Vazia", "Cheia"],
         "mark": "bexiga_vazia"
       },
       {
-        "label": "Vagina sem alterações acústicas",
-        "options": ["Sim", "Não"],
-        "mark": "vagina_sem_alteracoes"
+        "label": "Vagina no Exame?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_alteracoes_vagina"
       },
       {
-        "label": "Útero em AVF (Anteversoflexão)",
-        "options": ["Sim", "Não"],
-        "mark": "utero_avf"
+        "label": "Utero no Exame?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_alteracoes_utero"
       },
       {
-        "label": "Útero centrado",
-        "options": ["Sim", "Não"],
-        "mark": "utero_centrado"
+        "label": "Endométrio no Exame?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_alteracoes_endometrio"
       },
       {
-        "label": "Contornos regulares do útero",
-        "options": ["Sim", "Não"],
-        "mark": "utero_contornos_regulares"
+        "label": "Ovario Esquerdo no Exame?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_alteracoes_OvarioEsquerdo"
       },
       {
-        "label": "Limites precisos do útero",
-        "options": ["Sim", "Não"],
-        "mark": "utero_limites_precisos"
+        "label": "Ovario Direito no Exame?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_alteracoes_OvarioDireito"
       },
-      {
-        "label": "Miométrio com ecotextura homogênea",
-        "options": ["Sim", "Não"],
-        "mark": "miometrio_ecotextura"
-      },
-      {
-        "label": "Eco endometrial regular",
-        "options": ["Sim", "Não"],
-        "mark": "eco_endometrial_regular"
-      },
-      {
-        "label": "Ovario direito parauterino",
-        "options": ["Sim", "Não"],
-        "mark": "ovario_direito_parauterino"
-      },
-      {
-        "label": "Contornos regulares do ovário direito",
-        "options": ["Sim", "Não"],
-        "mark": "ovario_direito_contornos_regulares"
-      },
-      {
-        "label": "Limites precisos do ovário direito",
-        "options": ["Sim", "Não"],
-        "mark": "ovario_direito_limites_precisos"
-      },
-      {
-        "label": "Ecotextura habitual do ovário direito",
-        "options": ["Sim", "Não"],
-        "mark": "ovario_direito_ecotextura"
-      },
-      {
-        "label": "Ovario esquerdo parauterino",
-        "options": ["Sim", "Não"],
-        "mark": "ovario_esquerdo_parauterino"
-      },
-      {
-        "label": "Contornos regulares do ovário esquerdo",
-        "options": ["Sim", "Não"],
-        "mark": "ovario_esquerdo_contornos_regulares"
-      },
-      {
-        "label": "Limites precisos do ovário esquerdo",
-        "options": ["Sim", "Não"],
-        "mark": "ovario_esquerdo_limites_precisos"
-      },
-      {
-        "label": "Ecotextura habitual do ovário esquerdo",
-        "options": ["Sim", "Não"],
-        "mark": "ovario_esquerdo_ecotextura"
-      },
+   
       {
         "label": "Transvaginal seriada",
         "options": ["Sim", "Não"],
@@ -718,17 +694,237 @@ const Questions: Record<string, {
         "condition": "Sim",
         "fields": [
           {
-            "label": "Artéria uterina com fluxo pulsátil, sem alterações",
+            "label": "Artéria uterina com fluxo pulsátil",
             "options": ["Sim", "Não"],
-            "mark": "arteria_uterina_fluxo_normal"
+            "mark": "arteria_uterina_fluxo_pulsatil"
           },
           {
-            "label": "Artéria ovariana com fluxo fásico, sem alterações",
+            "label": "Veia uterina com fluxo fásico",
             "options": ["Sim", "Não"],
-            "mark": "arteria_ovariana_fluxo_normal"
+            "mark": "veia_uterina_fluxo_fasico"
           }
         ]
+      },
+      "condicional_alteracoes_vagina": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Alterações acústicas",
+            "options": ["Sem", "Com"],
+            "mark": "alteracoes_acusticas_vagina"
+          },
+        ]
+      },
+      "condicional_alteracoes_utero": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Medida do Útero:",
+            "options": [''],
+            "isTextInput": true,
+            "mark": "medidas_utero_volume"
+          },
+          {
+            "label": "Medida do Corpo:",
+            "options": [''],
+            "isTextInput": true,
+            "mark": "medidas_corpo_volume"
+          },
+          {
+            "label": "Alterações acústicas",
+            "options": ["Sem", "Com"],
+            "mark": "alteracoes_acusticas_vagina"
+          },
+          {
+            "label": "Em AVF (Anteversoflexão)",
+            "options": ["Sim", "Não"],
+            "mark": "utero_avf"
+          },
+          {
+            "label": "Centrado",
+            "options": ["Sim", "Não"],
+            "mark": "utero_centrado"
+          },
+          {
+            "label": "Contornos da serosa",
+            "options": ["Regulares", "Não Regulares"],
+            "mark": "utero_contornos_regulares"
+          },
+          {
+            "label": "Limites",
+            "options": ["Precisos", "Imprecisos"],
+            "mark": "utero_limites_precisos"
+          },
+          {
+            "label": "Miométrio com ecotextura",
+            "options": ["Homogênea", "Não Homogênea"],
+            "mark": "miometrio_ecotextura"
+          },
+          {
+            "label": "Lesões miometriais",
+            "options": ["Ausentes", "Presentes"],
+            "mark": "lesoes_miometriais",
+            "questions": [
+              {
+                "label": "Quantidade lesões miometriais",
+                "options": [],
+                "isNumberInput": true,
+                "mark": "quantidade_lesoes_miometriais"
+            },
+            {
+                "label": "Hipoecogênica",
+                "options": ["Sim", "Não"],
+                "mark": "hipoecogenicidade_lesoes_miometriais"
+            },
+            {
+                "label": "Parede",
+                "options": ["Posterior", "Anterior", "Lateral", "Fundica"],
+                "mark": "parede_lesoes_miometriais"
+            },
+            {
+                "label": "Tipo",
+                "options": ["2-5", "0", "1", "2", "3", "4", "5", "6", "7", "8"],
+                "mark": "tipo_lesoes_miometriais"
+            },
+            {
+                "label": "Medida das lesões",
+                "options": [],
+                "isTextInput": true,
+                "mark": "medida_lesoes_miometriais"
+            },
+            {
+                "label": "IC",
+                "options": ["1", "2", "3", "4", "5"],
+                "mark": "ic_utero"
+            }
+            ]
+          },
+        ]
+      },
+      "condicional_alteracoes_endometrio": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Medida: ",
+            "options": [],
+            "isNumberInput": true,
+            "mark": "medida_endometrio"
+          },
+          {
+            "label": "Ecotextura",
+            "options": ["Isoecogênica", "Hipoecogênica", "Hiperecogênica"],
+            "mark": "ecotextura_endometrio"
+          },
+          {
+            "label": "Uniformidade",
+            "options": ["Homogênea", "Não Homogênea"],
+            "mark": "uniformidade_endometrio"
+          },
+          {
+            "label": "Linha endometrial central",
+            "options": ["Linear", "Ondulada"],
+            "mark": "linha_endometrial"
+          },
+          {
+            "label": "Junção endometrio-miométrio",
+            "options": ["Regular", "Não regular"],
+            "mark": "juncao_endometrio_miometrio"
+          },
+          {
+            "label": "Líquido intra-cavitário",
+            "options": ["Ausente", "Presente"],
+            "mark": "liquido_intra_cavitario"
+          },
+          {
+            "label": "Lesões intra-cavitárias",
+            "options": ["Ausentes", "Presentes"],
+            "mark": "lesoes_intra_cavitarias"
+          },
+          {
+            "label": "IC",
+            "options": ["1", "2", "3", "4", "5"],
+            "mark": "ic"
+          }
+        ]
+      },
+      "condicional_alteracoes_OvarioDireito": {
+        "condition": "Sim",
+        "fields": [
+         
+      {
+        "label": "Parauterino",
+        "options": ["Sim", "Não"],
+        "mark": "ovario_direito_parauterino"
+      },
+      {
+        "label": "Contornos",
+        "options": ["Regulares", "Não regulares"],
+        "mark": "ovario_direito_contornos_regulares"
+      },
+      {
+        "label": "Limites",
+        "options": ["Precisos", "Imprecisos"],
+        "mark": "ovario_direito_limites_precisos"
+      },
+      {
+        "label": "Ecotextura",
+        "options": ["Habitual", "Não habitual"],
+        "mark": "ovario_direito_ecotextura"
+      },
+      {
+        "label": "Medida",
+        "options": [],
+        "isNumberInput": true,
+        "mark": "ovario_direito_medida"
+      },
+      {
+        "label": "Volume",
+        "options": [],
+        "isNumberInput": true,
+        "mark": "ovario_direito_volume"
       }
+
+        ]
+      },
+      "condicional_alteracoes_OvarioEsquerdo": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Parauterino",
+            "options": ["Sim", "Não"],
+            "mark": "ovario_esquerdo_parauterino"
+          },
+          {
+            "label": "Contornos",
+            "options": ["Regulares", "Não regulares"],
+            "mark": "ovario_esquerdo_contornos_regulares"
+          },
+          {
+            "label": "Limites",
+            "options": ["Precisos", "Imprecisos"],
+            "mark": "ovario_esquerdo_limites_precisos"
+          },
+          {
+            "label": "Ecotextura",
+            "options": ["Habitual", "Não habitual"],
+            "mark": "ovario_esquerdo_ecotextura"
+          },
+          {
+            "label": "Medida",
+            "options": [],
+            "isNumberInput": true,
+            "mark": "ovario_esquerdo_medida"
+          },
+          {
+            "label": "Volume",
+            "options": [],
+            "isNumberInput": true,
+            "mark": "ovario_esquerdo_volume"
+          }
+    
+        ]
+      }
+      
     }
   },
   Parede: {
@@ -1122,72 +1318,123 @@ const Questions: Record<string, {
         "mark": "hipocondrio_localizacao"
       },
       {
-        "label": "Fígado com topografia normal",
-        "options": ["Sim", "Não"],
-        "mark": "figado_topografia_normal"
+        "label": "Fígado no Exame?",
+        "options": ["Não Visualizado", "Sim"],
+        "mark": "condicional_alteracoes_fígado"
       },
       {
-        "label": "Fígado com dimensões normais",
-        "options": ["Sim", "Não"],
-        "mark": "figado_dimensoes_normais"
+        "label": "Vesícula Biliar no Exame?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_alteracoes_VesículaBiliar"
       },
       {
-        "label": "Fígado com contornos lisos e regulares",
-        "options": ["Sim", "Não"],
-        "mark": "figado_contornos_regulares"
+        "label": "Pâncreas no Exame?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_alteracoes_Pancreas"
       },
-      {
-        "label": "Fígado com parênquima de ecotextura homogênea",
-        "options": ["Sim", "Não"],
-        "mark": "figado_parenquima_homogeneo"
-      },
-      {
-        "label": "Fígado com ausência de dilatação das vias biliares intra e extra-hepáticas",
-        "options": ["Sim", "Não"],
-        "mark": "figado_vias_biliares_normais"
-      },
-      {
-        "label": "Veias supra-hepáticas e porta com calibres normais e trajetos regulares",
-        "options": ["Sim", "Não"],
-        "mark": "veias_suprahepaticas_normais"
-      },
-      {
-        "label": "Hepatocolédoco medindo normalmente",
-        "options": ["Sim", "Não"],
-        "mark": "hepatocolecodo_medindo_normal"
-      },
-      {
-        "label": "Vesícula biliar com topografia e dimensões normais",
-        "options": ["Sim", "Não"],
-        "mark": "vesicula_biliar_topografia_dimensoes_normais"
-      },
-      {
-        "label": "Vesícula biliar com paredes normoespessas",
-        "options": ["Sim", "Não"],
-        "mark": "vesicula_biliar_paredes_normoespessas"
-      },
-      {
-        "label": "Vesícula biliar com conteúdo homogêneo",
-        "options": ["Sim", "Não"],
-        "mark": "vesicula_biliar_conteudo_homogeneo"
-      },
-      {
-        "label": "Pâncreas com topografia e dimensões normais",
-        "options": ["Sim", "Não"],
-        "mark": "pancreas_topografia_dimensoes_normais"
-      },
-      {
-        "label": "Pâncreas com limites precisos",
-        "options": ["Sim", "Não"],
-        "mark": "pancreas_limites_precisos"
-      },
-      {
-        "label": "Pâncreas sem dilatação do Wirsung",
-        "options": ["Sim", "Não"],
-        "mark": "pancreas_sem_dilatacao_wirsung"
-      }
     ],
     "Checkbox": [],
+    "ConditionalSections": {
+      "condicional_alteracoes_fígado": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Topografia Normal",
+            "options": ["Com", "Sem"],
+            "mark": "figado_topografia_normal"
+          },
+          {
+            "label": "Dimensões",
+            "options": ["Normais", "Anormais"],
+            "mark": "figado_dimensoes_normais"
+          },
+          {
+            "label": "Contornos",
+            "options": ["Lisos e regulares", "Não lisos e regulares"],
+            "mark": "figado_contornos_regulares"
+          },
+          {
+            "label": "Parênquima de ecotextura",
+            "options": ["Homogênea", "Não homogênea"],
+            "mark": "figado_parenquima_homogeneo"
+          },
+          {
+            "label": "Dilatação das vias biliares intra e extra-hepáticas",
+            "options": ["Ausência de", "Presença de"],
+            "mark": "figado_vias_biliares_normais"
+          },
+          {
+            "label": "Veias supra-hepáticas e porta com calibres",
+            "options": ["Normais", "Anormais"],
+            "mark": "veias_suprahepaticas_normais"
+          },
+          {
+            "label": "Trajetos",
+            "options": ["Regulares", "Não regulares"],
+            "mark": "veias_suprahepaticas_trajetos_regulares"
+          },
+          {
+            "label": "Hepatocolédoco medindo normalmente",
+            "options": [],
+            "isNumberInput": true,
+            "mark": "hepatocolecodo_medindo_normal"
+          },
+        
+         
+        ]
+      },
+      "condicional_alteracoes_VesículaBiliar":{
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Topografia Normal",
+            "options": ["Com", "Sem"],
+            "mark": "vesicula_topografia_normal"
+          },
+          {
+            "label": "Dimensões",
+            "options": ["Normais", "Anormais"],
+            "mark": "vesicula_dimensoes_normais"
+          },
+          {
+            "label": "Conteúdo",
+            "options": ["Homogêneo", "Não Homogêneo"],
+            "mark": "vesicula_biliar_conteudo_homogeneo"
+          },
+          {
+            "label": "Paredes",
+            "options": ["Normoespessas", "Não normoespessas"],
+            "mark": "vesicula_biliar_paredes_normoespessas"
+          },
+
+        ]
+      },
+      "condicional_alteracoes_Pancreas":{
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Topografia Normal",
+            "options": ["Com", "Sem"],
+            "mark": "pancreas_topografia_normal"
+          },
+          {
+            "label": "Dimensões",
+            "options": ["Normais", "Anormais"],
+            "mark": "pancreas_dimensoes_normais"
+          },
+          {
+            "label": "Limites",
+            "options": ["Precisos", "Não Precisos"],
+            "mark": "pancreas_limites_precisos"
+          },
+          {
+            "label": "Dilatação do Wirsung",
+            "options": ["Ausência de", "Presença de"],
+            "mark": "pancreas_sem_dilatacao_wirsung"
+          },
+        ]
+      }
+    }
   },
   FigadoViaBilares: {
     "Selects": [
@@ -1322,82 +1569,38 @@ const Questions: Record<string, {
       {
         "label": "É Pediátrico?",
         "options": ["Não", "Sim"],
-        "mark": "condicional_pediatrico_urinario"
+        "mark": "condicional_urinario_Pediatrico"
       },
       {
         "label": "Há Doppler",
         "options": ["Não", "Sim"],
-        "mark": "condicional_doppler_urinario"
+        "mark": "condicional_doppler_Urinário"
+      },
+
+      {
+        "label": "Rim Direito no Exame?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_RimDireito"
       },
       {
-        "label": "Rim direito com topografia, forma, contornos, mobilidade e dimensões normais",
-        "options": ["Sim", "Não"],
-        "mark": "rim_direito_topografia_forma_normais"
+        "label": "Rim Esquerdo no Exame?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_RimEsquerdo"
       },
       {
-        "label": "Espessura e ecogenicidade do parênquima renal direito preservadas",
-        "options": ["Sim", "Não"],
-        "mark": "rim_direito_parenquima_preservado"
+        "label": "Bexiga no Exame?",
+        "options": ["Não", "Sim"],
+        "mark": "condicional_Bexiga"
       },
       {
-        "label": "A espessura do parênquima renal direito é de [cm]",
-        "options": ["Sim", "Não"],
-        "mark": "espessura_parenquima_direito"
-      },
-      {
-        "label": "Relação córtico-medular do rim direito mantida",
-        "options": ["Sim", "Não"],
-        "mark": "relacao_cortico_medular_direito"
-      },
-      {
-        "label": "Ausência de sinais de hidronefrose ou dilatação pielocalicial no rim direito",
-        "options": ["Sim", "Não"],
-        "mark": "hidronefrose_dilatacao_rim_direito"
-      },
-      {
-        "label": "Rim esquerdo com topografia, forma, contornos, mobilidade e dimensões normais",
-        "options": ["Sim", "Não"],
-        "mark": "rim_esquerdo_topografia_forma_normais"
-      },
-      {
-        "label": "Espessura e ecogenicidade do parênquima renal esquerdo preservadas",
-        "options": ["Sim", "Não"],
-        "mark": "rim_esquerdo_parenquima_preservado"
-      },
-      {
-        "label": "A espessura do parênquima renal esquerdo é de [cm]",
-        "options": ["Sim", "Não"],
-        "mark": "espessura_parenquima_esquerdo"
-      },
-      {
-        "label": "Relação córtico-medular do rim esquerdo mantida",
-        "options": ["Sim", "Não"],
-        "mark": "relacao_cortico_medular_esquerdo"
-      },
-      {
-        "label": "Ausência de sinais de hidronefrose ou dilatação pielocalicial no rim esquerdo",
-        "options": ["Sim", "Não"],
-        "mark": "hidronefrose_dilatacao_rim_esquerdo"
-      },
-      {
-        "label": "Espaços peri-renais livres",
-        "options": ["Sim", "Não"],
-        "mark": "espacos_peri_renais_livres"
-      },
-      {
-        "label": "Ureteres visualizados",
-        "options": ["Sim", "Não"],
+        "label": "Ureteres",
+        "options": ["Não Visualizados", "Visualizados"],
         "mark": "ureteres_visualizados"
       },
-      {
-        "label": "Bexiga repleta, de paredes finas e lisas, conteúdo anecóico",
-        "options": ["Sim", "Não"],
-        "mark": "bexiga_repleta_norma"
-      }
     ],
     "Checkbox": [],
     "ConditionalSections": {
-      "condicional_doppler_urinario": {
+      "condicional_doppler_Urinário": {
         "condition": "Sim",
         "fields": [
           {
@@ -1432,7 +1635,7 @@ const Questions: Record<string, {
           }
         ]
       },
-      "condicional_pediatrico_urinario": {
+      "condicional_urinario_Pediatrico": {
         "condition": "Sim",
         "fields": [
           {
@@ -1445,6 +1648,160 @@ const Questions: Record<string, {
             "options": ["Sim", "Não"],
             "mark": "rim_esquerdo_dimensoes_normais"
           }
+        ]
+      },
+      "condicional_RimDireito": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Topografia",
+            "options": ["Normal", "Anormal"],
+            "mark": "rim_direito_topografia_normal"
+          },
+          {
+            "label": "Forma",
+            "options": ["Normal", "Anormal"],
+            "mark": "rim_direito_forma_normal"
+          },
+          {
+           "label": "Contornos",
+            "options": ["Normais", "Anormais"],
+            "mark": "rim_direito_contornos_normais"
+          },
+          {
+            "label": "Mobilidade",
+            "options": ["Normal", "Anormal"],
+            "mark": "rim_direito_mobilidade_normal"
+          },
+          {
+            "label": "Dimensões",
+            "options": ["Normais", "Anormais"],
+            "mark": "rim_direito_dimensoes_normais"
+          },
+          {
+            "label": "Medindo: ",
+            "options": [],
+            "isNumberInput": true,
+            "mark": "rim_direito_medindo"
+          },
+          {
+          "label": "Espessura do Parênquima",
+          "options": ["Preservadas", "Não Preservadas"],
+          "mark": "rim_direito_parenquima_preservado"
+          },
+          {
+            "label": "Ecogenicidade do Parênquima",
+            "options": ["Preservada", "Não Preservada"],
+            "mark": "rim_direito_ecogenicidade_parenquima"
+          },
+          {
+            "label": "Espessura do Parênquima:",
+            "options": [],
+            "isNumberInput": true,
+            "mark": "rim_direito_espessura_parenquima"
+          },
+          {
+            "label": "Relação córtico-medular",
+            "options": ["Mantida", "Não Mantida"],
+            "mark": "rim_direito_relacao_cortico_medular"
+          },
+          {
+            "label": "Sinais de hidronefrose ou dilatação pielocalicial",
+            "options": ["Ausência de", "Presença de"],
+            "mark": "rim_direito_hidronefrose_dilatacao"
+          },
+          {
+            "label": "Espaços peri-renais",
+            "options": ["Livres", "Não Livres"],
+            "mark": "rim_direito_espacos_peri_renais"
+          }
+        ]
+      },
+      "condicional_RimEsquerdo": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Topografia",
+            "options": ["Normal", "Anormal"],
+            "mark": "rim_esquerdo_topografia_normal"
+          },
+          {
+            "label": "Forma",
+            "options": ["Normal", "Anormal"],
+            "mark": "rim_esquerdo_forma_normal"
+          },
+          {
+           "label": "Contornos",
+            "options": ["Normais", "Anormais"],
+            "mark": "rim_esquerdo_contornos_normais"
+          },
+          {
+            "label": "Mobilidade",
+            "options": ["Normal", "Anormal"],
+            "mark": "rim_esquerdo_mobilidade_normal"
+          },
+          {
+            "label": "Dimensões",
+            "options": ["Normais", "Anormais"],
+            "mark": "rim_esquerdo_dimensoes_normais"
+          },
+          {
+            "label": "Medindo: ",
+            "options": [],
+            "isNumberInput": true,
+            "mark": "rim_esquerdo_medindo"
+          },
+          {
+          "label": "Espessura do Parênquima",
+          "options": ["Preservadas", "Não Preservadas"],
+          "mark": "rim_esquerdo_parenquima_preservado"
+          },
+          {
+            "label": "Ecogenicidade do Parênquima",
+            "options": ["Preservada", "Não Preservada"],
+            "mark": "rim_esquerdo_ecogenicidade_parenquima"
+          },
+          {
+            "label": "Espessura do Parênquima:",
+            "options": [],
+            "isNumberInput": true,
+            "mark": "espessura_parenquima"
+          },
+          {
+            "label": "Relação córtico-medular",
+            "options": ["Mantida", "Não Mantida"],
+            "mark": "relacao_cortico_medular"
+          },
+          {
+            "label": "Sinais de hidronefrose ou dilatação pielocalicial",
+            "options": ["Ausência de", "Presença de"],
+            "mark": "hidronefrose_dilatacao"
+          },
+          {
+            "label": "Espaços peri-renais",
+            "options": ["Livres", "Não Livres"],
+            "mark": "espacos_peri_renais"
+          }
+        ]
+      },
+      "condicional_Bexiga":{
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Repleta",
+            "options": ["Sim", "Não"],
+            "mark": "bexiga_repleta"
+          },
+          {
+            "label": "Paredes",
+            "options": ["Finas e Lisas", "Não Finas e Lisas"],
+            "mark": "bexiga_paredes_normoespessas"
+          },
+          {
+            "label": "Conteúdo",
+            "options": ["Anecóico", "Não Anecóico"],
+            "mark": "bexiga_conteudo_homogeneo"
+          },
         ]
       }
     }

@@ -15,14 +15,14 @@ const consultations = [
 
 
 
-const ListTypeConsult: React.FC<ListTypeConsultProps> = ({ patient }) => {
+const ListTypeConsult: React.FC<ListTypeConsultProps> = ({ consulta }) => {
     return (
         <Box sx={{ flexGrow: 1, padding: 2 }}>
             <Grid container spacing={2}>
                 {consultations.map((consultation, index) => (
                     <Grid item xs={12} sm={6} key={index}>
                         <a
-                            href={`/consultatype?patientId=${patient.id}&consultation=${consultation}&doctor=${encodeURIComponent(patient.solicitingDoctor)}&patientAge=${patient.age}&patientName=${encodeURIComponent(patient.name)}`} style={{ textDecoration: 'none' }}
+                            href={`/consultatype?patientId=${consulta.id}&consultation=${consultation}&doctor=${encodeURIComponent(consulta.medicoSolicitante)}&patientAge=${consulta.idadePaciente}&patientName=${encodeURIComponent(consulta.nomePaiente)}`} style={{ textDecoration: 'none' }}
                         >
                             <Card
                                 sx={{
