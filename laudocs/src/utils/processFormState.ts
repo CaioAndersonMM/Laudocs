@@ -10,18 +10,10 @@ export const processFormState = (formState: string | null) => {
 
     console.log(parsedFormState);
 
-    if (parsedFormState['Tem nódulo?'] === 'Sim') {
-        if (parsedFormState['Onde está o Nódulo?'] === 'Esquerda') {
-            newParsedFormState['Nódulo esquerdo'] = 'Presente';
-        } else if (parsedFormState['Onde está o Nódulo?'] === 'Direita') {
-            newParsedFormState['Nódulo direito'] = 'Presente';
-        } else if (parsedFormState['Onde está o Nódulo?'] === 'Ambos') {
-            newParsedFormState['Nódulo esquerdo'] = 'Presente';
-            newParsedFormState['Nódulo direito'] = 'Presente';
-        }
-        newParsedFormState = { ['Presença de nódulo']: 'Sim', ...newParsedFormState };
-    } else if (parsedFormState['Tem nódulo?'] === 'Não') {
-        newParsedFormState['Nenhum nódulo encontrado'] = 'Sim';
+    if (parsedFormState['Tem nódulo?'] === 'Sim' && parsedFormState.noduleData.length > 0) {
+        newParsedFormState = { ['Presença de nódulo(s)']: 'Sim', ...newParsedFormState };
+    } else {
+        newParsedFormState['Sem nódulos e/ou cistos encontrados'] = 'Sim';
     }
 
     if (parsedFormState['Há Doppler?'] === 'Sim') {
