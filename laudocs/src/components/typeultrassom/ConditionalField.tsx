@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface ConditionalSectionProps {
     select: any;
@@ -17,6 +17,82 @@ const ConditionalSection: React.FC<ConditionalSectionProps> = ({
     handleSelectChange,
     handleConditionalChange
 }) => {
+    const initialized = useRef(false);
+
+    useEffect(() => {
+        if (isConditionMet && conditionField && !initialized.current) {
+            conditionField.fields.forEach((field: any) => {
+                if (field.questions && formState.conditionalData[select.mark]?.fields[field.label] === 'Presentes') {
+                    field.questions.forEach((question: any) => {
+                        if (!formState.conditionalData[select.mark]?.fields[question.label]) {
+                            handleConditionalChange(select.mark, question.label, question.options[0] || '');
+                        }
+                    });
+                }
+            });
+            initialized.current = true;
+        }
+    }, [isConditionMet, conditionField, formState.conditionalData, select.mark, handleConditionalChange]);
+
+    const handleFieldChange = (sectionMark: string, fieldLabel: string, value: string) => {
+        handleConditionalChange(sectionMark, fieldLabel, value);
+        if (value === 'Presentes') {
+            const field = conditionField.fields.find((f: any) => f.label === fieldLabel);
+            if (field && field.questions) {
+                field.questions.forEach((question: any) => {
+                    handleConditionalChange(sectionMark, question.label, question.options[0] || '');
+                });
+            }
+        }
+    };
+
+    const renderField = (field: any, value: any, handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, subFieldLabel?: string) => void) => {
+        if (field.isNumberInput) {
+            return (
+                <input
+                    type="number"
+                    value={value || ""}
+                    onChange={(e) => handleChange(e)}
+                    className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                    placeholder="Digite a medida"
+                />
+            );
+        } else if (field.isTextInput) {
+            return (
+                <input
+                    type="text"
+                    value={value || ""}
+                    onChange={(e) => handleChange(e)}
+                    className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                    placeholder="Digite o texto"
+                />
+            );
+        } else {
+            return (
+                <select
+                    value={typeof value === 'boolean' ? (value ? 'Sim' : 'Não') : value || field.options[0]}
+                    onChange={(e) => handleChange(e)}
+                    className="mt-1 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
+                >
+                    {field.options.map((option: string, idx: number) => (
+                        <option key={idx} value={option}>{option}</option>
+                    ))}
+                </select>
+            );
+        }
+    };
+
+    const renderSubQuestions = (questions: any[], formState: any, handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, subFieldLabel?: string) => void) => {
+        return questions.map((question, index) => (
+            <div key={index} className="flex flex-col mt-4">
+                <label className="block text-sm font-semibold">
+                    {question.label}
+                    {renderField(question, formState[question.label], (e) => handleChange(e, question.label))}
+                </label>
+            </div>
+        ));
+    };
+
     return (
         <div className="flex flex-col space-y-4">
             <label className="block text-sm font-semibold">
@@ -39,29 +115,13 @@ const ConditionalSection: React.FC<ConditionalSectionProps> = ({
                             <div key={index} className="flex flex-col">
                                 <label className="block text-sm font-semibold">
                                     {field.label}
-                                    {field.isNumberInput ? (
-                                        <input
-                                            type="number"
-                                            // value={formState.condicionalData[field.mark] || ""}
-                                            onChange={(e) => handleConditionalChange(select.mark, field.label, e.target.value)}
-                                            className="mt-2 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
-                                            placeholder="Digite a medida"
-                                        />
-                                    ) : (
-                                        <select
-                                            value={typeof formState.conditionalData[select.mark]?.fields[field.label] === 'boolean'
-                                                ? (formState.conditionalData[select.mark]?.fields[field.label] ? 'Sim' : 'Não')
-                                                : formState.conditionalData[select.mark]?.fields[field.label] || field.options[0]}
-                                            onChange={(e) => handleConditionalChange(select.mark, field.label, e.target.value)}
-                                            className="mt-1 p-2 border rounded-md w-full bg-white focus:ring-2 focus:ring-cyan-800"
-                                        >
-                                            {field.options.map((option: string, idx: number) => (
-                                                <option key={idx} value={option}>{option}</option>
-                                            ))}
-                                        </select>
-                                    )}
-
+                                    {renderField(field, formState.conditionalData[select.mark]?.fields[field.label], (e) => handleFieldChange(select.mark, field.label, e.target.value))}
                                 </label>
+                                {field.questions && formState.conditionalData[select.mark]?.fields[field.label] === 'Presentes' && (
+                                    <div className="ml-4 mt-2">
+                                        {renderSubQuestions(field.questions, formState.conditionalData[select.mark]?.fields, (e, subFieldLabel) => handleConditionalChange(select.mark, subFieldLabel || field.label, e.target.value))}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>

@@ -54,6 +54,21 @@ const Laudo = () => {
     };
 
     const renderConditionalSection = (sectionKey: string, sectionData: any) => {
+        const calculateVolumes = (fields: any) => {
+            return Object.entries(fields)
+                .filter(([key]) => key.startsWith('Medida'))
+                .map(([key, value]) => {
+                    const [length, width, height] = (value as string).split('x').map(parseFloat);
+                    if (!isNaN(length) && !isNaN(width) && !isNaN(height)) {
+                        return { key, volume: (length * width * height).toFixed(2) };
+                    }
+                    return null;
+                })
+                .filter(volume => volume !== null);
+        };
+
+        const volumes = calculateVolumes(sectionData.fields);
+
         if (sectionData.conditionMet) {
             return (
                 <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
@@ -67,7 +82,16 @@ const Laudo = () => {
                         {Object.entries(sectionData.fields)
                             .filter(([key, value]) => value !== 'Não' && value !== '')
                             .map(([key, value]) => (
-                               renderField(key, value as string)
+                                <React.Fragment key={key}>
+                                    {renderField(key, value as string)}
+                                    {volumes.find(volume => volume.key === key) && (
+                                        <div className="flex items-center space-x-1">
+                                            <span className="block text-md text-cyan-900 truncate" title={`Volume: ${volumes.find(volume => volume.key === key)?.volume} cm³`}>
+                                                - Volume do {key.split(' ').pop()} {volumes.find(volume => volume.key === key)?.volume} cm³
+                                            </span>
+                                        </div>
+                                    )}
+                                </React.Fragment>
                             ))}
                     </div>
                 </div>
