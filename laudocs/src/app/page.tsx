@@ -2,32 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import signIn from '../../services/auth/SignIn';
-import { FirebaseError } from 'firebase/app';
 
 export default function LoginPage() {
+    const base_url = "http://localhost:8080";
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [credenciaisError, setCredencialError] = useState('');
-    const [saveCredentials, setSaveCredentials] = useState(false);
     const [loading, setLoading] = useState(true);
-    const router = useRouter();
-    const auth = getAuth();
+    const [saveCredentials, setSaveCredentials] = useState(false);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
-                router.push('/lista-de-pacientes');
-            } else {
-                setLoading(false);
-            }
-        });
-
-        return () => unsubscribe();
-    }, [auth, router]);
+        setLoading(false);
+    }, []);
 
     const validateEmail = (email: string) => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -40,50 +30,59 @@ export default function LoginPage() {
         setCredencialError('');
     
         let hasError = false;
-    
-        if (email.length < 5 || !validateEmail(email)) {
-            setEmailError('Por favor, insira um email válido.');
+        
+        if (email.length < 5) {
+            setEmailError('O email deve conter no mínimo 5 caracteres.');
+            hasError = true;
+        }
+        else if (!validateEmail(email)) {
+            setEmailError('O formato do email é inválido.');
             hasError = true;
         }
         if (password.length < 6) {
-            setPasswordError('A senha deve ter pelo menos 5 caracteres.');
+            setPasswordError('A senha deve conter no mínimo 6 caracteres.');
             hasError = true;
         }
     
         if (hasError) {
             return;
         }
+
+        const payload = {
+            email: email,
+            senha: password
+        };
+
         try {
-            const { error } = await signIn(email, password);
+            const response = await fetch(`${base_url}/api/v1/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
     
-            if (error) {
-                const firebaseError = error as FirebaseError;
-                if (firebaseError.code === 'auth/invalid-email') {
-                    setCredencialError('Email não encontrado.');
-                } else if (firebaseError.code === 'auth/invalid-credential') {
-                    setCredencialError('Email ou Senha estão incorretos.');
-                } else if (firebaseError.message) {
-                    setCredencialError(firebaseError.message);
+            const data = await response.json();
+    
+            console.log("Response:", response);
+            console.log("Data:", data);
+
+            if (response.ok) {
+                localStorage.setItem('token', data.token);
+
+                if (data.role.toUpperCase() === "ADMIN") {
+                    router.push('/consultas');
                 } else {
-                    setCredencialError('Erro desconhecido');
+                    router.push('/lista-de-pacientes');
                 }
-                return;
-            }
-    
-            if (saveCredentials) {
-                localStorage.setItem('userEmail', email);
-                localStorage.setItem('userPassword', password);
-            }
-    
-            if (email === "docjuniorceara@hotmail.com") {
-                router.push("/consultas");
+
             } else {
-                router.push("/lista-de-pacientes");
+                setCredencialError(`Email e senha não coincidem.`);
             }
-            
         } catch (error) {
-            console.error('Error: ', error);
+            setCredencialError("Erro ao fazer a requisição");
         }
+
     };
     
 
@@ -132,7 +131,7 @@ export default function LoginPage() {
                             <input 
                                 type="checkbox" 
                                 className="mr-2" 
-                                checked={saveCredentials} 
+                                checked={saveCredentials}
                                 onChange={() => setSaveCredentials(!saveCredentials)} 
                             />
                             <span>Lembrar minhas credenciais</span>
