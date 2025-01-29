@@ -16,37 +16,48 @@ const Laudo = () => {
         const input = document.getElementById('laudo-content');
         const printButton = document.getElementById('print-button');
         if (input) {
-            if (printButton) printButton.style.display = 'none'; 
-
+            if (printButton) printButton.style.display = 'none';
+    
             input.style.zoom = '1';
-
+    
             const canvas = await html2canvas(input, { scale: 2, useCORS: true });
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
-            const imgProps = pdf.getImageProperties(imgData);
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+    
+            let imgHeight = (canvas.height * pdfWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+    
+            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+            heightLeft -= pdfHeight;
+    
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+                heightLeft -= pdfHeight;
+            }
+    
             const pdfBlob = pdf.output('blob');
-
+    
             input.style.zoom = '0.75';
             pdf.save('laudo.pdf');
             const formData = new FormData();
             formData.append('file', pdfBlob, 'laudo.pdf');
-
+    
             await fetch('/api/upload', {
                 method: 'POST',
                 body: formData,
             });
-
+    
             if (printButton) printButton.style.display = 'block'; // Show the print button again
-
+    
             // Imprimir a página
             window.print();
         }
     };
-
     const renderField = (key: string, value: string) => {
         let label = key;
         if (value === 'Com' || value === 'Sem' || value === 'Presença' || value === 'Ausência' || value === 'Presença de' || value === 'Ausência de') {
@@ -173,7 +184,7 @@ const Laudo = () => {
                         page-break-after: always; /* Força uma quebra de página */
                     }
                     .no-print {
-                        display: none;
+                        display: none !important;
                     }
                     .bg-gray-100 {
                         background-color: #f3f4f6 !important;
