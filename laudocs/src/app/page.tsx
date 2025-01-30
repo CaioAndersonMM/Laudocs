@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { saveRole, saveToken } from '@/utils/token';
 
 export default function LoginPage() {
-    const base_url = process.env.NEXT_PUBLIC_BASE_URL;
+    const base_url = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     const router = useRouter();
     const [email, setEmail] = useState('');
@@ -68,7 +69,8 @@ export default function LoginPage() {
             console.log("Data:", data);
 
             if (response.ok) {
-                localStorage.setItem('token', data.token);
+                saveToken(data.token);
+                saveRole(data.role);
 
                 if (data.role.toUpperCase() === "ADMIN") {
                     router.push('/consultas');
