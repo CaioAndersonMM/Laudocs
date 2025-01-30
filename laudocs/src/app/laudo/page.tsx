@@ -3,8 +3,11 @@
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
+import jsPDF from 'jspdf';
+
+
 import { formatDate, processFormState } from '../../utils/processFormState';
+import axios from 'axios';
 
 const Laudo = () => {
     const searchParams = useSearchParams();
@@ -12,17 +15,34 @@ const Laudo = () => {
 
     const { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, medicoSolicitante, noduleData, condicionalData } = processFormState(formState);
 
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
     const handlePrintAndSend = async () => {
+        if (typeof window === 'undefined') return;
+
         const input = document.getElementById('laudo-content');
         const printButton = document.getElementById('print-button');
-        if (input) {
-            if (printButton) printButton.style.display = 'none';
 
+        if (!input) return;
+
+        try {
+            if (printButton) printButton.style.display = 'none';
             input.style.zoom = '1';
 
-            const canvas = await html2canvas(input, { scale: 2, useCORS: true });
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
+            const canvas = await html2canvas(input, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.7);
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
 
@@ -30,9 +50,8 @@ const Laudo = () => {
             let heightLeft = imgHeight;
             let position = 0;
 
-            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+            pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight, '', 'SLOW');
             heightLeft -= pdfHeight;
-
             while (heightLeft >= 0) {
                 position = heightLeft - imgHeight;
                 pdf.addPage();
@@ -40,22 +59,33 @@ const Laudo = () => {
                 heightLeft -= pdfHeight;
             }
 
+            input.style.zoom = '0.75';
+
+            pdf.save('laudo.pdf');
             const pdfBlob = pdf.output('blob');
 
-            input.style.zoom = '0.75';
-            pdf.save('laudo.pdf');
             const formData = new FormData();
             formData.append('file', pdfBlob, 'laudo.pdf');
+            formData.append('consultaId', '1');
+            formData.append('type', 'Ultrassom');
 
-            // await fetch('/api/upload', {
-            //     method: 'POST',
-            //     body: formData,
-            // });
+            const response = await axios.post(`${baseURL}/api/v1/laudo/criar`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
 
-            if (printButton) printButton.style.display = 'block';
-            window.print();
+            if (response.status === 200) {
+                console.log('PDF enviado com sucesso!');
+            } else {
+                console.error('Erro ao enviar o PDF:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro ao gerar/enviar o PDF:', error);
         }
+
+        window.print();
+        if (printButton) printButton.style.display = 'block';
     };
+
     const renderField = (key: string, value: string) => {
         let label = key;
         if (value === 'Com' || value === 'Sem' || value === 'Presença' || value === 'Ausência' || value === 'Presença de' || value === 'Ausência de') {
