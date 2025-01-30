@@ -59,7 +59,7 @@ export default function CardPatient({ id, pacienteId,nomePaciente,dataNascPacien
 
   const remove = async (id: number, removePatient: (id: number) => void) => {
     try {
-      await axios.delete(`${baseURL}/api/v1/consultas/${id}`);
+      await axios.put(`${baseURL}/api/v1/consultas/updateStatus/${id}`);
       removePatient(id);
       const response = await axios.get(`${baseURL}/api/v1/consultas`);
       updatePatients?.(response.data);
