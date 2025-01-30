@@ -8,9 +8,9 @@ import { CardPatientProps } from '@/interfaces/AllInterfaces';
 import Image from 'next/image';
 import dayjs from 'dayjs';
 
-export default function CardPatient({ id, pacienteId,nomePaiente,dataNascPaciente,dataConsulta,idadePaciente, medicoSolicitante, removePatient, updatePatients}: CardPatientProps) {
+export default function CardPatient({ id, pacienteId,nomePaciente,dataNascPaciente,dataConsulta,idadePaciente, medicoSolicitante, removePatient, updatePatients}: CardPatientProps) {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [editedName, setEditedName] = useState(nomePaiente);
+  const [editedName, setEditedName] = useState(nomePaciente);
   const [editedDataNasc, setEditeDataNasc] = useState<string>(dayjs(dataNascPaciente).format('DD/MM/YYYY'));
   const [editedDoctor, setEditedDoctor] = useState(medicoSolicitante);
 
@@ -74,7 +74,7 @@ export default function CardPatient({ id, pacienteId,nomePaiente,dataNascPacient
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center ml-2">
           <Image src="/assets/patientIcon.svg" alt="Icone Médico" width={24} height={24} className="mr-2" />
-          <h2 className="text-base font-extrabold text-cyan-800">{nomePaiente}, {idadePaciente} anos</h2>
+          <h2 className="text-base font-extrabold text-cyan-800">{nomePaciente}, {idadePaciente} anos</h2>
         </div>
         <button className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center" onClick={openModal}>
           <span className="text-xs font-bold"> <EditIcon /> </span>

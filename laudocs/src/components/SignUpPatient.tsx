@@ -132,6 +132,7 @@ export default function SignUp({ addConsulta }: SignUpProps) {
                 console.log('Consulta adicionada:', newAppointment);
 
             } catch (error) {
+                console.log('Paciente não encontrado:', error);
                
                 const externalPatient = {
                     nome: name,
