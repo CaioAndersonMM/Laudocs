@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import ProtectedLayout from '@/components/ProtectedLayout';
 import FormUltrassom from '@/components/typeultrassom/FormUltrassom';
 import ModalErro from '@/components/ModalErro';
 
@@ -56,7 +55,6 @@ const TitlePage = () => {
     };
 
     return (
-        <ProtectedLayout>
             <div className="bg-gray-100 h-screen p-6 rounded-lg">
             <button
                     onClick={() => router.back()}
@@ -77,7 +75,6 @@ const TitlePage = () => {
                     </Suspense>
                 </div>
             </div>
-        </ProtectedLayout>
     );
 };
 
