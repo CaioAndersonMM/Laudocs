@@ -13,7 +13,7 @@ const Laudo = () => {
     const searchParams = useSearchParams();
     const formState = searchParams ? searchParams.get('formState') : null;
 
-    const { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, medicoSolicitante, noduleData, condicionalData } = processFormState(formState);
+    const { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, pacienteId, medicoSolicitante, noduleData, condicionalData } = processFormState(formState);
 
     const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -66,8 +66,8 @@ const Laudo = () => {
 
             const formData = new FormData();
             formData.append('file', pdfBlob, 'laudo.pdf');
-            formData.append('consultaId', '1');
-            formData.append('type', 'Ultrassom');
+            formData.append('consultaId', pacienteId);
+            formData.append('type', tipoExame);
 
             const response = await axios.post(`${baseURL}/api/v1/laudo/criar`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }

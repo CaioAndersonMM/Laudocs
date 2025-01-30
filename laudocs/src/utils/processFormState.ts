@@ -54,6 +54,9 @@ export const processFormState = (formState: string | null) => {
     const tipoExame = parsedFormState.tipo;
     delete parsedFormState.tipo;
 
+    const pacienteId = parsedFormState.patientId;
+    delete parsedFormState.patientId;
+
     const medicoSolicitante = parsedFormState.solicitingDoctor;
     delete parsedFormState.solicitingDoctor;
 
@@ -63,5 +66,5 @@ export const processFormState = (formState: string | null) => {
     const condicionalData = parsedFormState.conditionalData;
     delete parsedFormState.conditionalData;
 
-    return { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, medicoSolicitante, noduleData, condicionalData };
+    return { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, pacienteId, medicoSolicitante, noduleData, condicionalData };
 };

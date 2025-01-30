@@ -9,6 +9,7 @@ const TitlePage = () => {
     const router = useRouter();
     const [tipo, setTipo] = useState('');
     const [patient, setPatient] = useState('');
+    const [patientId, setPatientId] = useState('');
     const [age, setAge] = useState('');
     const [doctor, setDoctor] = useState('');
     const [error, setError] = useState('');
@@ -24,11 +25,13 @@ const TitlePage = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const path = window.location.pathname;
             const tipo = path.split('/')[2];
+            const patientId = urlParams.get('patientId');
             const patientName = urlParams.get('patientName');
             const patientAge = urlParams.get('patientAge');
             const solicitingDoctor = urlParams.get('doctor');
 
-            if (patientName && patientAge && solicitingDoctor && tipo) {
+            if (patientId && patientName && patientAge && solicitingDoctor && tipo) {
+                setPatientId(patientId);
                 setPatient(patientName);
                 setAge(patientAge);
                 setDoctor(solicitingDoctor);
@@ -46,6 +49,7 @@ const TitlePage = () => {
     const renderQuestions = () => {
         return (
             <FormUltrassom
+                patientId={patientId} //é o id da consulta
                 tipo={tipo}
                 patientName={patient}
                 patientAge={age}
