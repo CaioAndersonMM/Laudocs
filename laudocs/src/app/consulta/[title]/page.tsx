@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import FormUltrassom from '@/components/typeultrassom/FormUltrassom';
 import ModalErro from '@/components/ModalErro';
+import { checkValidToken, isAdmin } from '@/utils/token';
 
 const TitlePage = () => {
     const router = useRouter();
@@ -17,6 +18,9 @@ const TitlePage = () => {
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
+        if(!checkValidToken() || !isAdmin())
+            router.push('/');
+        
         setIsClient(true);
     }, []);
 
@@ -59,6 +63,7 @@ const TitlePage = () => {
     };
 
     return (
+        <div>
             <div className="bg-gray-100 h-screen p-6 rounded-lg">
             <button
                     onClick={() => router.back()}
@@ -79,6 +84,7 @@ const TitlePage = () => {
                     </Suspense>
                 </div>
             </div>
+        </div>
     );
 };
 

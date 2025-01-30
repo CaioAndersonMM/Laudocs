@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -9,9 +9,12 @@ import '@/utils/globals.css'
 import { formatDate, processFormState } from '../../utils/processFormState';
 import axios from 'axios';
 import Modal, {finalizarConsulta} from '@components/laudo/Modal';
+import { checkValidToken, isAdmin } from '@/utils/token';
+import { useRouter } from 'next/navigation';
 
 const Laudo = () => {
     const [isModalOpen, setModalOpen] = useState(false);
+    const router = useRouter();
     const searchParams = useSearchParams();
     const formState = searchParams ? searchParams.get('formState') : null;
 
@@ -103,6 +106,13 @@ const Laudo = () => {
     const handleCloseModal = () => {
         setModalOpen(false);
     };
+
+    
+        useEffect(() => {
+            if(!checkValidToken() || !isAdmin())
+                router.push('/');
+            
+        }, []);
 
     const renderField = (key: string, value: string) => {
         let label = key;

@@ -6,6 +6,7 @@ import { optionsMap } from '@/utils/consultations';
 import ConsultationCard from '@/components/ConsultationCard';
 import Image from 'next/image';
 import ModalErro from '@/components/ModalErro';
+import { checkValidToken, isAdmin } from '@/utils/token';
 
 const ConsultaPage = () => {
     const router = useRouter();
@@ -20,6 +21,9 @@ const ConsultaPage = () => {
     const solicitingDoctor = searchParams ? searchParams.get('doctor') : null;
 
     useEffect(() => {
+        if(!checkValidToken() || !isAdmin())
+            router.push('/');
+
         if (!consulta || !patientId || !patientName || !patientAge || !solicitingDoctor) {
             setError('Dados do paciente não encontrados. Redirecionando para consultas...');
             setShowModal(true);

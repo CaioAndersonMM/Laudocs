@@ -3,19 +3,16 @@ import { useState } from 'react';
 import logout from '../../services/auth/LogOut';
 import { useRouter } from 'next/navigation';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { clear } from 'console';
+import { clearStorage } from '@/utils/token';
 
 export default function LogOutComponent() {
     const [showModal, setShowModal] = useState(false);
     const router = useRouter();
 
     const handleLogout = async () => {
-        const { error } = await logout();
-
-        if (!error) {
-            router.push('/');
-        } else {
-            console.error("Erro ao deslogar:", error);
-        }
+        clearStorage();
+        router.push('/');
     };
 
     return (
