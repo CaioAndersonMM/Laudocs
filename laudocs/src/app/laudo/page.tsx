@@ -17,44 +17,42 @@ const Laudo = () => {
         const printButton = document.getElementById('print-button');
         if (input) {
             if (printButton) printButton.style.display = 'none';
-    
+
             input.style.zoom = '1';
-    
+
             const canvas = await html2canvas(input, { scale: 2, useCORS: true });
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
-    
+
             let imgHeight = (canvas.height * pdfWidth) / canvas.width;
             let heightLeft = imgHeight;
             let position = 0;
-    
+
             pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
             heightLeft -= pdfHeight;
-    
+
             while (heightLeft >= 0) {
                 position = heightLeft - imgHeight;
                 pdf.addPage();
                 pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
                 heightLeft -= pdfHeight;
             }
-    
+
             const pdfBlob = pdf.output('blob');
-    
+
             input.style.zoom = '0.75';
             pdf.save('laudo.pdf');
             const formData = new FormData();
             formData.append('file', pdfBlob, 'laudo.pdf');
-    
-            await fetch('/api/upload', {
-                method: 'POST',
-                body: formData,
-            });
-    
-            if (printButton) printButton.style.display = 'block'; // Show the print button again
-    
-            // Imprimir a página
+
+            // await fetch('/api/upload', {
+            //     method: 'POST',
+            //     body: formData,
+            // });
+
+            if (printButton) printButton.style.display = 'block';
             window.print();
         }
     };
@@ -170,51 +168,46 @@ const Laudo = () => {
             <style jsx global>{`
                 @media print {
                     @page {
-                        size: A4;
-                        margin: 1cm;
+                        size: A4 portrait;
+                        margin: 1.5cm;
                     }
                     body {
-                       width: 210mm; /* Ajuste o tamanho para A4 */
-                        height: 297mm;
-                        margin: 0 auto;
-                        padding: 1cm;
-                        box-sizing: border-box;
+                        font-family: Arial, sans-serif;
+                        font-size: 12pt;
+                        color: #000;
+                        background: #fff;
                     }
-                    .page-break {
-                        page-break-after: always; /* Força uma quebra de página */
+                    body * {
+                        visibility: hidden;
                     }
-                    .no-print {
+                          .no-print {
                         display: none !important;
                     }
-                    .bg-gray-100 {
-                        background-color: #f3f4f6 !important;
+                    #laudo-content, #laudo-content * {
+                        visibility: visible;
                     }
-                    .bg-cyan-700 {
-                        background-color: #0369a1 !important;
+                    #laudo-content {
+                        position: relative;
+                        width: 100%;
+                        max-width: 100%;
+                        padding: 0;
+                        margin: 0;
+                        background: #fff;
                     }
-                    .shadow-sm {
-                        box-shadow: none;
-                    }
-                    .rounded-lg {
-                        border-radius: 0;
+                    .print-container {
+                        width: 100%;
+                        max-width: 100%;
                     }
                     .grid {
                         display: grid;
-                        grid-template-columns: repeat(2, 1fr); /* Garante que a grade seja mantida */
+                        grid-template-columns: repeat(3, 1fr);
                         gap: 8px;
                     }
-                    .text-sm {
-                        font-size: 12px;
-                    }
-                    .text-md {
-                        font-size: 14px;
-                    }
-                    .text-lg {
-                        font-size: 16px;
-                    }
-                    .text-xl {
-                        font-size: 18px;
-                    }
+                    #dados {
+                    display: grid;
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 8px;
+            }
                 }
                 .flex {
                     display: flex;
@@ -361,7 +354,7 @@ const Laudo = () => {
             </p>
 
             <section className="mb-6 print-container">
-                <div className="grid grid-cols-2 gap-3">
+                <div id='dados' className="grid grid-cols-2 gap-3">
                     <div>
                         <label className="block text-sm font-semibold text-cyan-900 opacity-55">Nome do Paciente</label>
                         <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{nomePaciente}</p>
