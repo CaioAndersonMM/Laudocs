@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function LoginPage() {
     const base_url = process.env.NEXT_PUBLIC_BASE_URL;
@@ -14,6 +15,8 @@ export default function LoginPage() {
     const [credenciaisError, setCredencialError] = useState('');
     const [loading, setLoading] = useState(true);
     const [saveCredentials, setSaveCredentials] = useState(false);
+
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     useEffect(() => {
         setLoading(false);
@@ -54,20 +57,14 @@ export default function LoginPage() {
         };
 
         try {
-            const response = await fetch(`${base_url}/api/v1/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            });
+            const response = await axios.post(`${baseURL}/api/v1/auth/login`, payload);
     
-            const data = await response.json();
+            const data = response.data;
     
             console.log("Response:", response);
             console.log("Data:", data);
 
-            if (response.ok) {
+            if (response.status === 200) {
                 localStorage.setItem('token', data.token);
 
                 if (data.role.toUpperCase() === "ADMIN") {

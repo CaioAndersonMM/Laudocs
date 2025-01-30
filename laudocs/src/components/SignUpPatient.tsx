@@ -101,6 +101,8 @@ export default function SignUp({ addConsulta }: SignUpProps) {
                 const existingPatientResponse = await axios.get(`${baseURL}/api/v1/paciente/cpf/${cpf}`);
                 const patientId = existingPatientResponse.data.id;
 
+                console.log('Paciente encontrado:', existingPatientResponse.data);
+
                 
                 const today = dayjs().format("DD/MM/YYYY");
                 const newAppointment = {
@@ -108,6 +110,7 @@ export default function SignUp({ addConsulta }: SignUpProps) {
                     medicoSolicitante: solicitingDoctor,
                     dataConsulta: today,
                 };
+                console.log('Nova consulta:', newAppointment);
 
                const response=  await axios.post(`${baseURL}/api/v1/consultas`, newAppointment);
                addConsulta(response.data);
@@ -121,6 +124,8 @@ export default function SignUp({ addConsulta }: SignUpProps) {
                     dataNasc: birthDate,
                     idade: calculateAge(birthDate),
                 };
+
+                console.log('Paciente externo:', externalPatient);
 
                 const response = await axios.post(`${baseURL}/api/v1/paciente/criar`, externalPatient);
                 const patientId = response.data.id;

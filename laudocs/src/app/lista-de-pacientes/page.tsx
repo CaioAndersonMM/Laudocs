@@ -8,7 +8,6 @@ import axios from 'axios';
 import LoadingCard from '@/components/LoadingCard';
 import LogOutComponent from '@/components/LogOutButton';
 import ProtectedLayout from '@/components/ProtectedLayout';
-import { BaseNextResponse } from 'next/dist/server/base-http';
 
 export default function Home() {
   const [consultas, setConsultas] = useState<CardConsultaInterface[]>([]);
@@ -74,7 +73,6 @@ export default function Home() {
   };
 
   return (
-    <ProtectedLayout>
     <div className="bg-gray-100 h-screen p-1">
     <div className="flex justify-end pr-6">
         <LogOutComponent />
@@ -105,6 +103,5 @@ export default function Home() {
 
       </div>
     </div>
-    </ProtectedLayout>
   );
 }
