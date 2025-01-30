@@ -7,10 +7,11 @@ import { CardConsultaInterface } from '@/interfaces/AllInterfaces';
 import axios from 'axios';
 import LoadingCard from '@/components/LoadingCard';
 import LogOutComponent from '@/components/LogOutButton';
-import ProtectedLayout from '@/components/ProtectedLayout';
-import { BaseNextResponse } from 'next/dist/server/base-http';
+import { useRouter } from 'next/navigation';
+import { checkValidToken, getRole, getToken } from '@/utils/token';
 
 export default function Home() {
+  const router = useRouter();
   const [consultas, setConsultas] = useState<CardConsultaInterface[]>([]);
   const [selectedConsulta, setSelectedConsulta] = useState<CardConsultaInterface | null>(null);
   const [loading, setLoading] = useState(true);
@@ -19,21 +20,23 @@ export default function Home() {
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
  useEffect(() => {
-     fetchConsultas();
- 
-     
-     const eventSource = new EventSource("http://localhost:8080/sse/subscribe");
- 
- 
-     eventSource.addEventListener("consulta-adicionada", (event) => {
-       console.log("Nova consulta recebida via SSE:", event.data);
-       fetchConsultas();
-     });
-     eventSource.addEventListener('consulta-atualizada', (event) => {
-       const consulta = JSON.parse(event.data);
-       console.log('Consulta atualizada:', consulta);
-      
-       fetchConsultas(); 
+    if(!checkValidToken())
+      router.push('/');
+
+    fetchConsultas(); 
+    
+    const eventSource = new EventSource("http://localhost:8080/sse/subscribe");
+
+
+    eventSource.addEventListener("consulta-adicionada", (event) => {
+      console.log("Nova consulta recebida via SSE:", event.data);
+      fetchConsultas();
+    });
+    eventSource.addEventListener('consulta-atualizada', (event) => {
+      const consulta = JSON.parse(event.data);
+      console.log('Consulta atualizada:', consulta);
+    
+      fetchConsultas(); 
    });
    
    
@@ -50,7 +53,12 @@ export default function Home() {
   const fetchConsultas = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${baseURL}/api/v1/consultas`);
+      const token = getToken();
+      const response = await axios.get(`${baseURL}/api/v1/consultas`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setConsultas(response.data);
     } catch (err) {
       setError('Erro ao buscar pacientes');
@@ -74,7 +82,6 @@ export default function Home() {
   };
 
   return (
-    <ProtectedLayout>
     <div className="bg-gray-100 h-screen p-1">
     <div className="flex justify-end pr-6">
         <LogOutComponent />
@@ -105,6 +112,5 @@ export default function Home() {
 
       </div>
     </div>
-    </ProtectedLayout>
   );
 }

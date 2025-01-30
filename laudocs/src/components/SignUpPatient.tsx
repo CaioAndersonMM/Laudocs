@@ -9,6 +9,7 @@ import axios from 'axios';
 import { SignUpProps } from '@/interfaces/AllInterfaces';
 import MaskedInput from 'react-text-mask';
 import dayjs from 'dayjs';
+import { getToken } from '@/utils/token';
 
 const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
     fontWeight: 'bold',
@@ -54,7 +55,12 @@ export default function SignUp({ addConsulta }: SignUpProps) {
         const fetchPatientByCpf = async () => {
             if (validateCpf(cpf)) {
                 try {
-                    const response = await axios.get(`${baseURL}/api/v1/paciente/cpf/${cpf}`);
+                    const token = await getToken();
+                    const response = await axios.get(`${baseURL}/api/v1/paciente/cpf/${cpf}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
                     const { nome, dataNasc } = response.data;
                     setName(nome);
                     setBirthDate(dataNasc);
@@ -84,7 +90,7 @@ export default function SignUp({ addConsulta }: SignUpProps) {
             isValid = false;
         }
         if (!name.trim() || name.length < 5) {
-            setNameError('Nome completo é obrigatório.');
+            setNameError('É obrigatório informar o nome completo do paciente.');
             isValid = false;
         }
         if (!validateBirthDate(birthDate)) {
@@ -92,13 +98,18 @@ export default function SignUp({ addConsulta }: SignUpProps) {
             isValid = false;
         }
         if (!solicitingDoctor.trim() || solicitingDoctor.length < 5) {
-            setDoctorError('Nome do médico solicitante é obrigatório.');
+            setDoctorError('É obrigatório informar o nome completo do médico.');
             isValid = false;
         }
 
         if (isValid) {
             try {
-                const existingPatientResponse = await axios.get(`${baseURL}/api/v1/paciente/cpf/${cpf}`);
+                const token = await getToken();
+                const existingPatientResponse = await axios.get(`${baseURL}/api/v1/paciente/cpf/${cpf}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 const patientId = existingPatientResponse.data.id;
 
                 
@@ -109,7 +120,11 @@ export default function SignUp({ addConsulta }: SignUpProps) {
                     dataConsulta: today,
                 };
 
-               const response=  await axios.post(`${baseURL}/api/v1/consultas`, newAppointment);
+            const response = await axios.post(`${baseURL}/api/v1/consultas`, newAppointment, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
                addConsulta(response.data);
                 console.log('Consulta adicionada:', newAppointment);
 
@@ -121,8 +136,12 @@ export default function SignUp({ addConsulta }: SignUpProps) {
                     dataNasc: birthDate,
                     idade: calculateAge(birthDate),
                 };
-
-                const response = await axios.post(`${baseURL}/api/v1/paciente/criar`, externalPatient);
+                const token = getToken();
+                const response = await axios.post(`${baseURL}/api/v1/paciente/criar`, externalPatient, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 const patientId = response.data.id;
 
                 
@@ -132,8 +151,11 @@ export default function SignUp({ addConsulta }: SignUpProps) {
                     medicoSolicitante: solicitingDoctor,
                     dataConsulta: today,
                 };
-
-                const response2 = await axios.post(`${baseURL}/api/v1/consultas`, newAppointment);
+                const response2 = await axios.post(`${baseURL}/api/v1/consultas`, newAppointment, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 addConsulta(response2.data);
                 console.log('Paciente e consulta adicionados:', externalPatient, newAppointment);
             }
@@ -245,3 +267,4 @@ export default function SignUp({ addConsulta }: SignUpProps) {
         </div>
     );
 }
+

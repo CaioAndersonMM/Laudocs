@@ -4,9 +4,9 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Box } from '@mui/material';
 import { optionsMap } from '@/utils/consultations';
 import ConsultationCard from '@/components/ConsultationCard';
-import ProtectedLayout from '@/components/ProtectedLayout';
 import Image from 'next/image';
 import ModalErro from '@/components/ModalErro';
+import { checkValidToken, isAdmin } from '@/utils/token';
 
 const ConsultaPage = () => {
     const router = useRouter();
@@ -21,6 +21,9 @@ const ConsultaPage = () => {
     const solicitingDoctor = searchParams ? searchParams.get('doctor') : null;
 
     useEffect(() => {
+        if(!checkValidToken() || !isAdmin())
+            router.push('/');
+
         if (!consulta || !patientId || !patientName || !patientAge || !solicitingDoctor) {
             setError('Dados do paciente não encontrados. Redirecionando para consultas...');
             setShowModal(true);
@@ -48,7 +51,7 @@ const ConsultaPage = () => {
     };
 
     return (
-        <ProtectedLayout>
+        <div>
             <div className="bg-gray-100 min-h-screen p-4 md:p-6 rounded-lg">
                 <div className='text-[#173D65] border border-black rounded-md bg-white h-full'>
                     <div className="relative flex flex-col items-center">
@@ -81,7 +84,7 @@ const ConsultaPage = () => {
                 </div>
             </div>
             <ModalErro open={showModal} errorMessage={error} onClose={() => setShowModal(false)} />
-        </ProtectedLayout>
+        </div>
     );
 };
 

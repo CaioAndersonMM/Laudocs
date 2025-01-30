@@ -1,14 +1,24 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { formatDate, processFormState } from '../../utils/processFormState';
+import { checkValidToken, isAdmin } from '@/utils/token';
+import { useRouter } from 'next/navigation';
 
 const Laudo = () => {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const formState = searchParams ? searchParams.get('formState') : null;
 
     const { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, medicoSolicitante, noduleData, condicionalData } = processFormState(formState);
+
+    
+        useEffect(() => {
+            if(!checkValidToken() || !isAdmin())
+                router.push('/');
+            
+        }, []);
 
     const renderField = (key: string, value: string) => {
         let label = key;
