@@ -7,7 +7,6 @@ import { CardConsultaInterface } from '@/interfaces/AllInterfaces';
 import axios from 'axios';
 import LoadingCard from '@/components/LoadingCard';
 import LogOutComponent from '@/components/LogOutButton';
-import ProtectedLayout from '@/components/ProtectedLayout';
 
 export default function Home() {
   const [consultas, setConsultas] = useState<CardConsultaInterface[]>([]);

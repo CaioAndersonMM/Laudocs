@@ -4,7 +4,6 @@ import SelectPatient from "@/components/SelectPatient";
 import ListPatients from "@/components/ListPatients";
 import { CardConsultaInterface } from "@/interfaces/AllInterfaces";
 import LoadingCard from "@/components/LoadingCard";
-import ProtectedLayout from "@/components/ProtectedLayout";
 import LogOutComponent from "@/components/LogOutButton";
 import axios from "axios";
 
@@ -62,7 +61,6 @@ function Consultas() {
   }, [baseURL]);
 
   return (
-    <ProtectedLayout>
       <div className="bg-gray-100 h-screen p-1">
         <div className="flex justify-end pr-6">
           <LogOutComponent />
@@ -91,7 +89,6 @@ function Consultas() {
           </div>
         </div>
       </div>
-    </ProtectedLayout>
   );
 }
 
