@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { styled } from '@mui/material/styles';
@@ -77,7 +77,7 @@ export default function SignUp({ addConsulta }: SignUpProps) {
         fetchPatientByCpf();
     }, [cpf]);
 
-    const handleAddPatient = async () => {
+    const validateForm = () => {
         let isValid = true;
 
         setCpfError('');
@@ -102,67 +102,65 @@ export default function SignUp({ addConsulta }: SignUpProps) {
             isValid = false;
         }
 
-        if (isValid) {
+        return isValid;
+    };
+
+    const createPatient = async () => {
+        const externalPatient = {
+            nome: name,
+            cpf,
+            dataNasc: birthDate,
+            idade: calculateAge(birthDate),
+        };
+        const token = await getToken();
+        const response = await axios.post(`${baseURL}/api/v1/paciente/criar`, externalPatient, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data.id;
+    };
+
+    const createAppointment = async (patientId: string) => {
+        const today = dayjs().format("DD/MM/YYYY");
+        const newAppointment = {
+            pacienteId: patientId,
+            medicoSolicitante: solicitingDoctor,
+            dataConsulta: today,
+        };
+        const token = await getToken();
+        const response = await axios.post(`${baseURL}/api/v1/consultas`, newAppointment, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data;
+    };
+
+    const handleAddPatient = async () => {
+        if (!validateForm()) return;
+
+        try {
+            const token = await getToken();
+            let patientId;
+
             try {
-                const token = await getToken();
                 const existingPatientResponse = await axios.get(`${baseURL}/api/v1/paciente/cpf/${cpf}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                const patientId = existingPatientResponse.data.id;
-
+                patientId = existingPatientResponse.data.id;
                 console.log('Paciente encontrado:', existingPatientResponse.data);
-
-                
-                const today = dayjs().format("DD/MM/YYYY");
-                const newAppointment = {
-                    pacienteId: patientId,
-                    medicoSolicitante: solicitingDoctor,
-                    dataConsulta: today,
-                };
-                console.log('Nova consulta:', newAppointment);
-
-            const response = await axios.post(`${baseURL}/api/v1/consultas`, newAppointment, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-               addConsulta(response.data);
-                console.log('Consulta adicionada:', newAppointment);
-
             } catch (error) {
-                console.log('Paciente não encontrado:', error);
-               
-                const externalPatient = {
-                    nome: name,
-                    cpf,
-                    dataNasc: birthDate,
-                    idade: calculateAge(birthDate),
-                };
-                const token = getToken();
-                const response = await axios.post(`${baseURL}/api/v1/paciente/criar`, externalPatient, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                const patientId = response.data.id;
-
-                
-                const today = dayjs().format("DD/MM/YYYY");
-                const newAppointment = {
-                    pacienteId: patientId,
-                    medicoSolicitante: solicitingDoctor,
-                    dataConsulta: today,
-                };
-                const response2 = await axios.post(`${baseURL}/api/v1/consultas`, newAppointment, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                addConsulta(response2.data);
-                console.log('Paciente e consulta adicionados:', externalPatient, newAppointment);
+                console.log('Paciente não encontrado, criando novo paciente:', error);
+                patientId = await createPatient();
+                console.log('Novo paciente criado com ID:', patientId);
             }
+
+            const newAppointment = await createAppointment(patientId);
+            addConsulta(newAppointment);
+            console.log('Consulta adicionada:', newAppointment);
 
             setCpf('');
             setName('');
@@ -170,9 +168,10 @@ export default function SignUp({ addConsulta }: SignUpProps) {
             setAge('');
             setSolicitingDoctor('');
             setPriority(false);
+        } catch (error) {
+            console.error('Erro ao adicionar paciente ou consulta:', error);
         }
     };
-
 
     return (
         <div className="bg-white flex flex-col justify-between h-full w-full p-4 text-[#173D65] font-bold rounded-r-lg border border-[#173D65]">
@@ -271,4 +270,3 @@ export default function SignUp({ addConsulta }: SignUpProps) {
         </div>
     );
 }
-
