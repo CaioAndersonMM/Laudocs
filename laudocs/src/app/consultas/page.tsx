@@ -42,8 +42,8 @@ function Consultas() {
       if(!checkValidToken())
         router.push('/');
 
-      if (!isAdmin())
-        router.push('/lista-de-pacientes');
+      // if (!isAdmin())
+      //   router.push('/lista-de-pacientes');
 
     fetchConsultas();
 
