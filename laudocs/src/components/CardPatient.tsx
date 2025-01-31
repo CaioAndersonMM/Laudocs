@@ -115,7 +115,7 @@ export default function CardPatient({
         return;
       }
 
-      await axios.delete(`${baseURL}/api/v1/consultas/${id}`, {
+      await axios.put(`${baseURL}/api/v1/consultas/updateStatus/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
