@@ -38,6 +38,11 @@ function Consultas() {
   };
 
 
+  const removeConsulta = (id: number) => {
+    setConsultas((prevConsultas) => prevConsultas.filter((consulta) => consulta.id!== id));
+  };
+
+
   useEffect(() => {
       if(!checkValidToken())
         router.push('/');
@@ -95,7 +100,7 @@ function Consultas() {
           ) : error ? (
             <p>{error}</p>
           ) : (
-            <ListPatients arrayOfConsultas={consultas} onSelectConsulta={setSelectedConsulta} updateConsulta={setConsultas} />
+            <ListPatients arrayOfConsultas={consultas} onSelectConsulta={setSelectedConsulta} removeConsulta={removeConsulta} updateConsulta={setConsultas} />
           )}
         </div>
         <div className="flex h-[97%]">
