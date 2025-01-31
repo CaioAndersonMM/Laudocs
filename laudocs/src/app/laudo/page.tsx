@@ -126,7 +126,7 @@ const Laudo = () => {
         label = label.charAt(0).toUpperCase() + label.slice(1).toLowerCase();
         return (
             <div key={key} className="flex items-center space-x-1">
-                <span className="block text-md text-cyan-900 truncate" title={label}>
+                <span className="block text-md text-black" title={label}>
                     - {label}
                 </span>
             </div>
@@ -190,7 +190,7 @@ const Laudo = () => {
                                     {renderField(key, value as string)}
                                     {volumes.find(volume => volume.key === key) && (
                                         <div className="flex items-center space-x-1">
-                                            <span className="block text-md text-cyan-900 truncate" title={`Volume: ${volumes.find(volume => volume.key === key)?.volume} cm³`}>
+                                            <span className="block text-md text-cyan-900" title={`Volume: ${volumes.find(volume => volume.key === key)?.volume} cm³`}>
                                                 - Volume do {key.split(' ').pop()} {volumes.find(volume => volume.key === key)?.volume} cm³
                                             </span>
                                         </div>
@@ -211,7 +211,7 @@ const Laudo = () => {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-1 gap-1 text-sm">
                         <div className="bg-white p-3 rounded-lg shadow-xs">
-                            <span className="block text-md text-cyan-900 truncate" title="Não há alterações">
+                            <span className="block text-md text-cyan-900" title="Não há alterações">
                                 - Não há alterações ou não visualizado
                             </span>
                         </div>
@@ -235,21 +235,24 @@ const Laudo = () => {
 
             <section className="mb-6 print-container">
                 <div id='dados' className="grid grid-cols-2 gap-3">
-                    <div>
-                        <label className="block text-sm font-semibold text-cyan-900 opacity-55">Nome do Paciente</label>
-                        <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{nomePaciente}</p>
+                    <div className='text-black text-md'>
+                        <label className="block text-sm font-semibold text-cyan-900 opacity-55 mb-2">Nome do Paciente</label>
+                        {/* <div className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold"></div> */}
+                        {nomePaciente}
                     </div>
-                    <div>
-                        <label className="block text-sm font-semibold text-cyan-900 opacity-55">Idade do Paciente</label>
-                        <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{idadePaciente}</p>
+                    <div className='text-black text-md'>
+                        <label className="block text-sm font-semibold text-cyan-900 opacity-55 mb-2">Idade do Paciente</label>
+                        {/* <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold"></p> */}
+                        {idadePaciente}
                     </div>
-                    <div>
-                        <label className="block text-sm font-semibold text-cyan-900 opacity-55">Médico Solicitante</label>
-                        <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{medicoSolicitante}</p>
+                    <div className='text-black text-md'>
+                        <label className="block text-sm font-semibold text-cyan-900 opacity-55 mb-2">Médico Solicitante</label>
+                        {/* <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold"></p> */}
+                        {medicoSolicitante}
                     </div>
-                    <div>
-                        <label className="block text-sm font-semibold text-cyan-900 opacity-55">Data</label>
-                        <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold">{formatDate(dataExame)}</p>
+                    <div className='text-black text-md'>
+                        <label className="block text-sm font-semibold text-cyan-900 opacity-55 mb-2">Data</label>
+                    {formatDate(dataExame)}
                     </div>
                 </div>
             </section>
