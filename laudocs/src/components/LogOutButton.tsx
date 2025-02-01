@@ -1,9 +1,7 @@
 "use client"
 import { useState } from 'react';
-import logout from '../../services/auth/LogOut';
 import { useRouter } from 'next/navigation';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { clear } from 'console';
 import { clearStorage } from '@/utils/token';
 
 export default function LogOutComponent() {
