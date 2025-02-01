@@ -9,6 +9,7 @@ import FormField from './FormField';
 import ConditionalSection from './ConditionalField';
 
 interface FormUltrassomProps {
+    patientId: string;
     tipo: string;
     patientName: string;
     patientAge: string;
@@ -30,7 +31,7 @@ type FormState = {
     conditionalData: { [key: string]: ConditionalSectionData };
 };
 
-const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: FormUltrassomProps) => {
+const FormUltrassom = ({ patientId, tipo, patientName, patientAge, solicitingDoctor }: FormUltrassomProps) => {
     const router = useRouter();
     const [data, setData] = useState(new Date().toISOString().split('T')[0]);
     const [formState, setFormState] = useState<FormState>({
@@ -180,6 +181,7 @@ const FormUltrassom = ({ tipo, patientName, patientAge, solicitingDoctor }: Form
 
         const updatedFormState = {
             ...formState,
+            patientId,
             tipo,
             patientName,
             patientAge,

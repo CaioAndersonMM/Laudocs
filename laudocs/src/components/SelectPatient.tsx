@@ -19,7 +19,7 @@ export default function SelectPatient({ selectedConsulta, removePatientSelected 
                                 className="mr-2"
                             />
                             <h3 className="ml-4 text-2xl font-extrabold">
-                                {selectedConsulta.nomePaiente}, {selectedConsulta.idadePaciente} anos
+                                {selectedConsulta.nomePaciente}, {selectedConsulta.idadePaciente} anos
                             </h3>
                         </div>
                         <button className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center" onClick={removePatientSelected}>

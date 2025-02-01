@@ -10,18 +10,10 @@ export const processFormState = (formState: string | null) => {
 
     console.log(parsedFormState);
 
-    if (parsedFormState['Tem nódulo?'] === 'Sim') {
-        if (parsedFormState['Onde está o Nódulo?'] === 'Esquerda') {
-            newParsedFormState['Nódulo esquerdo'] = 'Presente';
-        } else if (parsedFormState['Onde está o Nódulo?'] === 'Direita') {
-            newParsedFormState['Nódulo direito'] = 'Presente';
-        } else if (parsedFormState['Onde está o Nódulo?'] === 'Ambos') {
-            newParsedFormState['Nódulo esquerdo'] = 'Presente';
-            newParsedFormState['Nódulo direito'] = 'Presente';
-        }
-        newParsedFormState = { ['Presença de nódulo']: 'Sim', ...newParsedFormState };
-    } else if (parsedFormState['Tem nódulo?'] === 'Não') {
-        newParsedFormState['Nenhum nódulo encontrado'] = 'Sim';
+    if (parsedFormState['Tem nódulo?'] === 'Sim' && parsedFormState.noduleData.length > 0) {
+        newParsedFormState = { ['Presença de nódulo(s)']: 'Sim', ...newParsedFormState };
+    } else {
+        newParsedFormState['Sem nódulos e/ou cistos encontrados'] = 'Sim';
     }
 
     if (parsedFormState['Há Doppler?'] === 'Sim') {
@@ -62,6 +54,9 @@ export const processFormState = (formState: string | null) => {
     const tipoExame = parsedFormState.tipo;
     delete parsedFormState.tipo;
 
+    const pacienteId = parsedFormState.patientId;
+    delete parsedFormState.patientId;
+
     const medicoSolicitante = parsedFormState.solicitingDoctor;
     delete parsedFormState.solicitingDoctor;
 
@@ -71,5 +66,5 @@ export const processFormState = (formState: string | null) => {
     const condicionalData = parsedFormState.conditionalData;
     delete parsedFormState.conditionalData;
 
-    return { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, medicoSolicitante, noduleData, condicionalData };
+    return { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, pacienteId, medicoSolicitante, noduleData, condicionalData };
 };

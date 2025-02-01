@@ -4,7 +4,6 @@ import SelectPatient from "@/components/SelectPatient";
 import ListPatients from "@/components/ListPatients";
 import { CardConsultaInterface } from "@/interfaces/AllInterfaces";
 import LoadingCard from "@/components/LoadingCard";
-import ProtectedLayout from "@/components/ProtectedLayout";
 import LogOutComponent from "@/components/LogOutButton";
 import axios from "axios";
 import { checkValidToken, getRole, getToken, isAdmin } from "@/utils/token";
@@ -39,12 +38,17 @@ function Consultas() {
   };
 
 
+  const removeConsulta = (id: number) => {
+    setConsultas((prevConsultas) => prevConsultas.filter((consulta) => consulta.id!== id));
+  };
+
+
   useEffect(() => {
       if(!checkValidToken())
         router.push('/');
 
-      if (!isAdmin())
-        router.push('/lista-de-pacientes');
+      // if (!isAdmin())
+      //   router.push('/lista-de-pacientes');
 
     fetchConsultas();
 
@@ -96,7 +100,7 @@ function Consultas() {
           ) : error ? (
             <p>{error}</p>
           ) : (
-            <ListPatients arrayOfConsultas={consultas} onSelectConsulta={setSelectedConsulta} updateConsulta={setConsultas} />
+            <ListPatients arrayOfConsultas={consultas} onSelectConsulta={setSelectedConsulta} removeConsulta={removeConsulta} updateConsulta={setConsultas} />
           )}
         </div>
         <div className="flex h-[97%]">

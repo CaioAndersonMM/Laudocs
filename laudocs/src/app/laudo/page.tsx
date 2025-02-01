@@ -1,17 +1,111 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import '@/utils/globals.css'
+
 import { formatDate, processFormState } from '../../utils/processFormState';
+import axios from 'axios';
+import Modal, {finalizarConsulta} from '@components/laudo/Modal';
 import { checkValidToken, isAdmin } from '@/utils/token';
 import { useRouter } from 'next/navigation';
 
 const Laudo = () => {
+    const [isModalOpen, setModalOpen] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
     const formState = searchParams ? searchParams.get('formState') : null;
 
-    const { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, medicoSolicitante, noduleData, condicionalData } = processFormState(formState);
+    const { parsedFormState, idadePaciente, nomePaciente, dataExame, tipoExame, pacienteId, medicoSolicitante, noduleData, condicionalData } = processFormState(formState);
+
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    const handlePrintAndSend = async () => {
+        if (typeof window === 'undefined') return;
+
+        const input = document.getElementById('laudo-content');
+        const printButton = document.getElementById('print-button');
+        const finalizarButton = document.getElementById('finalizar-consulta');
+
+        if (!input) return;
+
+        try {
+            if (printButton) printButton.style.display = 'none';
+            if (finalizarButton) finalizarButton.style.display = 'none';
+            input.style.zoom = '1';
+
+            const canvas = await html2canvas(input, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.7);
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            let imgHeight = (canvas.height * pdfWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight, '', 'SLOW');
+            heightLeft -= pdfHeight;
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+                heightLeft -= pdfHeight;
+            }
+
+            input.style.zoom = '0.75';
+
+            pdf.save('laudo.pdf');
+            const pdfBlob = pdf.output('blob');
+
+            const formData = new FormData();
+            formData.append('file', pdfBlob, 'laudo.pdf');
+            formData.append('consultaId', pacienteId);
+            formData.append('type', tipoExame);
+
+            const response = await axios.post(`${baseURL}/api/v1/laudo/criar`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            if (response.status === 200) {
+                console.log('PDF enviado com sucesso!');
+            } else {
+                console.error('Erro ao enviar o PDF:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro ao gerar/enviar o PDF:', error);
+        }
+
+        window.print();
+        if (printButton) printButton.style.display = 'block';
+        if (finalizarButton){
+            finalizarButton.style.display = 'flex';
+        }
+
+        handleOpenModal();
+
+    };
+
+    const handleOpenModal = () => {
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+    };
 
     
         useEffect(() => {
@@ -32,7 +126,7 @@ const Laudo = () => {
         label = label.charAt(0).toUpperCase() + label.slice(1).toLowerCase();
         return (
             <div key={key} className="flex items-center space-x-1">
-                <span className="block text-md text-cyan-900 truncate" title={label}>
+                <span className="block text-md text-black" title={label}>
                     - {label}
                 </span>
             </div>
@@ -96,7 +190,7 @@ const Laudo = () => {
                                     {renderField(key, value as string)}
                                     {volumes.find(volume => volume.key === key) && (
                                         <div className="flex items-center space-x-1">
-                                            <span className="block text-md text-cyan-900 truncate" title={`Volume: ${volumes.find(volume => volume.key === key)?.volume} cm³`}>
+                                            <span className="block text-md text-cyan-900" title={`Volume: ${volumes.find(volume => volume.key === key)?.volume} cm³`}>
                                                 - Volume do {key.split(' ').pop()} {volumes.find(volume => volume.key === key)?.volume} cm³
                                             </span>
                                         </div>
@@ -117,7 +211,7 @@ const Laudo = () => {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-1 gap-1 text-sm">
                         <div className="bg-white p-3 rounded-lg shadow-xs">
-                            <span className="block text-md text-cyan-900 truncate" title="Não há alterações">
+                            <span className="block text-md text-cyan-900" title="Não há alterações">
                                 - Não há alterações ou não visualizado
                             </span>
                         </div>
@@ -128,51 +222,7 @@ const Laudo = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
-
-            <style jsx global>{`
-                @media print {
-                    @page {
-                        margin: 1cm;
-                    }
-                    body {
-                        -webkit-print-color-adjust: exact;
-                    }
-                    .no-print {
-                        display: none;
-                    }
-                   
-                    .bg-gray-100 {
-                        background-color: #f3f4f6 !important;
-                    }
-                    .bg-cyan-700 {
-                        background-color: #0369a1 !important;
-                    }
-                    .shadow-sm {
-                        box-shadow: none;
-                    }
-                    .rounded-lg {
-                        border-radius: 0;
-                    }
-                    .grid {
-                        display: grid;
-                        grid-template-columns: repeat(2, 1fr); /* Garante que a grade seja mantida */
-                        gap: 8px;
-                    }
-                    .text-sm {
-                        font-size: 12px;
-                    }
-                    .text-md {
-                        font-size: 14px;
-                    }
-                    .text-lg {
-                        font-size: 16px;
-                    }
-                    .text-xl {
-                        font-size: 18px;
-                    }
-                }
-            `}</style>
+        <div id="laudo-content" className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg" style={{ zoom: '0.75' }}>
 
             <header className="text-center mb-6 print-header">
                 <h1 className="text-2xl font-bold text-cyan-700">Consultório Doutor Mauro</h1>
@@ -184,22 +234,25 @@ const Laudo = () => {
             </p>
 
             <section className="mb-6 print-container">
-                <div className="grid grid-cols-2 gap-3">
-                    <div>
-                        <label className="block text-sm font-semibold text-cyan-900 opacity-55">Nome do Paciente</label>
-                        <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{nomePaciente}</p>
+                <div id='dados' className="grid grid-cols-2 gap-3">
+                    <div className='text-black text-md'>
+                        <label className="block text-sm font-semibold text-cyan-900 opacity-55 mb-2">Nome do Paciente</label>
+                        {/* <div className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold"></div> */}
+                        {nomePaciente}
                     </div>
-                    <div>
-                        <label className="block text-sm font-semibold text-cyan-900 opacity-55">Idade do Paciente</label>
-                        <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{idadePaciente}</p>
+                    <div className='text-black text-md'>
+                        <label className="block text-sm font-semibold text-cyan-900 opacity-55 mb-2">Idade do Paciente</label>
+                        {/* <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold"></p> */}
+                        {idadePaciente}
                     </div>
-                    <div>
-                        <label className="block text-sm font-semibold text-cyan-900 opacity-55">Médico Solicitante</label>
-                        <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold capitalize">{medicoSolicitante}</p>
+                    <div className='text-black text-md'>
+                        <label className="block text-sm font-semibold text-cyan-900 opacity-55 mb-2">Médico Solicitante</label>
+                        {/* <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold"></p> */}
+                        {medicoSolicitante}
                     </div>
-                    <div>
-                        <label className="block text-sm font-semibold text-cyan-900 opacity-55">Data</label>
-                        <p className="mt-1 p-1 border rounded-md bg-gray-100 text-cyan-900 font-semibold">{formatDate(dataExame)}</p>
+                    <div className='text-black text-md'>
+                        <label className="block text-sm font-semibold text-cyan-900 opacity-55 mb-2">Data</label>
+                    {formatDate(dataExame)}
                     </div>
                 </div>
             </section>
@@ -232,13 +285,32 @@ const Laudo = () => {
                 <p className="text-sm text-gray-600">CRM-RN 4868</p>
             </div>
 
+            <div className="flex justify-center mt-6 no-print " id="finalizar-consulta" style={{ display: 'none', justifyContent: 'center' }}>
+                <button
+                    id="finalizar-button"
+                    onClick={handleOpenModal}
+                    className="w-2/3 px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                >
+                    Finalizar consulta
+                </button>
+            </div>
+
             <div className="flex justify-center mt-6 no-print">
                 <button
-                    onClick={() => window.print()}
+                    id="print-button"
+                    onClick={handlePrintAndSend}
                     className="w-2/3 px-4 py-2 bg-green-700 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 >
                     Imprimir
                 </button>
+
+                <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+                <p className='text-cyan-900 p-4 text-xl font-bold'>Tem certeza de que deseja finalizar a consulta?</p>
+                <div className="flex justify-center">
+                    <button onClick={async () => await finalizarConsulta(pacienteId)} className="w-full h-16 mt-5 px-4 py-2 bg-green-900 hover:bg-red-900 text-white font-bold rounded-md">Confirmar</button>
+                </div>
+                </Modal>
+                
             </div>
         </div>
     );

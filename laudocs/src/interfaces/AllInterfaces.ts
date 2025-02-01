@@ -3,10 +3,11 @@ export interface CardConsultaInterface {
     dataConsulta: string;
     pacienteId: number;
     medicoSolicitante: string;
-    laudoId?: number | null;
-    nomePaiente: string;
+    laudoId?: number[];
+    nomePaciente: string;
     idadePaciente: number;
     dataNascPaciente: string;
+    Status?: string;
 
 }
 
