@@ -6,6 +6,7 @@ import { clearStorage } from '@/utils/token';
 
 export default function LogOutComponent() {
     const [showModal, setShowModal] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
     const router = useRouter();
 
     const handleLogout = async () => {
@@ -14,11 +15,40 @@ export default function LogOutComponent() {
     };
 
     return (
-        <div>
-            <button onClick={() => setShowModal(true)} className="bg-black text-white p-1 rounded">
+        <div className="relative">
+            <button
+                onMouseEnter={() => setShowMenu(true)}
+                onMouseLeave={() => setShowMenu(false)}
+                onClick={() => setShowModal(true)} 
+                className="bg-black text-white p-1 rounded"
+            >
                 <LogoutIcon />
             </button>
 
+            {showMenu && (
+                <div
+                    className="absolute right-full top-0 bg-black shadow-lg rounded-lg overflow-hidden transition-all duration-300 ease-in-out transform translate-x-0 opacity-100"
+                    onMouseEnter={() => setShowMenu(true)}
+                    onMouseLeave={() => setShowMenu(false)}
+                >
+                    <ul className="flex py-2">
+                        <li
+                            className="px-4 py-2 hover:bg-cyan-600 cursor-pointer rounded"
+                            onClick={() => router.push('/historico-pacientes')}
+                        >
+                            Histórico
+                        </li>
+                        <li className="px-4 py-2 hover:bg-cyan-600 cursor-pointer rounded">Perfil</li>
+                        <li className="px-4 py-2 hover:bg-cyan-600 cursor-pointer rounded">Configurações</li>
+                        <li
+                            className="px-4 py-2 hover:bg-red-800 cursor-pointer rounded"
+                            onClick={() => setShowModal(true)}
+                        >
+                            Sair
+                        </li>
+                    </ul>
+                </div>
+            )}
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-5 rounded-lg shadow-lg w-80 text-center">
