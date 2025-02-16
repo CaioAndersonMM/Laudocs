@@ -26,6 +26,16 @@ const Questions: Record<string, {
   Mamas: {
     Selects: [
       {
+        label: 'Mama direita no Exame',
+        options: ['Não', 'Sim'],
+        mark: 'condicional_mama_direita',
+      },
+      {
+        label: 'Mama esquerda no Exame',
+        options: ['Não', 'Sim'],
+        mark: 'condicional_mama_esquerda',
+      },
+      {
         label: 'Tem nódulo?',
         options: ['Não', 'Sim'],
         mark: 'mamas_nodulo',
@@ -36,23 +46,105 @@ const Questions: Record<string, {
         mark: 'mamas_local_nodulo',
       },
       {
-        label: 'Linfonodos têm aspecto não habitual?',
-        options: ['Não', 'Sim'],
-        mark: 'mamas_linfonodo',
-      },
-      {
-        label: 'Onde está o Linfonodo?',
-        options: ['Esquerda', 'Direita', 'Ambas'],
-        mark: 'mamas_local_linfonodo',
-      },
-      {
-        label: 'Medida em cm:',
+        label: 'BI-RADS USG:',
         options: [],
         isNumberInput: true,
-        mark: 'mamas_medida',
+        mark: 'mamas_medida_birads',
       },
     ],
     Checkbox: [],
+    ConditionalSections: {
+      "condicional_mama_direita": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Pele e complexo aréolo-papilar",
+            "options": ["Íntegros", "Não íntegros"],
+            "mark": "mama_direita_pele_areolo"
+          },
+          {
+            "label": "Acustica",
+            "options": ["Normal", "Anormal"],
+            "mark": "mama_direita_acustica"
+          },
+          {
+            "label": "Camada subcutânea de espessura",
+            "options": ["Normal para idade", "Anormal para idade"],
+            "mark": "mama_direita_subcutanea"
+          },
+          {
+            "label": "Ecotextura e aspecto",
+            "options": ["Habituais", "Não habituais"],
+            "mark": "mama_direita_ecotextura"
+          },
+          {
+            "label": "Camada glandular exibindo substituição conjuntiva",
+            "options": ["Com distribuição simétrica", "Sem distribuição simétrica"],
+            "mark": "mama_direita_glandular"
+          },
+          {
+            "label": "Grau",
+            "options": ["Habitual para a faixa etária", "Não habitual para a faixa etária"],
+            "mark": "mama_direita_grau"
+          },
+          {
+            "label": "Presença de tecido fibro-gorduroso de substituição com ecotextura e aspecto característicos",
+            "options": ["Sim", "Não"],
+            "mark": "mama_direita_tecido"
+          },
+          {
+            "label": "Linfonodos axilares tem aspecto",
+            "options": ["Habitual", "Não habitual"],
+            "mark": "mama_direita_linfonodo"
+          }
+        ]
+      },
+      "condicional_mama_esquerda": {
+        "condition": "Sim",
+        "fields": [
+          {
+            "label": "Pele e complexo aréolo-papilar",
+            "options": ["Íntegros", "Não íntegros"],
+            "mark": "mama_esquerda_pele_areolo"
+          },
+          {
+            "label": "Acustica",
+            "options": ["Normal", "Anormal"],
+            "mark": "mama_esquerda_acustica"
+          },
+          {
+            "label": "Camada subcutânea de espessura",
+            "options": ["Normal para idade", "Anormal para idade"],
+            "mark": "mama_esquerda_subcutanea"
+          },
+          {
+            "label": "Ecotextura e aspecto",
+            "options": ["Habituais", "Não habituais"],
+            "mark": "mama_esquerda_ecotextura"
+          },
+          {
+            "label": "Camada glandular exibindo substituição conjuntiva",
+            "options": ["Com distribuição simétrica", "Sem distribuição simétrica"],
+            "mark": "mama_esquerda_glandular"
+          },
+          {
+            "label": "Grau",
+            "options": ["Habitual para a faixa etária", "Não habitual para a faixa etária"],
+            "mark": "mama_esquerda_grau"
+          },
+          {
+            "label": "Presença de tecido fibro-gorduroso de substituição com ecotextura e aspecto característicos",
+            "options": ["Sim", "Não"],
+            "mark": "mama_esquerda_tecido"
+          },
+          {
+            "label": "Linfonodos axilares tem aspecto",
+            "options": ["Habitual", "Não habitual"],
+            "mark": "mama_esquerda_linfonodo"
+          }
+        ]
+      },
+    },
   },
   Axila: {
     Selects: [
@@ -76,6 +168,11 @@ const Questions: Record<string, {
         "options": ["Esquerda", "Direita", "Ambas"],
         "mark": "axila_local_nodulo"
       },
+      {
+        "label": "Linfonodos axilares com aspecto",
+        "options": ["Habitual", "Não habitual"],
+        "mark": "axila_linfonodos"
+      }
     ],
     Checkbox: [],
     ConditionalSections: {
