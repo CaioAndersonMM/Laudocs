@@ -19,7 +19,7 @@ export default function LogOutComponent() {
             <button
                 onMouseEnter={() => setShowMenu(true)}
                 onMouseLeave={() => setShowMenu(false)}
-                onClick={() => setShowModal(true)} 
+                onClick={() => setShowModal(true)}
                 className="bg-black text-white p-1 rounded"
             >
                 <LogoutIcon />
@@ -38,8 +38,16 @@ export default function LogOutComponent() {
                         >
                             Histórico
                         </li>
-                        <li className="px-4 py-2 hover:bg-cyan-600 cursor-pointer rounded">Perfil</li>
-                        <li className="px-4 py-2 hover:bg-cyan-600 cursor-pointer rounded">Configurações</li>
+                        <li className="px-4 py-2 hover:bg-cyan-600 cursor-pointer rounded"
+                            onClick={() => router.push('/perfil')}
+                        >
+                            Perfil
+                        </li>
+                        <li className="px-4 py-2 hover:bg-cyan-600 cursor-pointer rounded"
+                            onClick={() => router.push('/configuracoes')}
+                        >
+                            Configurações
+                        </li>
                         <li
                             className="px-4 py-2 hover:bg-red-800 cursor-pointer rounded"
                             onClick={() => setShowModal(true)}
