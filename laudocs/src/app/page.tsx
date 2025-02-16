@@ -61,6 +61,7 @@ export default function LoginPage() {
             const response = await axios.post(`${baseURL}/api/v1/auth/login`, payload);
     
             const data = response.data;
+            console.log(data);
     
             console.log("Response:", response);
             console.log("Data:", data);
@@ -68,6 +69,7 @@ export default function LoginPage() {
             if (response.status === 200) {
                 saveToken(data.token);
                 saveRole(data.role);
+                localStorage.setItem('userId', data.id);
 
                 if (data.role.toUpperCase() === "ADMIN") {
                     router.push('/consultas');
