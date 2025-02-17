@@ -8,8 +8,8 @@ import '@/utils/globals.css'
 
 import { formatDate, processFormState } from '../../utils/processFormState';
 import axios from 'axios';
-import Modal, {finalizarConsulta} from '@components/laudo/Modal';
-import { checkValidToken, isAdmin } from '@/utils/token';
+import Modal, { finalizarConsulta } from '@components/laudo/Modal';
+import { checkValidToken, getToken, isAdmin } from '@/utils/token';
 import { useRouter } from 'next/navigation';
 
 const Laudo = () => {
@@ -76,8 +76,13 @@ const Laudo = () => {
             formData.append('consultaId', pacienteId);
             formData.append('type', tipoExame);
 
+            const token = getToken();
             const response = await axios.post(`${baseURL}/api/v1/laudo/criar`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
+
+                }
             });
 
             if (response.status === 200) {
@@ -91,7 +96,7 @@ const Laudo = () => {
 
         window.print();
         if (printButton) printButton.style.display = 'block';
-        if (finalizarButton){
+        if (finalizarButton) {
             finalizarButton.style.display = 'flex';
         }
 
@@ -107,12 +112,12 @@ const Laudo = () => {
         setModalOpen(false);
     };
 
-    
-        useEffect(() => {
-            if(!checkValidToken() || !isAdmin())
-                router.push('/');
-            
-        }, []);
+
+    useEffect(() => {
+        if (!checkValidToken() || !isAdmin())
+            router.push('/');
+
+    }, []);
 
     const renderField = (key: string, value: string) => {
         let label = key;
@@ -252,7 +257,7 @@ const Laudo = () => {
                     </div>
                     <div className='text-black text-md'>
                         <label className="block text-sm font-semibold text-cyan-900 opacity-55 mb-2">Data</label>
-                    {formatDate(dataExame)}
+                        {formatDate(dataExame)}
                     </div>
                 </div>
             </section>
@@ -305,12 +310,12 @@ const Laudo = () => {
                 </button>
 
                 <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-                <p className='text-cyan-900 p-4 text-xl font-bold'>Tem certeza de que deseja finalizar a consulta?</p>
-                <div className="flex justify-center">
-                    <button onClick={async () => await finalizarConsulta(pacienteId)} className="w-full h-16 mt-5 px-4 py-2 bg-green-900 hover:bg-red-900 text-white font-bold rounded-md">Confirmar</button>
-                </div>
+                    <p className='text-cyan-900 p-4 text-xl font-bold'>Tem certeza de que deseja finalizar a consulta?</p>
+                    <div className="flex justify-center">
+                        <button onClick={async () => await finalizarConsulta(pacienteId)} className="w-full h-16 mt-5 px-4 py-2 bg-green-900 hover:bg-red-900 text-white font-bold rounded-md">Confirmar</button>
+                    </div>
                 </Modal>
-                
+
             </div>
         </div>
     );
