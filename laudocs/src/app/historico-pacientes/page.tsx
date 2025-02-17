@@ -157,29 +157,35 @@ const HistoricoPacientes: React.FC = () => {
                 <td className="px-6 py-4 text-sm text-gray-700">{paciente.id}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{paciente.nomePaciente}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">
-                {paciente.dataConsulta}
+                  {paciente.dataConsulta}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700">{paciente.medicoSolicitante}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">{paciente.status}</td>
                 <td className="px-6 py-4 text-sm text-gray-700">
-                  <button
-                    onClick={() => fetchLaudo(paciente.laudoIds)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Ver Laudos
-                  </button>
-                  {Array.isArray(paciente.laudoIds) && paciente.laudoIds.map((laudoId) => (
-                    laudos[laudoId] && (
-                      <div key={laudoId} className="mt-2">
-                        <button
-                          onClick={() => handleOpenModal(laudos[laudoId].conteudo)}
-                          className="text-blue-600 hover:underline"
-                        >
-                          Laudo {laudoId}
-                        </button>
-                      </div>
-                    )
-                  ))}
+                  {paciente.laudoIds.length > 0 ? (
+                    <>
+                      <button
+                        onClick={() => fetchLaudo(paciente.laudoIds)}
+                        className="text-blue-600 hover:underline"
+                      >
+                        Ver Laudo(s)
+                      </button>
+                      {Array.isArray(paciente.laudoIds) && paciente.laudoIds.map((laudoId) => (
+                        laudos[laudoId] && (
+                          <div key={laudoId} className="mt-2">
+                            <button
+                              onClick={() => handleOpenModal(laudos[laudoId].conteudo)}
+                              className="text-blue-600 hover:underline"
+                            >
+                              Laudo {laudoId}
+                            </button>
+                          </div>
+                        )
+                      ))}
+                    </>
+                  ) : (
+                    <span>Laudo(s) não emitido(s)</span>
+                  )}
                 </td>
               </tr>
             ))}
@@ -190,9 +196,8 @@ const HistoricoPacientes: React.FC = () => {
         <button
           onClick={handlePaginaAnterior}
           disabled={paginaAtual === 1}
-          className={`px-4 py-2 text-sm font-medium text-white ${
-            paginaAtual === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-          } rounded-md transition-colors`}
+          className={`px-4 py-2 text-sm font-medium text-white ${paginaAtual === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+            } rounded-md transition-colors`}
         >
           Página Anterior
         </button>
@@ -202,11 +207,10 @@ const HistoricoPacientes: React.FC = () => {
         <button
           onClick={handleProximaPagina}
           disabled={paginaAtual === totalPaginas}
-          className={`px-4 py-2 text-sm font-medium text-white ${
-            paginaAtual === totalPaginas
+          className={`px-4 py-2 text-sm font-medium text-white ${paginaAtual === totalPaginas
               ? "bg-gray-300 cursor-not-allowed"
               : "bg-blue-600 hover:bg-blue-700"
-          } rounded-md transition-colors`}
+            } rounded-md transition-colors`}
         >
           Próxima Página
         </button>
