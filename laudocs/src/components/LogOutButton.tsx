@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { clearStorage } from '@/utils/token';
 
@@ -8,6 +8,7 @@ export default function LogOutComponent() {
     const [showModal, setShowModal] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const router = useRouter();
+    const pathname = usePathname();
 
     const handleLogout = async () => {
         clearStorage();
@@ -32,6 +33,21 @@ export default function LogOutComponent() {
                     onMouseLeave={() => setShowMenu(false)}
                 >
                     <ul className="flex py-2">
+                        {pathname === '/lista-de-pacientes' ? (
+                            <li
+                                className="px-4 py-2 hover:bg-cyan-600 cursor-pointer rounded"
+                                onClick={() => router.push('/consultas')}
+                            >
+                                Consultório
+                            </li>
+                        ) : (
+                            <li
+                                className="px-4 py-2 hover:bg-cyan-600 cursor-pointer rounded"
+                                onClick={() => router.push('/lista-de-pacientes')}
+                            >
+                                Recepção
+                            </li>
+                        )}
                         <li
                             className="px-4 py-2 hover:bg-cyan-600 cursor-pointer rounded"
                             onClick={() => router.push('/historico-pacientes')}
