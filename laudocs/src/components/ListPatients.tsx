@@ -4,6 +4,7 @@ import { ListConsultaProps } from "../interfaces/AllInterfaces";
 
 
 export default function ListConsultas({ arrayOfConsultas, onSelectConsulta, removeConsulta, updateConsulta }: ListConsultaProps) {
+
   return (
     <div className="bg-[#173D65] text-white flex flex-col p-2 rounded-l-lg h-[97%]">
       <h1 className="mt-4 mb-7 text-center text-2xl font-bold" style={{ fontFamily: 'Inter, sans-serif' }}>Fila de Espera</h1>
@@ -19,21 +20,22 @@ export default function ListConsultas({ arrayOfConsultas, onSelectConsulta, remo
         {arrayOfConsultas.map((consulta) => (
           console.log("id da consulta", consulta.id),
           console.log("consulta", consulta),
-          <div 
-            key={consulta.id} 
+          <div
+            key={consulta.id}
             onClick={() => onSelectConsulta?.(consulta)}
             className="cursor-pointer"
           >
-            <CardPatient 
+            <CardPatient
               pacienteId={consulta.pacienteId}
-              id={consulta.id} 
-              dataConsulta={consulta.dataConsulta} 
+              id={consulta.id}
+              dataConsulta={consulta.dataConsulta}
               nomePaciente={consulta.nomePaciente}
               idadePaciente={consulta.idadePaciente}
               medicoSolicitante={consulta.medicoSolicitante}
-              dataNascPaciente={consulta.dataNascPaciente} 
+              dataNascPaciente={consulta.dataNascPaciente}
               removePatient={removeConsulta}
               updatePatients={updateConsulta}
+              laudoIds={consulta.laudoIds}
             />
           </div>
         ))}
