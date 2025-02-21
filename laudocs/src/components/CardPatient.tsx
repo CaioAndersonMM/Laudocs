@@ -1,6 +1,7 @@
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Modal, Box, TextField, Button, Snackbar, Alert } from '@mui/material';
+import DoneIcon from '@mui/icons-material/Done';
 import axios from 'axios';
 import { useState } from 'react';
 import { CardPatientProps } from '@/interfaces/AllInterfaces';
@@ -16,6 +17,7 @@ export default function CardPatient({
   dataConsulta,
   idadePaciente,
   medicoSolicitante,
+  laudoIds = [],
   removePatient,
   updatePatients,
 }: CardPatientProps) {
@@ -25,7 +27,9 @@ export default function CardPatient({
   const [editedDoctor, setEditedDoctor] = useState(medicoSolicitante);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info'>('success');
+
+  console.log('laudosIDs:', laudoIds);
 
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -61,7 +65,7 @@ export default function CardPatient({
     }
 
     try {
-      const token = await getToken();
+      const token = getToken();
       if (!token) {
         setSnackbarMessage('Token de autenticação não encontrado.');
         setSnackbarSeverity('error');
@@ -77,7 +81,7 @@ export default function CardPatient({
         nomePaciente: editedName,
       };
 
-      await axios.put(`${baseURL}/api/v1/consultas/${id}`, pacienteAtualizado, {
+      axios.put(`${baseURL}/api/v1/consultas/${id}`, pacienteAtualizado, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -155,28 +159,54 @@ export default function CardPatient({
             {nomePaciente}, {idadePaciente} anos
           </h2>
         </div>
-        <button
-          className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center"
-          onClick={openModal}
-        >
-          <span className="text-xs font-bold">
-            <EditIcon />
-          </span>
-        </button>
+        {laudoIds.length > 0 ? (
+          <button
+            className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center opacity-60"
+            onClick={() => {
+              setSnackbarMessage('O paciente já possui laudo! Não é possível editar.');
+              setSnackbarSeverity('info');
+              setSnackbarOpen(true);
+            }}
+          >
+            <span className="text-xs font-bold">
+              <EditIcon />
+            </span>
+          </button>
+        ) : (
+          <button
+            className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center"
+            onClick={openModal}
+          >
+            <span className="text-xs font-bold">
+              <EditIcon />
+            </span>
+          </button>
+        )}
       </div>
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center ml-2">
           <Image src="/assets/medicIcon.svg" alt="Icone Hospital" width={24} height={24} className="mr-2" />
           <p className="text-cyan-800 font-bold">{medicoSolicitante}</p>
         </div>
-        <button
-          className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center"
-          onClick={handleRemove}
-        >
-          <span className="text-xs font-bold">
-            <DeleteIcon />
-          </span>
-        </button>
+        {laudoIds.length > 0 ? (
+          <button
+            className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center"
+            onClick={handleRemove}
+          >
+            <span className="text-xs font-bold">
+              <DoneIcon />
+            </span>
+          </button>
+        ) : (
+          <button
+            className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center"
+            onClick={handleRemove}
+          >
+            <span className="text-xs font-bold">
+              <DeleteIcon />
+            </span>
+          </button>
+        )}
       </div>
 
       <Modal open={isModalOpen} onClose={closeModal}>
@@ -231,7 +261,7 @@ export default function CardPatient({
         </Box>
       </Modal>
 
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
           {snackbarMessage}
         </Alert>
