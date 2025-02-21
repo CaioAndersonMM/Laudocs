@@ -10,6 +10,7 @@ import { SignUpProps } from '@/interfaces/AllInterfaces';
 import MaskedInput from 'react-text-mask';
 import dayjs from 'dayjs';
 import { getToken } from '@/utils/token';
+import { Alert, Snackbar } from '@mui/material';
 
 const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
     fontWeight: 'bold',
@@ -34,6 +35,10 @@ export default function SignUp({ addConsulta }: SignUpProps) {
     const [birthDateError, setBirthDateError] = useState('');
     const [doctorError, setDoctorError] = useState('');
 
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info'>('success');
+
     const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     const validateCpf = (cpf: string) => /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(cpf);
@@ -49,6 +54,10 @@ export default function SignUp({ addConsulta }: SignUpProps) {
         const [day, month, year] = birthDate.split('/').map(Number);
         const birth = dayjs(`${year}-${month}-${day}`);
         return dayjs().diff(birth, 'year');
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     useEffect(() => {
@@ -112,7 +121,7 @@ export default function SignUp({ addConsulta }: SignUpProps) {
             dataNasc: birthDate,
             idade: calculateAge(birthDate),
         };
-        const token = await getToken();
+        const token = getToken();
         const response = await axios.post(`${baseURL}/api/v1/paciente/criar`, externalPatient, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -128,7 +137,7 @@ export default function SignUp({ addConsulta }: SignUpProps) {
             medicoSolicitante: solicitingDoctor,
             dataConsulta: today,
         };
-        const token = await getToken();
+        const token = getToken();
         const response = await axios.post(`${baseURL}/api/v1/consultas`, newAppointment, {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -141,7 +150,7 @@ export default function SignUp({ addConsulta }: SignUpProps) {
         if (!validateForm()) return;
 
         try {
-            const token = await getToken();
+            const token = getToken();
             let patientId;
 
             try {
@@ -158,9 +167,19 @@ export default function SignUp({ addConsulta }: SignUpProps) {
                 console.log('Novo paciente criado com ID:', patientId);
             }
 
-            const newAppointment = await createAppointment(patientId);
-            addConsulta(newAppointment);
-            console.log('Consulta adicionada:', newAppointment);
+            try {
+                const newAppointment = await createAppointment(patientId);
+                addConsulta(newAppointment);
+                console.log('Consulta adicionada:', newAppointment);
+            } catch (error) {
+                if (axios.isAxiosError(error) && error.response && error.response.status === 409) {
+                    setSnackbarMessage('O paciente já está na fila de espera');
+                    setSnackbarSeverity('error');
+                    setSnackbarOpen(true);
+                } else {
+                    console.error('Erro ao criar consulta:', error);
+                }
+            }
 
             setCpf('');
             setName('');
@@ -267,6 +286,12 @@ export default function SignUp({ addConsulta }: SignUpProps) {
                     </ColorButton>
                 </div>
             </div>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+
         </div>
     );
 }
