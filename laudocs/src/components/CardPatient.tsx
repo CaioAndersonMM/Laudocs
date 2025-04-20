@@ -159,7 +159,7 @@ export default function CardPatient({
             {nomePaciente}, {idadePaciente} anos
           </h2>
         </div>
-        {laudoIds.length > 0 ? (
+        {(laudoIds?.length ?? 0) > 0 ? (
           <button
             className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center opacity-60"
             onClick={() => {
@@ -188,7 +188,7 @@ export default function CardPatient({
           <Image src="/assets/medicIcon.svg" alt="Icone Hospital" width={24} height={24} className="mr-2" />
           <p className="text-cyan-800 font-bold">{medicoSolicitante}</p>
         </div>
-        {laudoIds.length > 0 ? (
+        {(laudoIds?.length ?? 0) > 0 ? (
           <button
             className="w-10 h-7 rounded-md bg-[#15AAAA] text-white flex items-center justify-center"
             onClick={handleRemove}

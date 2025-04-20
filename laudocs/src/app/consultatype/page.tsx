@@ -14,6 +14,8 @@ const ConsultaPage = () => {
 
     const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState('');
+    const [isHydrated, setIsHydrated] = useState(false);
+
     const consulta = searchParams ? searchParams.get('consultation') as keyof typeof optionsMap | null : null;
     const patientId = searchParams ? searchParams.get('patientId') : null;
     const patientName = searchParams ? searchParams.get('patientName') : null;
@@ -21,7 +23,9 @@ const ConsultaPage = () => {
     const solicitingDoctor = searchParams ? searchParams.get('doctor') : null;
 
     useEffect(() => {
-        if(!checkValidToken() || !isAdmin())
+        setIsHydrated(true); // Marca que estamos no cliente
+
+        if (!checkValidToken() || !isAdmin())
             router.push('/');
 
         if (!consulta || !patientId || !patientName || !patientAge || !solicitingDoctor) {
@@ -51,37 +55,45 @@ const ConsultaPage = () => {
     };
 
     return (
-            <><div className="bg-gray-100 min-h-screen p-4 md:p-6 rounded-lg">
-            <div className='text-[#173D65] border border-black rounded-md bg-white h-full'>
-                <div className="relative flex flex-col items-center">
-                    <button
-                        onClick={() => router.back()}
-                        className="absolute left-4 top-4 px-4 py-2 text-[#173D65] bg-white border border-[#173D65] rounded-md mb-4 hover:bg-[#173D65] hover:text-white transition duration-200 md:left-12 md:top-6"
-                    >
-                        Voltar
-                    </button>
+        <>
+            <div className="bg-gray-100 min-h-screen p-4 md:p-6 rounded-lg">
+                <div className='text-[#173D65] border border-black rounded-md bg-white h-full'>
+                    <div className="relative flex flex-col items-center">
+                        <button
+                            onClick={() => router.back()}
+                            className="absolute left-4 top-4 px-4 py-2 text-[#173D65] bg-white border border-[#173D65] rounded-md mb-4 hover:bg-[#173D65] hover:text-white transition duration-200 md:left-12 md:top-6"
+                        >
+                            Voltar
+                        </button>
 
-                    <div className='text-center mt-20 md:mt-6'>
-                        <div className="flex items-center justify-center mb-1">
-                            <Image src="/assets/patientIcon.svg" alt="Ícone Médico" width={24} height={24} />
-                            <h3 className="ml-4 text-xl font-bold md:text-2xl">{patientName}, {patientAge} anos</h3>
-                        </div>
+                        {isHydrated && (
+                            <div className='text-center mt-20 md:mt-6'>
+                                <div className="flex items-center justify-center mb-1">
+                                    <Image src="/assets/patientIcon.svg" alt="Ícone Médico" width={24} height={24} />
+                                    <h3 className="ml-4 text-xl font-bold md:text-2xl">{patientName}, {patientAge} anos</h3>
+                                </div>
 
-                        <div className="flex items-center justify-center mb-2">
-                            <Image src="/assets/medicIcon.svg" alt="Ícone Hospital" width={24} height={24} />
-                            <p className="ml-4 text-lg font-bold md:text-2xl">Médico Solicitante: {solicitingDoctor}</p>
-                        </div>
-
+                                <div className="flex items-center justify-center mb-2">
+                                    <Image src="/assets/medicIcon.svg" alt="Ícone Hospital" width={24} height={24} />
+                                    <p className="ml-4 text-lg font-bold md:text-2xl">Médico Solicitante: {solicitingDoctor}</p>
+                                </div>
+                            </div>
+                        )}
+                        <hr className='border-1 border-cyan-800 mt-7 w-full' />
                     </div>
-                    <hr className='border-1 border-cyan-800 mt-7 w-full' />
 
+                    <h1 className='text-xl mt-4 ml-4 md:text-2xl md:ml-8'>
+                        Selecione uma opção da categoria {consulta}:
+                    </h1>
+
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', padding: 2, justifyContent: 'center' }}>
+                        {renderOptions()}
+                    </Box>
                 </div>
-                <h1 className='text-xl mt-4 ml-4 md:text-2xl md:ml-8'>Selecione uma opção da categoria {consulta}:</h1>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', padding: 2, justifyContent: 'center' }}>
-                    {renderOptions()}
-                </Box>
             </div>
-        </div><ModalErro open={showModal} errorMessage={error} onClose={() => setShowModal(false)} /></>
+
+            <ModalErro open={showModal} errorMessage={error} onClose={() => setShowModal(false)} />
+        </>
     );
 };
 
